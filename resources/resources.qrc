@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/EchoCAD.svg</file>
+    </qresource>
+</RCC>

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(EchoCAD VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
@@ -16,13 +15,16 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/interface/mainwindow.cpp
         src/interface/mainwindow.h
-        src/interface/mainwindow.ui
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(EchoCAD
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+
+        resources/resources.qrc
+        resources/resources.rc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET EchoCAD APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

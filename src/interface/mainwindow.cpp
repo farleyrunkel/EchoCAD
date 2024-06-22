@@ -1,14 +1,14 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+
 {
-    ui->setupUi(this);
+    resize(800, 600);
+    setWindowTitle("EchoCAD");
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+
 }
