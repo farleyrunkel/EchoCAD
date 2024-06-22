@@ -11,6 +11,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-
+public:
+    void setupMainUi();
+private:
+    void setupRibbonBar();
 };
 #endif // MAINWINDOW_H
