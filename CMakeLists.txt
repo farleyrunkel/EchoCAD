@@ -13,18 +13,23 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/interface/mainwindow.cpp
-        src/interface/mainwindow.h
-
+        src/gui/mainwindow.cpp
+        src/gui/mainwindow.h
 )
+
+set(PROJECT_RESOURCES
+    resources/resources.qrc
+)
+
+if(WIN32)
+    list(APPEND PROJECT_RESOURCES resources/resources.rc)
+endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(EchoCAD
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-
-        resources/resources.qrc
-        resources/resources.rc
+        ${PROJECT_RESOURCES}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET EchoCAD APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
