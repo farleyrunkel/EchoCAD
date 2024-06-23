@@ -24,7 +24,7 @@ private:
     Qt3DRender::QCamera *m_camera;
 
     void setup3DWindow();
-    void setupCamera();
+    void setupCamera();l
     void setupMainUi();
     void setupConnections();
     void createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhongMaterial *material);

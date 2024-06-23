@@ -1,6 +1,6 @@
 <svg width="420" height="420" xmlns="http://www.w3.org/2000/svg">
   <!-- Background rounded rectangle -->
-  <rect x="10" y="10" rx="50" ry="50" width="400" height="400" fill="#90a4ae" />
+  <rect x="10" y="10" rx="50" ry="50" width="400" height="400" fill="#8faadc" />
 
   <!-- Upper rectangle and polygons -->
   <rect x="50" y="90" width="240" height="160" fill="#aed581" />
@@ -8,11 +8,11 @@
   <polygon points="290,90 290,250 370,200 370,40" fill="#7cb342" />
 
   <!-- Lower rounded rectangle -->
-  <rect x="40" y="280" rx="50" ry="50" width="340" height="100" fill="#455a64" />
+  <rect x="40" y="280" rx="50" ry="50" width="340" height="100" fill="#1f4e79" />
 
   <!-- CAD text -->
   <text x="120" y="355" font-family="Arial" font-size="70" fill="#ffffff" font-weight="bold">CAD</text>
 
   <!-- Yellow circle -->
-  <circle cx="330" cy="330" r="35" fill="#ffeb3b" />
+  <circle cx="330" cy="330" r="35" fill="#ffc000" />
 </svg>
