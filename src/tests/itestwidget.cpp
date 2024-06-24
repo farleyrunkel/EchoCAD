@@ -3,6 +3,7 @@
 #include "itestwidget.h"
 #include <QHBoxLayout>
 #include <QDebug>
+#include "../3d/grid.h"
 
 ITestWidget::ITestWidget(QWidget *parent) : QWidget(parent) {
 
@@ -16,6 +17,7 @@ ITestWidget::ITestWidget(QWidget *parent) : QWidget(parent) {
 
     setupCamera();
 
+    Qt3DCore::QEntity * grid = new Grid(m_rootEntity);
     setupConnections();
 }
 

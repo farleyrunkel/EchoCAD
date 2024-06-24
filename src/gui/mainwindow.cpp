@@ -1,36 +1,34 @@
 #include "mainwindow.h"
-#include "../tests/itestwidget.h"
-#include <QCalendarWidget>
 #include <QVBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
+#include <QHBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-{
-    resize(1280, 800);
-    setupMainUi();
+    : QMainWindow(parent), scene(new Scene()) {
+
+
+    resize(1260, 800);
+    QWidget *centralWidget = new QWidget(this);
+    QVBoxLayout *layout = new QVBoxLayout(centralWidget);
+
+    input = new QLineEdit(this);
+    executeButton = new QPushButton("Execute", this);
+
+    QHBoxLayout *inputLayout = new QHBoxLayout();
+    inputLayout->addWidget(input);
+    inputLayout->addWidget(executeButton);
+
+    layout->addWidget(QWidget::createWindowContainer(scene));
+    layout->addLayout(inputLayout);
+
+    connect(executeButton, &QPushButton::clicked, this, &MainWindow::onExecuteButtonClicked);
+
+    setCentralWidget(centralWidget);
 }
 
-MainWindow::~MainWindow()
-{
-
-}
-
-void MainWindow::setupMainUi()
-{
-    setupRibbonBar();
-
-    auto t = new ITestWidget;
-    setCentralWidget(t);
-
-    auto a = new QCalendarWidget(t);
-    //a->setGeometry(20, 20, width()-20, 50);
-    setLayout(new QVBoxLayout);
-    layout()->addWidget(a);
-
- // a->raise();
-}
-
-void MainWindow::setupRibbonBar()
-{
-
+void MainWindow::onExecuteButtonClicked() {
+    QString userInput = input->text();
+    // 处理用户输入
 }

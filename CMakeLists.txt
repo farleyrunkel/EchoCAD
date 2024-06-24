@@ -11,6 +11,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Test 3DCore 3DExtras 3DInput 3DRender)
 
+# Include the src directory and all its subdirectories
+set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+
+# Find all direct subdirectories under the src directory
+file(GLOB SUBDIRS RELATIVE ${SRC_DIR} ${SRC_DIR}/*)
+foreach(subdir ${SUBDIRS})
+    if(IS_DIRECTORY ${SRC_DIR}/${subdir})
+        include_directories(${SRC_DIR}/${subdir})
+    endif()
+endforeach()
+
 set(PROJECT_SOURCES
         src/main.cpp
         src/gui/mainwindow.cpp
@@ -31,11 +42,16 @@ if(WIN32)
     list(APPEND PROJECT_RESOURCES resources/resources.rc)
 endif()
 
+
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(EchoCAD
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${PROJECT_RESOURCES}
+        src/3d/grid.h src/3d/grid.cpp
+        src/3d/scene.h src/3d/scene.cpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET EchoCAD APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

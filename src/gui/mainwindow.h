@@ -2,18 +2,23 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "scene.h"
+#include <QLineEdit>
+#include <QPushButton>
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 
-public:
-    void setupMainUi();
+private slots:
+    void onExecuteButtonClicked();
+
 private:
-    void setupRibbonBar();
+    Scene *scene;
+    QLineEdit *input;
+    QPushButton *executeButton;
 };
+
 #endif // MAINWINDOW_H
