@@ -31,7 +31,7 @@ void ITestWidget::setupConnections() {
 void ITestWidget::setupMainUi() {
 
     setLayout(new QHBoxLayout(this));
-    layout()->setContentsMargins(0, 0, 0, 0);
+  // layout()->setContentsMargins(20, 20, 20, 20);
 }
 
 void ITestWidget::resizeEvent(QResizeEvent *event) {

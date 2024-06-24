@@ -22,12 +22,12 @@ void MainWindow::setupMainUi()
     auto t = new ITestWidget;
     setCentralWidget(t);
 
-    // auto a = new QCalendarWidget(t);
-    // a->setGeometry(20, 20, width(), 50);
-    // setLayout(new QVBoxLayout);
-    // layout()->addWidget(a);
+    auto a = new QCalendarWidget(t);
+    //a->setGeometry(20, 20, width()-20, 50);
+    setLayout(new QVBoxLayout);
+    layout()->addWidget(a);
 
-   // t->raise();
+ // a->raise();
 }
 
 void MainWindow::setupRibbonBar()

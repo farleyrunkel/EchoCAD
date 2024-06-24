@@ -11,8 +11,8 @@ void Initializer::initialize(QApplication *app)
 
 void Initializer::setApplicationInfo()
 {
-    qApp->setApplicationName("octuple");
-    qApp->setApplicationDisplayName("Octuple");
+    qApp->setApplicationName("EchoCAD");
+    qApp->setApplicationDisplayName("EchoCAD");
 }
 
 void Initializer::setEnvironmentVariables()
@@ -25,7 +25,7 @@ void Initializer::loadTranslations()
     static QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
-        const QString baseName = "octuple_" + QLocale(locale).name();
+        const QString baseName = "EchoCAD_" + QLocale(locale).name();
         if (translator.load(":/i18n/" + baseName + ".qm")) {
             qApp->installTranslator(&translator);
             break;
