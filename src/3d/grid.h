@@ -13,7 +13,7 @@ public:
     Grid(Qt3DCore::QEntity *parent = nullptr);
 
 private:
-    void init(int step = 100, int gridSize = 5000);
+    void init(int step = 100, int gridSize = 10000);
     Qt3DCore::QGeometry *geometry;
     Qt3DRender::QGeometryRenderer *geometryRenderer;
     Qt3DCore::QBuffer *vertexDataBuffer;

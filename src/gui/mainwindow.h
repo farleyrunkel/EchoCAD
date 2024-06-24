@@ -2,9 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "scene.h"
 #include <QLineEdit>
 #include <QPushButton>
+#include "Scene.h"
+#include "GPTProcessor.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -14,11 +15,13 @@ public:
 
 private slots:
     void onExecuteButtonClicked();
+    void onPredictionReady(const QString &prediction);
 
 private:
     Scene *scene;
     QLineEdit *input;
     QPushButton *executeButton;
+    GPTProcessor *gptProcessor;
 };
 
 #endif // MAINWINDOW_H

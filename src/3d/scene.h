@@ -22,6 +22,8 @@ private:
     Qt3DRender::QCamera *m_camera;
     void createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhongMaterial *material);
     void createZAxis();
+    void createXAxis();
+    void createYAxis();
 };
 
 #endif // SCENE_H

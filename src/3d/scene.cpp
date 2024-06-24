@@ -22,6 +22,10 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     // 添加网格背景
     new Grid(m_rootEntity);
 
+    createXAxis();
+
+    createYAxis();
+
     createZAxis();
 
     // 添加光源
@@ -37,7 +41,6 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     lightEntity->addComponent(lightTransform);
 
 }
-
 
 
 Scene::~Scene() {
@@ -99,11 +102,27 @@ void Scene::createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhon
     lineEntity->addComponent(material);
 }
 
-void Scene::createZAxis() {
+void Scene::createXAxis() {
     Qt3DExtras::QPhongMaterial *zAxisMaterial = new Qt3DExtras::QPhongMaterial();
     zAxisMaterial->setAmbient(Qt::green);
 
     // Create Z-axis line
+    createLineEntity({QVector3D(-10000,0, 0 ), QVector3D(10000,0, 0)}, zAxisMaterial);
+}
+void Scene::createYAxis() {
+    Qt3DExtras::QPhongMaterial *zAxisMaterial = new Qt3DExtras::QPhongMaterial();
+    zAxisMaterial->setAmbient(Qt::red);
+
+    // Create Z-axis line
+    createLineEntity({QVector3D(0, -10000, 0), QVector3D(0,10000, 0 )}, zAxisMaterial);
+}
+
+void Scene::createZAxis() {
+    Qt3DExtras::QPhongMaterial *zAxisMaterial = new Qt3DExtras::QPhongMaterial();
+    zAxisMaterial->setAmbient(Qt::blue);
+
+    // Create Z-axis line
     createLineEntity({QVector3D(0, 0, -10000), QVector3D(0, 0, 10000)}, zAxisMaterial);
 }
+
 

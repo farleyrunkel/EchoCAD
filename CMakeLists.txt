@@ -51,6 +51,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_RESOURCES}
         src/3d/grid.h src/3d/grid.cpp
         src/3d/scene.h src/3d/scene.cpp
+        src/core/gptprocessor.h src/core/gptprocessor.cpp
 
     )
 # Define target properties for Android with Qt 6 as:

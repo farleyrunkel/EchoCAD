@@ -29,6 +29,7 @@ void Grid::init(int step, int gridSize) {
 
     for (int i = -gridSize; i <= gridSize; i += step) {
 
+        if (i == 0) {continue; }
         rawVertexArray[index++] = i;
         rawVertexArray[index++] = -gridSize;
         rawVertexArray[index++] = 0;
