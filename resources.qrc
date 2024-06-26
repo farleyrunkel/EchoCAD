@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/icons/EchoCAD.svg</file>
+        <file>scripts/openai_client.py</file>
+        <file>resources/icons/EchoCAD.ico</file>
+    </qresource>
+</RCC>

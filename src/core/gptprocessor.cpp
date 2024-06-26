@@ -21,3 +21,4 @@ void GPTProcessor::handleProcessOutput() {
     QString output = process->readAllStandardOutput().trimmed();
     emit predictionReady(output);
 }
+  

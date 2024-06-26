@@ -22,6 +22,11 @@ private:
     QLineEdit *input;
     QPushButton *executeButton;
     GPTProcessor *gptProcessor;
+    void setupMainUi();
+    void setupConnects();
+
+    QWidget *createInputLine(QWidget *parent);
+    void consnect();
 };
 
 #endif // MAINWINDOW_H

@@ -1,0 +1,3 @@
+[submodule "src/3rdparty/occt"]
+	path = src/3rdparty/occt
+	url = git@github.com:Open-Cascade-SAS/OCCT.git

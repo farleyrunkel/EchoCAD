@@ -1,0 +1,5 @@
+{
+    "cmake.configureArgs": [
+        "-D3RDPARTY_DIR:PATH=C:/Dependencies"
+    ],
+}
