@@ -22,14 +22,15 @@ void MainWindow::setupMainUi() {
     setCentralWidget(wid);
 
     auto layout = new QVBoxLayout(wid);
-
+    layout->setAlignment(Qt::AlignTop);
     auto container = QWidget::createWindowContainer(scene);
 
     wid->setWidget(container);
     wid->setLayout(layout);
 
+   auto w =  createInputLine(this);
 
-   auto w =  createInputLine(this);     w->setFixedHeight(29);
+    w->setFixedHeight(49);
    layout->addWidget(w);
 
 }

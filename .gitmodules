@@ -1,3 +1,6 @@
 [submodule "src/3rdparty/occt"]
 	path = src/3rdparty/occt
 	url = git@github.com:Open-Cascade-SAS/OCCT.git
+[submodule "external/freetype"]
+	path = external/freetype
+	url = git@github.com:freetype/freetype.git

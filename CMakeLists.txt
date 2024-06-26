@@ -8,7 +8,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# add_subdirectory(src/3rdparty)
+add_subdirectory(src/3rdparty)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Test 3DCore 3DExtras 3DInput 3DRender)
@@ -24,6 +24,8 @@ foreach(subdir ${SUBDIRS})
     endif()
 endforeach()
 
+set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources.qrc)
+
 set(PROJECT_SOURCES
         src/main.cpp
         src/gui/mainwindow.cpp
@@ -33,11 +35,6 @@ set(PROJECT_SOURCES
         src/tests/itestwidget.h
         src/gui/initializer.cpp
         src/gui/initializer.h
-
-)
-
-set(PROJECT_RESOURCES
-        resources.qrc
 )
 
 if(WIN32)
@@ -53,8 +50,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/3d/scene.h src/3d/scene.cpp
         src/core/gptprocessor.h src/core/gptprocessor.cpp
         src/gui/ioverlaywidget.h src/gui/ioverlaywidget.cpp
-
-
+  #      src/core/cadmodule.h src/core/cadmodule.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET EchoCAD APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -74,7 +70,7 @@ else()
     endif()
 endif()
 
-set(OCCT_LINK OpenCASCADE::TKBO OpenCASCADE::TKBRep OpenCASCADE::TKShHealing OpenCASCADE::TKTopAlgo OpenCASCADE::TKGeomBase OpenCASCADE::TKMath)
+set(OCCT_LINK TKBO T KBRep TKShHealing TKTopAlgo TKGeomBase TKMath)
 
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
 
