@@ -22,16 +22,16 @@ void MainWindow::setupMainUi() {
     setCentralWidget(wid);
 
     auto layout = new QVBoxLayout(wid);
-    layout->setAlignment(Qt::AlignTop);
+    layout->setAlignment(Qt::AlignBottom);
     auto container = QWidget::createWindowContainer(scene);
 
     wid->setWidget(container);
     wid->setLayout(layout);
-
-   auto w =  createInputLine(this);
+    
+    auto w =  createInputLine(this);
 
     w->setFixedHeight(49);
-   layout->addWidget(w);
+    layout->addWidget(w);
 
 }
 
@@ -53,6 +53,7 @@ QWidget* MainWindow::createInputLine(QWidget* parent) {
     executeButton = new QPushButton("Execute", widget);
 
     auto inputLayout = new QHBoxLayout(widget);
+
     inputLayout->addWidget(input);
     inputLayout->addWidget(executeButton);
 

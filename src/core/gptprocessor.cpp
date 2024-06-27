@@ -1,4 +1,4 @@
-#include "GPTProcessor.h"
+#include "gptprocessor.h"
 #include <QDebug>
 
 GPTProcessor::GPTProcessor(QObject *parent) : QObject(parent) {

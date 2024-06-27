@@ -9,6 +9,7 @@
 class CadModule {
 public:
     CadModule();
+    void initialize();
     TopoDS_Shape createBox(double x, double y, double z);
 };
 

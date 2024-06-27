@@ -1,4 +1,4 @@
-# Set OCCT cmake parameters
+# # Set OCCT cmake parameters
 
 # # Specify the path to the OCCT source directory
 # set(OCCT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/occt CACHE PATH "Path to OCCT source directory")

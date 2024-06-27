@@ -4,6 +4,8 @@
 #include <Qt3DRender/QPointLight>
 #include "grid.h"
 #include <Qt3DExtras/QOrbitCameraController>
+#include "OcctEntity.h"
+#include <BRepPrimAPI_MakeBox.hxx>
 
 Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     m_rootEntity = new Qt3DCore::QEntity();
@@ -40,6 +42,10 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     lightEntity->addComponent(light);
     lightEntity->addComponent(lightTransform);
 
+    // 添加 OpenCASCADE 形状
+    OcctEntity* occtEntity = new OcctEntity(m_rootEntity);
+    TopoDS_Shape shape = BRepPrimAPI_MakeBox(100, 100, 100).Shape();
+   occtEntity->addShape(shape);
 }
 
 
