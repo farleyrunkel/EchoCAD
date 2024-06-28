@@ -6,6 +6,22 @@
 #include <Qt3DExtras/QOrbitCameraController>
 #include "OcctEntity.h"
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <Geom_Plane.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <gp_Pnt.hxx>
+#include <Viewer.h>
+#include <BRepTools.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
+#include <BRepPrimAPI_MakeCone.hxx>
+#include <BRepPrimAPI_MakeTorus.hxx>
+#include <BRepPrimAPI_MakeWedge.hxx>
+#include <BRepPrimAPI_MakeHalfSpace.hxx>
+
 
 Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     m_rootEntity = new Qt3DCore::QEntity();
@@ -36,7 +52,7 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     light->setIntensity(1);
 
     auto *lightTransform = new Qt3DCore::QTransform(m_rootEntity);
-    lightTransform->setTranslation(QVector3D(10, 10, 10));
+    lightTransform->setTranslation(QVector3D(110, -110, 310));
 
     auto *lightEntity = new Qt3DCore::QEntity(m_rootEntity);
     lightEntity->addComponent(light);
@@ -45,30 +61,40 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     // 添加 OpenCASCADE 形状
     OcctEntity* occtEntity = new OcctEntity(m_rootEntity);
     TopoDS_Shape shape = BRepPrimAPI_MakeBox(100, 100, 100).Shape();
-   occtEntity->addShape(shape);
+    occtEntity->addShape(shape);
+
+
+    // 创建一个边长为100的正方形面
+    gp_Pnt p1(0, 0, 0);
+    gp_Pnt p2(0, 100, 0);
+    gp_Pnt p3(0, 100, 100);
+    gp_Pnt p4(0, 0, 100);
+
+    TopoDS_Edge edge1 = BRepBuilderAPI_MakeEdge(p1, p2);
+    TopoDS_Edge edge2 = BRepBuilderAPI_MakeEdge(p2, p3);
+    TopoDS_Edge edge3 = BRepBuilderAPI_MakeEdge(p3, p4);
+    TopoDS_Edge edge4 = BRepBuilderAPI_MakeEdge(p4, p1);
+
+    TopoDS_Wire wire = BRepBuilderAPI_MakeWire(edge1, edge2, edge3, edge4);
+
+    TopoDS_Face face = BRepBuilderAPI_MakeFace(wire);
+
+    // 将面添加到 OcctEntity
+    occtEntity->addFace(face);
+
+
+    //Viewer vout(50, 50, 500, 500);
+
+    //vout << shape;
+
+    //vout.StartMessageLoop();
+
+
 }
 
 
 Scene::~Scene() {
     delete m_rootEntity;
-}
-
-void Scene::setupCamera() {
-    m_camera = this->camera();
-    m_camera->lens()->setPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-    m_camera->setPosition(QVector3D(100, -500, 100));
-    m_camera->setUpVector(QVector3D(0, 0, 1));
-    m_camera->setViewCenter(QVector3D(0, 0, 0));
-
-    Qt3DExtras::QOrbitCameraController *camController =
-        new Qt3DExtras::QOrbitCameraController(m_rootEntity);
-    camController->setLinearSpeed(150.0f);
-    camController->setLookSpeed(180.0f);
-    camController->setCamera(m_camera);
-}
-
-Qt3DCore::QEntity* Scene::rootEntity() const {
-    return m_rootEntity;
 }
 
 
@@ -132,3 +158,21 @@ void Scene::createZAxis() {
 }
 
 
+
+void Scene::setupCamera() {
+    m_camera = this->camera();
+    m_camera->lens()->setPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+    m_camera->setPosition(QVector3D(250, -450, 250));
+    m_camera->setUpVector(QVector3D(0, 0, 1));
+    m_camera->setViewCenter(QVector3D(0, 0, 0));
+
+    Qt3DExtras::QOrbitCameraController* camController =
+        new Qt3DExtras::QOrbitCameraController(m_rootEntity);
+    camController->setLinearSpeed(150.0f);
+    camController->setLookSpeed(180.0f);
+    camController->setCamera(m_camera);
+}
+
+Qt3DCore::QEntity* Scene::rootEntity() const {
+    return m_rootEntity;
+}

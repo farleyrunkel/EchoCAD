@@ -14,6 +14,9 @@ int main(int argc, char *argv[])
 
     mainWindow.show();
 
+
+
+
     return application.exec();
 }
 

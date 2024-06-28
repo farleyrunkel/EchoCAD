@@ -60,6 +60,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/core/OcctEntity.h src/core/OcctEntity.cpp
 
         src/gui/ioverlaywidget.h src/gui/ioverlaywidget.cpp
+
+                src/helper/Viewer.h   src/helper/Viewer.cpp
+                                src/helper/ViewerInteractor.h   src/helper/ViewerInteractor.cpp
   #      src/core/cadmodule.h src/core/cadmodule.cpp
     )
 # Define target properties for Android with Qt 6 as:
