@@ -28,6 +28,7 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
 
     // 设置摄像机
     setupCamera();
+    setupLight();
 
     defaultFrameGraph()->setClearColor(QColor(Qt::darkGray));
     setRootEntity(m_rootEntity);
@@ -46,17 +47,11 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
 
     createZAxis();
 
-    // 添加光源
-    auto *light = new Qt3DRender::QPointLight(m_rootEntity);
-    light->setColor("white");
-    light->setIntensity(1);
+    temp();
+}
 
-    auto *lightTransform = new Qt3DCore::QTransform(m_rootEntity);
-    lightTransform->setTranslation(QVector3D(110, -110, 310));
 
-    auto *lightEntity = new Qt3DCore::QEntity(m_rootEntity);
-    lightEntity->addComponent(light);
-    lightEntity->addComponent(lightTransform);
+void Scene::temp() {
 
     // 添加 OpenCASCADE 形状
     OcctEntity* occtEntity = new OcctEntity(m_rootEntity);
@@ -83,14 +78,28 @@ Scene::Scene(QScreen *screen) : Qt3DExtras::Qt3DWindow(screen) {
     occtEntity->addFace(face);
 
 
-    //Viewer vout(50, 50, 500, 500);
+    Viewer vout(50, 50, 500, 500);
 
-    //vout << shape;
+    vout << shape;
 
-    //vout.StartMessageLoop();
-
-
+    vout.StartMessageLoop();
 }
+
+void Scene::setupLight() {
+
+    // 添加光源
+    auto* light = new Qt3DRender::QPointLight(m_rootEntity);
+    light->setColor("white");
+    light->setIntensity(1);
+
+    auto* lightTransform = new Qt3DCore::QTransform(m_rootEntity);
+    lightTransform->setTranslation(QVector3D(110, -110, 310));
+
+    auto* lightEntity = new Qt3DCore::QEntity(m_rootEntity);
+    lightEntity->addComponent(light);
+    lightEntity->addComponent(lightTransform);
+}
+    
 
 
 Scene::~Scene() {
@@ -98,7 +107,7 @@ Scene::~Scene() {
 }
 
 
-void Scene::createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhongMaterial *material) {
+Qt3DCore::QEntity* Scene::createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhongMaterial *material) {
     Qt3DCore::QEntity *lineEntity = new Qt3DCore::QEntity(m_rootEntity);
     Qt3DCore::QGeometry *geometry = new Qt3DCore::QGeometry(lineEntity);
 
@@ -132,29 +141,31 @@ void Scene::createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhon
 
     lineEntity->addComponent(geometryRenderer);
     lineEntity->addComponent(material);
+
+    return lineEntity;
 }
 
-void Scene::createXAxis() {
+Qt3DCore::QEntity* Scene::createXAxis() {
     Qt3DExtras::QPhongMaterial *zAxisMaterial = new Qt3DExtras::QPhongMaterial();
     zAxisMaterial->setAmbient(Qt::green);
 
     // Create Z-axis line
-    createLineEntity({QVector3D(-10000,0, 0 ), QVector3D(10000,0, 0)}, zAxisMaterial);
+    return createLineEntity({QVector3D(-10000,0, 0 ), QVector3D(10000,0, 0)}, zAxisMaterial);
 }
-void Scene::createYAxis() {
+Qt3DCore::QEntity* Scene::createYAxis() {
     Qt3DExtras::QPhongMaterial *zAxisMaterial = new Qt3DExtras::QPhongMaterial();
     zAxisMaterial->setAmbient(Qt::red);
 
     // Create Z-axis line
-    createLineEntity({QVector3D(0, -10000, 0), QVector3D(0,10000, 0 )}, zAxisMaterial);
+    return createLineEntity({QVector3D(0, -10000, 0), QVector3D(0,10000, 0 )}, zAxisMaterial);
 }
 
-void Scene::createZAxis() {
+Qt3DCore::QEntity* Scene::createZAxis() {
     Qt3DExtras::QPhongMaterial *zAxisMaterial = new Qt3DExtras::QPhongMaterial();
     zAxisMaterial->setAmbient(Qt::blue);
 
     // Create Z-axis line
-    createLineEntity({QVector3D(0, 0, -10000), QVector3D(0, 0, 10000)}, zAxisMaterial);
+    return createLineEntity({QVector3D(0, 0, -10000), QVector3D(0, 0, 10000)}, zAxisMaterial);
 }
 
 

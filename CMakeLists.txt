@@ -13,7 +13,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(src/3rdparty) 
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Test 3DCore 3DExtras 3DInput 3DRender)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Test 3DCore 3DExtras 3DInput 3DRender )
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS OpenGLWidgets )
+find_package(OpenGL REQUIRED)
+
 # 查找OCCT库
 find_package(OpenCASCADE REQUIRED)
 
@@ -28,9 +31,6 @@ foreach(subdir ${SUBDIRS})
     endif()
 endforeach()
 include_directories(${OpenCASCADE_INCLUDE_DIR})
-message(STATUS "OpenCASCADE_INCLUDE_DIR:" ${OpenCASCADE_INCLUDE_DIR})
-
-message(STATUS "OpenCASCADE_LIBRARY_DIR:" ${OpenCASCADE_LIBRARY_DIR})
 
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources.qrc)
 
@@ -43,8 +43,32 @@ set(PROJECT_SOURCES
         src/tests/itestwidget.h
         src/gui/initializer.cpp
         src/gui/initializer.h
-)
 
+        src/3d/grid.h 
+        src/3d/grid.cpp
+
+        src/3d/scene.h src/3d/scene.cpp
+        src/core/gptprocessor.h 
+        src/core/gptprocessor.cpp
+        src/core/OcctEntity.h 
+        src/core/OcctEntity.cpp
+
+        src/gui/ioverlaywidget.h 
+        src/gui/ioverlaywidget.cpp
+        src/gui/OcctGlTools.cpp
+        src/gui/OcctGlTools.h
+
+        src/gui/IOcctViewer.cpp
+        src/gui/IOcctViewer.h 
+
+        src/helper/Viewer.h   
+        src/helper/Viewer.cpp
+        src/helper/ViewerInteractor.h   
+        src/helper/ViewerInteractor.cpp
+        
+  #      src/core/cadmodule.h src/core/cadmodule.cpp
+)
+ 
 if(WIN32)
     list(APPEND PROJECT_RESOURCES resources/resources.rc)
 endif()
@@ -54,16 +78,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${PROJECT_RESOURCES}
-        src/3d/grid.h src/3d/grid.cpp
-        src/3d/scene.h src/3d/scene.cpp
-        src/core/gptprocessor.h src/core/gptprocessor.cpp
-        src/core/OcctEntity.h src/core/OcctEntity.cpp
-
-        src/gui/ioverlaywidget.h src/gui/ioverlaywidget.cpp
-
-                src/helper/Viewer.h   src/helper/Viewer.cpp
-                                src/helper/ViewerInteractor.h   src/helper/ViewerInteractor.cpp
-  #      src/core/cadmodule.h src/core/cadmodule.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET EchoCAD APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -91,6 +105,8 @@ endforeach()
 
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender )
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -5,6 +5,7 @@
 #include <QCalendarWidget>
 #include <QScrollArea>
 #include "ioverlaywidget.h"
+#include <BRepPrimAPI_MakeBox.hxx>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -27,8 +28,8 @@ void MainWindow::setupMainUi() {
 
     wid->setWidget(container);
     wid->setLayout(layout);
-    
-    auto w =  createInputLine(this);
+
+    auto w = createInputLine(this);
 
     w->setFixedHeight(49);
     layout->addWidget(w);

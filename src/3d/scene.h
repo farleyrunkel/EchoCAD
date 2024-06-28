@@ -12,6 +12,8 @@ class Scene : public Qt3DExtras::Qt3DWindow {
 
 public:
     explicit Scene(QScreen *screen = nullptr);
+
+    void setupLight();
     ~Scene();
 
     Qt3DCore::QEntity* rootEntity() const;
@@ -20,10 +22,12 @@ private:
     Qt3DCore::QEntity *m_rootEntity;
     void setupCamera();
     Qt3DRender::QCamera *m_camera;
-    void createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhongMaterial *material);
-    void createZAxis();
-    void createXAxis();
-    void createYAxis();
+    Qt3DCore::QEntity* createLineEntity(const QVector<QVector3D> &points, Qt3DExtras::QPhongMaterial *material);
+    Qt3DCore::QEntity* createZAxis();
+    Qt3DCore::QEntity* createXAxis();
+    Qt3DCore::QEntity* createYAxis();
+
+    void temp();
 };
 
 #endif // SCENE_H
