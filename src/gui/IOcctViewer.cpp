@@ -1,23 +1,3 @@
-// Copyright (c) 2021 OPEN CASCADE SAS
-//
-// This file is part of the examples of the Open CASCADE Technology software library.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 
 #ifdef _WIN32
   #include <windows.h>
@@ -222,7 +202,7 @@ public:
 // Function : OcctQtViewer
 // Purpose  :
 // ================================================================
-OcctQtViewer::OcctQtViewer (QWidget* theParent)
+IOcctViewer::IOcctViewer (QWidget* theParent)
 : QOpenGLWidget (theParent),
   myIsCoreProfile (true)
 {
@@ -305,7 +285,7 @@ OcctQtViewer::OcctQtViewer (QWidget* theParent)
 // Function : ~OcctQtViewer
 // Purpose  :
 // ================================================================
-OcctQtViewer::~OcctQtViewer()
+IOcctViewer::~IOcctViewer()
 {
   // hold on X11 display connection till making another connection active by glXMakeCurrent()
   // to workaround sudden crash in QOpenGLWidget destructor
@@ -327,7 +307,7 @@ OcctQtViewer::~OcctQtViewer()
 // Function : dumpGlInfo
 // Purpose  :
 // ================================================================
-void OcctQtViewer::dumpGlInfo (bool theIsBasic, bool theToPrint)
+void IOcctViewer::dumpGlInfo (bool theIsBasic, bool theToPrint)
 {
   TColStd_IndexedDataMapOfStringString aGlCapsDict;
   myView->DiagnosticInformation (aGlCapsDict, theIsBasic ? Graphic3d_DiagnosticInfo_Basic : Graphic3d_DiagnosticInfo_Complete);
@@ -355,7 +335,7 @@ void OcctQtViewer::dumpGlInfo (bool theIsBasic, bool theToPrint)
 // Function : initializeGL
 // Purpose  :
 // ================================================================
-void OcctQtViewer::initializeGL()
+void IOcctViewer::initializeGL()
 {
   const QRect aRect = rect();
   const Graphic3d_Vec2i aViewSize (aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
@@ -398,7 +378,7 @@ void OcctQtViewer::initializeGL()
 
   {
     // dummy shape for testing
-    TopoDS_Shape aBox = BRepPrimAPI_MakeBox (100.0, 50.0, 90.0).Shape();
+    TopoDS_Shape aBox = BRepPrimAPI_MakeBox (100.0, 150.0, 90.0).Shape();
     Handle(AIS_Shape) aShape = new AIS_Shape (aBox);
     myContext->Display (aShape, AIS_Shaded, 0, false);
   }
@@ -408,7 +388,7 @@ void OcctQtViewer::initializeGL()
 // Function : closeEvent
 // Purpose  :
 // ================================================================
-void OcctQtViewer::closeEvent (QCloseEvent* theEvent)
+void IOcctViewer::closeEvent (QCloseEvent* theEvent)
 {
   theEvent->accept();
 }
@@ -417,7 +397,7 @@ void OcctQtViewer::closeEvent (QCloseEvent* theEvent)
 // Function : keyPressEvent
 // Purpose  :
 // ================================================================
-void OcctQtViewer::keyPressEvent (QKeyEvent* theEvent)
+void IOcctViewer::keyPressEvent (QKeyEvent* theEvent)
 {
   Aspect_VKey aKey = qtKey2VKey (theEvent->key());
   switch (aKey)
@@ -441,7 +421,7 @@ void OcctQtViewer::keyPressEvent (QKeyEvent* theEvent)
 // Function : mousePressEvent
 // Purpose  :
 // ================================================================
-void OcctQtViewer::mousePressEvent (QMouseEvent* theEvent)
+void IOcctViewer::mousePressEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mousePressEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -460,7 +440,7 @@ void OcctQtViewer::mousePressEvent (QMouseEvent* theEvent)
 // Function : mouseReleaseEvent
 // Purpose  :
 // ================================================================
-void OcctQtViewer::mouseReleaseEvent (QMouseEvent* theEvent)
+void IOcctViewer::mouseReleaseEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseReleaseEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -479,7 +459,7 @@ void OcctQtViewer::mouseReleaseEvent (QMouseEvent* theEvent)
 // Function : mouseMoveEvent
 // Purpose  :
 // ================================================================
-void OcctQtViewer::mouseMoveEvent (QMouseEvent* theEvent)
+void IOcctViewer::mouseMoveEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseMoveEvent (theEvent);
   const Graphic3d_Vec2i aNewPos (theEvent->pos().x(), theEvent->pos().y());
@@ -497,7 +477,7 @@ void OcctQtViewer::mouseMoveEvent (QMouseEvent* theEvent)
 // function : wheelEvent
 // purpose  :
 // ==============================================================================
-void OcctQtViewer::wheelEvent (QWheelEvent* theEvent)
+void IOcctViewer::wheelEvent (QWheelEvent* theEvent)
 {
   QOpenGLWidget::wheelEvent (theEvent);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -533,7 +513,7 @@ void OcctQtViewer::wheelEvent (QWheelEvent* theEvent)
 // function : updateView
 // purpose  :
 // =======================================================================
-void OcctQtViewer::updateView()
+void IOcctViewer::updateView()
 {
   update();
   //if (window() != NULL) { window()->update(); }
@@ -543,7 +523,7 @@ void OcctQtViewer::updateView()
 // Function : paintGL
 // Purpose  :
 // ================================================================
-void OcctQtViewer::paintGL()
+void IOcctViewer::paintGL()
 {
   if (myView->Window().IsNull())
   {
@@ -600,7 +580,7 @@ void OcctQtViewer::paintGL()
 // Function : handleViewRedraw
 // Purpose  :
 // ================================================================
-void OcctQtViewer::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
+void IOcctViewer::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
                                      const Handle(V3d_View)& theView)
 {
   AIS_ViewController::handleViewRedraw (theCtx, theView);
@@ -615,7 +595,7 @@ void OcctQtViewer::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCt
 // Function : OnSubviewChanged
 // Purpose  :
 // ================================================================
-void OcctQtViewer::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
+void IOcctViewer::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
                                      const Handle(V3d_View)&,
                                      const Handle(V3d_View)& theNewView)
 {

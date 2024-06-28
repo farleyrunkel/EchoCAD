@@ -1,23 +1,3 @@
-// Copyright (c) 2021 OPEN CASCADE SAS
-//
-// This file is part of the examples of the Open CASCADE Technology software library.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 
 #ifndef _OcctQtViewer_HeaderFile
 #define _OcctQtViewer_HeaderFile
@@ -33,16 +13,16 @@
 class AIS_ViewCube;
 
 //! OCCT 3D View.
-class OcctQtViewer : public QOpenGLWidget, public AIS_ViewController
+class IOcctViewer : public QOpenGLWidget, public AIS_ViewController
 {
   Q_OBJECT
 public:
 
   //! Main constructor.
-  OcctQtViewer (QWidget* theParent = nullptr);
+  IOcctViewer (QWidget* theParent = nullptr);
 
   //! Destructor.
-  virtual ~OcctQtViewer();
+  virtual ~IOcctViewer();
 
   //! Return Viewer.
   const Handle(V3d_Viewer)& Viewer() const { return myViewer; }
@@ -56,12 +36,6 @@ public:
   //! Return OpenGL info.
   const QString& getGlInfo() const { return myGlInfo; }
 
-  //! Minial widget size.
-  virtual QSize minimumSizeHint() const override { return QSize(200, 200); }
-
-  //! Default widget size.
-  virtual QSize sizeHint()        const override { return QSize(720, 480); }
-
 public:
 
   //! Handle subview focus change.
@@ -73,7 +47,10 @@ protected: // OpenGL events
 
   virtual void initializeGL() override;
   virtual void paintGL() override;
-  //virtual void resizeGL(int , int ) override;
+  virtual void resizeGL(int width, int height) override {
+    if ( !myView.IsNull() )
+	  myView->MustBeResized();
+  }
 
 protected: // user input events
 
