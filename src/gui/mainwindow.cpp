@@ -6,6 +6,7 @@
 #include <QScrollArea>
 #include "ioverlaywidget.h"
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <AIS_Shape.hxx>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -82,6 +83,14 @@ void MainWindow::setupOcctViewer()
         }
         aLayout->addWidget(aSliderBox);
     }
+
+    {
+        // dummy shape for testing
+        TopoDS_Shape aBox = BRepPrimAPI_MakeBox(30.0, 250.0, 190.0).Shape();
+        Handle(AIS_Shape) aShape = new AIS_Shape(aBox);
+        myViewer->Context()->Display(aShape, AIS_Shaded, 0, false);
+    }
+
     setCentralWidget(myViewer);
 }
 
