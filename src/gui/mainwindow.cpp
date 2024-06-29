@@ -1,12 +1,16 @@
 #include "MainWindow.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QStackedWidget>
 #include <QCalendarWidget>
 #include <QScrollArea>
-#include "ioverlaywidget.h"
+
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
+
+#include "ioverlaywidget.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),

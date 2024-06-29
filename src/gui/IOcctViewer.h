@@ -2,10 +2,10 @@
 #ifndef _OcctQtViewer_HeaderFile
 #define _OcctQtViewer_HeaderFile
 
-#include <Standard_WarningsDisable.hxx>
 #include <QOpenGLWidget>
-#include <Standard_WarningsRestore.hxx>
 
+#include <Standard_WarningsDisable.hxx>
+#include <Standard_WarningsRestore.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_ViewController.hxx>
 #include <V3d_View.hxx>

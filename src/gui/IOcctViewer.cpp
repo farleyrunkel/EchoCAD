@@ -2,18 +2,12 @@
 #ifdef _WIN32
   #include <windows.h>
 #endif
-#include <OpenGl_Context.hxx>
 
-#include "IOcctViewer.h"
-
-#include "OcctGlTools.h"
-
-#include <Standard_WarningsDisable.hxx>
 #include <QApplication>
 #include <QMessageBox>
 #include <QMouseEvent>
-#include <Standard_WarningsRestore.hxx>
 
+#include <Standard_WarningsRestore.hxx>
 #include <AIS_Shape.hxx>
 #include <AIS_ViewCube.hxx>
 #include <Aspect_DisplayConnection.hxx>
@@ -23,6 +17,12 @@
 #include <OpenGl_GraphicDriver.hxx>
 #include <OpenGl_FrameBuffer.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+#include <Standard_WarningsDisable.hxx>
+#include <OpenGl_Context.hxx>
+
+#include "IOcctViewer.h"
+#include "OcctGlTools.h"
+
 
 namespace
 {

@@ -1,4 +1,3 @@
-// Copyright (c) 2023 Kirill Gavrilov
 
 #ifndef _OcctGlTools_HeaderFile
 #define _OcctGlTools_HeaderFile

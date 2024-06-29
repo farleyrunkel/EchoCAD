@@ -1,4 +1,3 @@
-// Copyright (c) 2023 Kirill Gavrilov
 
 #include "OcctGlTools.h"
 

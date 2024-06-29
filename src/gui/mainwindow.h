@@ -3,28 +3,23 @@
 
 #include <QMainWindow>
 #include <QLineEdit>
-#include <QPushButton>
-#include "Scene.h"
-#include "GPTProcessor.h"
-
-#include "IOcctViewer.h"
-
-#include <Standard_WarningsDisable.hxx>
 #include <QApplication>
 #include <QSurfaceFormat>
-
 #include <QAction>
 #include <QLabel>
-#include <QMainWindow>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QSlider>
-#include <Standard_WarningsRestore.hxx>
 
+#include <Standard_WarningsDisable.hxx>
+#include <Standard_WarningsRestore.hxx>
 #include <Standard_Version.hxx>
 
+#include "Scene.h"
+#include "GPTProcessor.h"
+#include "IOcctViewer.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -32,23 +27,21 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
 
+private:
+    void setupMainUi();
+    void setupOcctViewer();
+    void setupMenuBar();
 
+    QWidget* createInputLine(QWidget* parent);
 
 private slots:
     void onExecuteButtonClicked();
     void onPredictionReady(const QString &prediction);
 
 private:
-
     QLineEdit *input;
     QPushButton *executeButton;
     GPTProcessor *gptProcessor;
-    void setupMainUi();
-    void setupOcctViewer();
-    void setupMenuBar();
-
-    QWidget *createInputLine(QWidget *parent);
-
 
     IOcctWidget* mViewer;
 };

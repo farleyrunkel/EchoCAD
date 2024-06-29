@@ -1,24 +1,11 @@
 
-#include "IOcctViewer.h"
-
-#include <Standard_WarningsDisable.hxx>
 #include <QApplication>
 #include <QSurfaceFormat>
 
-#include <QAction>
-#include <QLabel>
-#include <QMainWindow>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QSlider>
-#include <Standard_WarningsRestore.hxx>
-
 #include <Standard_Version.hxx>
 
-
 #include "MainWindow.h"
+
 
 int main(int theNbArgs, char** theArgVec)
 {
