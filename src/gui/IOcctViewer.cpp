@@ -223,7 +223,8 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   myViewer->SetDefaultLights();
   myViewer->SetLightOn();
   myViewer->ActivateGrid (Aspect_GT_Rectangular, Aspect_GDM_Lines);
-  myViewer->SetRectangularGridGraphicValues(5000, 5000, 0);
+  myViewer->SetRectangularGridGraphicValues(50000, 50000, 0);
+  myViewer->SetRectangularGridValues(0, 0, 100, 100, 0);
 
   //! set grid echo <aMarker> to the hit point.
   Handle(Graphic3d_AspectMarker3d) aMaker = new Graphic3d_AspectMarker3d(Aspect_TOM_O, Quantity_NOC_ALICEBLUE, 1.0);
