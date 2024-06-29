@@ -219,7 +219,7 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
 
   // create viewer
   myViewer = new V3d_Viewer (aDriver);
-  myViewer->SetDefaultBackgroundColor (Quantity_NOC_BLACK);
+  myViewer->SetDefaultBackgroundColor (Quantity_NOC_GRAY25);
   myViewer->SetDefaultLights();
   myViewer->SetLightOn();
   myViewer->ActivateGrid (Aspect_GT_Rectangular, Aspect_GDM_Lines);
