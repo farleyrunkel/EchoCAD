@@ -20,6 +20,8 @@
 #include <Standard_WarningsDisable.hxx>
 #include <OpenGl_Context.hxx>
 
+#include <AIS_Axis.hxx>
+
 #include "IOcctViewer.h"
 #include "OcctGlTools.h"
 
@@ -230,8 +232,21 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   // create AIS context
   myContext = new AIS_InteractiveContext (myViewer);
 
-  myViewCube = new AIS_ViewCube();    
+  {
+      // Create Z-axis with direction (0, 0, 1)
+      gp_Ax1 zAxis(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1));
+      Handle(AIS_Axis) aisZAxis = new AIS_Axis(zAxis);
 
+      // Set the color to red
+      Handle(Prs3d_LineAspect) aspect = aisZAxis->Attributes()->LineAspect();
+      aspect->SetColor(Quantity_NOC_RED);
+      aisZAxis->Attributes()->SetLineAspect(aspect);
+
+      // Display the Z-axis
+      myContext->Display(aisZAxis, Standard_True);
+  }
+
+  myViewCube = new AIS_ViewCube();    
   myViewCube->SetViewAnimation (myViewAnimation);
   myViewCube->SetFixedAnimationLoop (false);
   myViewCube->SetAutoStartAnimation (true);
@@ -241,15 +256,11 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   myView = myViewer->CreateView();
   myView->SetImmediateUpdate (false);
 
-  myView->SetEye(200, -450, 250); // 设置摄像机位置
-  myView->SetAt(0.0, 0.0, 0.0); // 设置目标点
-  myView->SetUp(0.0, 0.0, 1.0); // 设置上向量
+  myView->SetEye(200, -450, 250);
+  myView->SetAt(0.0, 0.0, 0.0);
+  myView->SetUp(0.0, 0.0, 1.0);
 
-
-  // 缩放视图以适应整个模型
   myView->FitAll();
-
-
 
 #ifndef __APPLE__
   myView->ChangeRenderingParams().NbMsaaSamples = 4; // warning - affects performance
