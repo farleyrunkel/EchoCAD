@@ -1,3 +1,6 @@
 [submodule "src/3rdparty/occt"]
 	path = src/3rdparty/occt
 	url = git@github.com:Open-Cascade-SAS/OCCT.git
+[submodule "src/3rdparty/pybind11"]
+	path = src/3rdparty/pybind11
+	url = git@github.com:pybind/pybind11.git

@@ -7,6 +7,8 @@
 #include <Qt3DCore>
 #include <Qt3DExtras>
 #include <QScrollArea>
+#include <pybind11/pybind11.h>
+
 
 class ITestWidget : public QWidget
 {
