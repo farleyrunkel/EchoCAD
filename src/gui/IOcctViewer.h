@@ -13,16 +13,16 @@
 class AIS_ViewCube;
 
 //! OCCT 3D View.
-class IOcctViewer : public QOpenGLWidget, public AIS_ViewController
+class IOcctWidget : public QOpenGLWidget, public AIS_ViewController
 {
   Q_OBJECT
 public:
 
   //! Main constructor.
-  IOcctViewer (QWidget* theParent = nullptr);
+  IOcctWidget (QWidget* theParent = nullptr);
 
   //! Destructor.
-  virtual ~IOcctViewer();
+  virtual ~IOcctWidget();
 
   //! Return Viewer.
   const Handle(V3d_Viewer)& Viewer() const { return myViewer; }
@@ -35,6 +35,12 @@ public:
 
   //! Return OpenGL info.
   const QString& getGlInfo() const { return myGlInfo; }
+
+  //! Minial widget size.
+  virtual QSize minimumSizeHint() const override { return QSize(200, 200); }
+
+  //! Default widget size.
+  virtual QSize sizeHint()        const override { return QSize(720, 480); }
 
 public:
 

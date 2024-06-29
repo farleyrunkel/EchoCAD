@@ -18,11 +18,11 @@
 #include <AIS_ViewCube.hxx>
 #include <Aspect_DisplayConnection.hxx>
 #include <Aspect_NeutralWindow.hxx>
-#include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
 #include <Message.hxx>
 #include <OpenGl_GraphicDriver.hxx>
 #include <OpenGl_FrameBuffer.hxx>
-
+#include <Graphic3d_AspectMarker3d.hxx>
 
 namespace
 {
@@ -170,12 +170,12 @@ namespace
 //! This FBO is set to OpenGl_Context::SetDefaultFrameBuffer() as a final target.
 //! Subclass calls OpenGl_Context::SetFrameBufferSRGB() with sRGB=false flag,
 //! which asks OCCT to disable GL_FRAMEBUFFER_SRGB and apply sRGB gamma correction manually.
-class OcctQtFrameBuffer : public OpenGl_FrameBuffer
+class IOcctFrameBuffer : public OpenGl_FrameBuffer
 {
-  DEFINE_STANDARD_RTTI_INLINE(OcctQtFrameBuffer, OpenGl_FrameBuffer)
+  DEFINE_STANDARD_RTTI_INLINE(IOcctFrameBuffer, OpenGl_FrameBuffer)
 public:
   //! Empty constructor.
-  OcctQtFrameBuffer() {}
+  IOcctFrameBuffer() {}
 
   //! Make this FBO active in context.
   virtual void BindBuffer (const Handle(OpenGl_Context)& theGlCtx) override
@@ -202,7 +202,7 @@ public:
 // Function : OcctQtViewer
 // Purpose  :
 // ================================================================
-IOcctViewer::IOcctViewer (QWidget* theParent)
+IOcctWidget::IOcctWidget (QWidget* theParent)
 : QOpenGLWidget (theParent),
   myIsCoreProfile (true)
 {
@@ -221,19 +221,36 @@ IOcctViewer::IOcctViewer (QWidget* theParent)
   myViewer->SetDefaultLights();
   myViewer->SetLightOn();
   myViewer->ActivateGrid (Aspect_GT_Rectangular, Aspect_GDM_Lines);
+  myViewer->SetRectangularGridGraphicValues(5000, 5000, 0);
+
+  //! set grid echo <aMarker> to the hit point.
+  Handle(Graphic3d_AspectMarker3d) aMaker = new Graphic3d_AspectMarker3d(Aspect_TOM_O, Quantity_NOC_ALICEBLUE, 1.0);
+  myViewer->SetGridEcho(aMaker);
 
   // create AIS context
   myContext = new AIS_InteractiveContext (myViewer);
 
-  myViewCube = new AIS_ViewCube();
+  myViewCube = new AIS_ViewCube();    
+
   myViewCube->SetViewAnimation (myViewAnimation);
   myViewCube->SetFixedAnimationLoop (false);
   myViewCube->SetAutoStartAnimation (true);
-  myViewCube->TransformPersistence()->SetOffset2d (Graphic3d_Vec2i (100, 150));
+  myViewCube->TransformPersistence()->SetOffset2d (Graphic3d_Vec2i (100, 200));
 
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();
   myView->SetImmediateUpdate (false);
+
+  myView->SetEye(200, -450, 250); // 设置摄像机位置
+  myView->SetAt(0.0, 0.0, 0.0); // 设置目标点
+  myView->SetUp(0.0, 0.0, 1.0); // 设置上向量
+
+
+  // 缩放视图以适应整个模型
+  myView->FitAll();
+
+
+
 #ifndef __APPLE__
   myView->ChangeRenderingParams().NbMsaaSamples = 4; // warning - affects performance
 #endif
@@ -285,7 +302,7 @@ IOcctViewer::IOcctViewer (QWidget* theParent)
 // Function : ~OcctQtViewer
 // Purpose  :
 // ================================================================
-IOcctViewer::~IOcctViewer()
+IOcctWidget::~IOcctWidget()
 {
   // hold on X11 display connection till making another connection active by glXMakeCurrent()
   // to workaround sudden crash in QOpenGLWidget destructor
@@ -307,7 +324,7 @@ IOcctViewer::~IOcctViewer()
 // Function : dumpGlInfo
 // Purpose  :
 // ================================================================
-void IOcctViewer::dumpGlInfo (bool theIsBasic, bool theToPrint)
+void IOcctWidget::dumpGlInfo (bool theIsBasic, bool theToPrint)
 {
   TColStd_IndexedDataMapOfStringString aGlCapsDict;
   myView->DiagnosticInformation (aGlCapsDict, theIsBasic ? Graphic3d_DiagnosticInfo_Basic : Graphic3d_DiagnosticInfo_Complete);
@@ -335,7 +352,7 @@ void IOcctViewer::dumpGlInfo (bool theIsBasic, bool theToPrint)
 // Function : initializeGL
 // Purpose  :
 // ================================================================
-void IOcctViewer::initializeGL()
+void IOcctWidget::initializeGL()
 {
   const QRect aRect = rect();
   const Graphic3d_Vec2i aViewSize (aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
@@ -375,20 +392,13 @@ void IOcctViewer::initializeGL()
 
     myContext->Display (myViewCube, 0, 0, false);
   }
-
-  {
-    // dummy shape for testing
-    TopoDS_Shape aBox = BRepPrimAPI_MakeBox (100.0, 150.0, 90.0).Shape();
-    Handle(AIS_Shape) aShape = new AIS_Shape (aBox);
-    myContext->Display (aShape, AIS_Shaded, 0, false);
-  }
 }
 
 // ================================================================
 // Function : closeEvent
 // Purpose  :
 // ================================================================
-void IOcctViewer::closeEvent (QCloseEvent* theEvent)
+void IOcctWidget::closeEvent (QCloseEvent* theEvent)
 {
   theEvent->accept();
 }
@@ -397,7 +407,7 @@ void IOcctViewer::closeEvent (QCloseEvent* theEvent)
 // Function : keyPressEvent
 // Purpose  :
 // ================================================================
-void IOcctViewer::keyPressEvent (QKeyEvent* theEvent)
+void IOcctWidget::keyPressEvent (QKeyEvent* theEvent)
 {
   Aspect_VKey aKey = qtKey2VKey (theEvent->key());
   switch (aKey)
@@ -421,7 +431,7 @@ void IOcctViewer::keyPressEvent (QKeyEvent* theEvent)
 // Function : mousePressEvent
 // Purpose  :
 // ================================================================
-void IOcctViewer::mousePressEvent (QMouseEvent* theEvent)
+void IOcctWidget::mousePressEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mousePressEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -440,7 +450,7 @@ void IOcctViewer::mousePressEvent (QMouseEvent* theEvent)
 // Function : mouseReleaseEvent
 // Purpose  :
 // ================================================================
-void IOcctViewer::mouseReleaseEvent (QMouseEvent* theEvent)
+void IOcctWidget::mouseReleaseEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseReleaseEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -459,10 +469,12 @@ void IOcctViewer::mouseReleaseEvent (QMouseEvent* theEvent)
 // Function : mouseMoveEvent
 // Purpose  :
 // ================================================================
-void IOcctViewer::mouseMoveEvent (QMouseEvent* theEvent)
+void IOcctWidget::mouseMoveEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseMoveEvent (theEvent);
   const Graphic3d_Vec2i aNewPos (theEvent->pos().x(), theEvent->pos().y());
+  qDebug() << "Mouse move event: " << aNewPos.x() << ", " << aNewPos.y();
+
   if (!myView.IsNull()
     && UpdateMousePosition (aNewPos,
                             qtMouseButtons2VKeys (theEvent->buttons()),
@@ -477,7 +489,7 @@ void IOcctViewer::mouseMoveEvent (QMouseEvent* theEvent)
 // function : wheelEvent
 // purpose  :
 // ==============================================================================
-void IOcctViewer::wheelEvent (QWheelEvent* theEvent)
+void IOcctWidget::wheelEvent (QWheelEvent* theEvent)
 {
   QOpenGLWidget::wheelEvent (theEvent);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -513,7 +525,7 @@ void IOcctViewer::wheelEvent (QWheelEvent* theEvent)
 // function : updateView
 // purpose  :
 // =======================================================================
-void IOcctViewer::updateView()
+void IOcctWidget::updateView()
 {
   update();
   //if (window() != NULL) { window()->update(); }
@@ -523,7 +535,7 @@ void IOcctViewer::updateView()
 // Function : paintGL
 // Purpose  :
 // ================================================================
-void IOcctViewer::paintGL()
+void IOcctWidget::paintGL()
 {
   if (myView->Window().IsNull())
   {
@@ -538,7 +550,7 @@ void IOcctViewer::paintGL()
   Handle(OpenGl_FrameBuffer) aDefaultFbo = aGlCtx->DefaultFrameBuffer();
   if (aDefaultFbo.IsNull())
   {
-    aDefaultFbo = new OcctQtFrameBuffer();
+    aDefaultFbo = new IOcctFrameBuffer();
     aGlCtx->SetDefaultFrameBuffer (aDefaultFbo);
   }
   if (!aDefaultFbo->InitWrapper (aGlCtx))
@@ -551,8 +563,9 @@ void IOcctViewer::paintGL()
   }
 
   Graphic3d_Vec2i aViewSizeOld;
-  //const QRect aRect = rect(); Graphic3d_Vec2i aViewSizeNew(aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
-  Graphic3d_Vec2i aViewSizeNew = aDefaultFbo->GetVPSize();
+  const QRect aRect = rect(); 
+  Graphic3d_Vec2i aViewSizeNew(aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
+  // Graphic3d_Vec2i aViewSizeNew = aDefaultFbo->GetVPSize();
   Handle(Aspect_NeutralWindow) aWindow = Handle(Aspect_NeutralWindow)::DownCast (myView->Window());
   aWindow->Size (aViewSizeOld.x(), aViewSizeOld.y());
   if (aViewSizeNew != aViewSizeOld)
@@ -580,7 +593,7 @@ void IOcctViewer::paintGL()
 // Function : handleViewRedraw
 // Purpose  :
 // ================================================================
-void IOcctViewer::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
+void IOcctWidget::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
                                      const Handle(V3d_View)& theView)
 {
   AIS_ViewController::handleViewRedraw (theCtx, theView);
@@ -595,7 +608,7 @@ void IOcctViewer::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx
 // Function : OnSubviewChanged
 // Purpose  :
 // ================================================================
-void IOcctViewer::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
+void IOcctWidget::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
                                      const Handle(V3d_View)&,
                                      const Handle(V3d_View)& theNewView)
 {

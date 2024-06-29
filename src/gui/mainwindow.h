@@ -46,12 +46,11 @@ private:
     void setupMainUi();
     void setupOcctViewer();
     void setupMenuBar();
-    void setupConnects();
 
     QWidget *createInputLine(QWidget *parent);
 
 
-    IOcctViewer* myViewer;
+    IOcctWidget* mViewer;
 };
 
 #endif // MAINWINDOW_H

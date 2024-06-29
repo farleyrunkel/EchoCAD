@@ -40,7 +40,7 @@ int main(int theNbArgs, char** theArgVec)
 #endif
 
     MainWindow aMainWindow;
-    aMainWindow.resize(aMainWindow.sizeHint());
+    aMainWindow.resize(1250, 800);
     aMainWindow.show();
     return aQApp.exec();
 }

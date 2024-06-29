@@ -5,12 +5,12 @@
 #include <QCalendarWidget>
 #include <QScrollArea>
 #include "ioverlaywidget.h"
-#include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-    myViewer(nullptr),
+    mViewer(nullptr),
     gptProcessor(new GPTProcessor(this)),
     executeButton(nullptr)
 {
@@ -18,21 +18,26 @@ MainWindow::MainWindow(QWidget *parent)
 
     setupMenuBar();
     setupOcctViewer();
-
-    setupConnects();
 }
 
 void MainWindow::setupMainUi() {
-    setFixedSize(1260, 800);
+    resize(1260, 800);
+    mViewer = new IOcctWidget();
+    setCentralWidget(mViewer);
 }
 
 void MainWindow::setupOcctViewer()
 {
     // 3D Viewer and some controls on top of it
-    myViewer = new IOcctViewer();
-    QVBoxLayout* aLayout = new QVBoxLayout(myViewer);
+    QVBoxLayout* aLayout = new QVBoxLayout(mViewer);
     aLayout->setDirection(QBoxLayout::BottomToTop);
     aLayout->setAlignment(Qt::AlignBottom);
+	{
+		QWidget* aInputLine = createInputLine(mViewer);
+		aLayout->addWidget(aInputLine);
+		connect(executeButton, &QPushButton::clicked, this, &MainWindow::onExecuteButtonClicked);
+		connect(gptProcessor, &GPTProcessor::predictionReady, this, &MainWindow::onPredictionReady);
+	}
     {
         QPushButton* aQuitBtn = new QPushButton("About");
         aLayout->addWidget(aQuitBtn);
@@ -43,7 +48,7 @@ void MainWindow::setupOcctViewer()
                     + "Open CASCADE Technology v." OCC_VERSION_STRING_EXT "\n"
                     + "Qt v." QT_VERSION_STR "\n\n"
                     + "OpenGL info:\n"
-                    + myViewer->getGlInfo());
+                    + mViewer->getGlInfo());
             });
     }
     {
@@ -70,28 +75,27 @@ void MainWindow::setupOcctViewer()
                     const float aVal = theValue / 255.0f;
                     const Quantity_Color aColor(aVal, aVal, aVal, Quantity_TOC_sRGB);
 
-                    for (const Handle(V3d_View)& aSubviewIter : myViewer->View()->Subviews())
+                    for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
                     {
                         aSubviewIter->SetBgGradientColors(aColor, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
                         aSubviewIter->Invalidate();
                     }
                     //myViewer->View()->SetBackgroundColor (aColor);
-                    myViewer->View()->SetBgGradientColors(aColor, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
-                    myViewer->View()->Invalidate();
-                    myViewer->update();
+                    mViewer->View()->SetBgGradientColors(aColor, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
+                    mViewer->View()->Invalidate();
+                    mViewer->update();
                 });
         }
         aLayout->addWidget(aSliderBox);
     }
-
     {
-        // dummy shape for testing
-        TopoDS_Shape aBox = BRepPrimAPI_MakeBox(30.0, 250.0, 190.0).Shape();
-        Handle(AIS_Shape) aShape = new AIS_Shape(aBox);
-        myViewer->Context()->Display(aShape, AIS_Shaded, 0, false);
-    }
+        // Create a sphere shape
+        TopoDS_Shape aSphere = BRepPrimAPI_MakeSphere(gp_Pnt(0, 0, 0), 100.0).Shape();
+        Handle(AIS_Shape) aShape = new AIS_Shape(aSphere);
 
-    setCentralWidget(myViewer);
+        // Display the sphere in the viewer
+        mViewer->Context()->Display(aShape, AIS_Shaded, 0, false);
+    }
 }
 
 void MainWindow::setupMenuBar() 
@@ -105,36 +109,36 @@ void MainWindow::setupMenuBar()
         aMenuWindow->addAction(anActionSplit);
         connect(anActionSplit, &QAction::triggered, [this]()
             {
-                if (!myViewer->View()->Subviews().IsEmpty())
+                if (!mViewer->View()->Subviews().IsEmpty())
                 {
                     // remove subviews
-                    myViewer->View()->View()->SetSubviewComposer(false);
-                    NCollection_Sequence<Handle(V3d_View)> aSubviews = myViewer->View()->Subviews();
+                    mViewer->View()->View()->SetSubviewComposer(false);
+                    NCollection_Sequence<Handle(V3d_View)> aSubviews = mViewer->View()->Subviews();
                     for (const Handle(V3d_View)& aSubviewIter : aSubviews)
                     {
                         aSubviewIter->Remove();
                     }
-                    myViewer->OnSubviewChanged(myViewer->Context(), nullptr, myViewer->View());
+                    mViewer->OnSubviewChanged(mViewer->Context(), nullptr, mViewer->View());
                 }
                 else
                 {
                     // create two subviews splitting window horizontally
-                    myViewer->View()->View()->SetSubviewComposer(true);
+                    mViewer->View()->View()->SetSubviewComposer(true);
 
-                    Handle(V3d_View) aSubView1 = new V3d_View(myViewer->Viewer());
+                    Handle(V3d_View) aSubView1 = new V3d_View(mViewer->Viewer());
                     aSubView1->SetImmediateUpdate(false);
-                    aSubView1->SetWindow(myViewer->View(), Graphic3d_Vec2d(0.5, 1.0),
+                    aSubView1->SetWindow(mViewer->View(), Graphic3d_Vec2d(0.5, 1.0),
                         Aspect_TOTP_LEFT_UPPER, Graphic3d_Vec2d(0.0, 0.0));
 
-                    Handle(V3d_View) aSubView2 = new V3d_View(myViewer->Viewer());
+                    Handle(V3d_View) aSubView2 = new V3d_View(mViewer->Viewer());
                     aSubView2->SetImmediateUpdate(false);
-                    aSubView2->SetWindow(myViewer->View(), Graphic3d_Vec2d(0.5, 1.0),
+                    aSubView2->SetWindow(mViewer->View(), Graphic3d_Vec2d(0.5, 1.0),
                         Aspect_TOTP_LEFT_UPPER, Graphic3d_Vec2d(0.5, 0.0));
 
-                    myViewer->OnSubviewChanged(myViewer->Context(), nullptr, aSubView1);
+                    mViewer->OnSubviewChanged(mViewer->Context(), nullptr, aSubView1);
                 }
-                myViewer->View()->Invalidate();
-                myViewer->update();
+                mViewer->View()->Invalidate();
+                mViewer->update();
             });
     }
     {
@@ -149,12 +153,6 @@ void MainWindow::setupMenuBar()
     setMenuBar(aMenuBar);
 }
 
-void MainWindow::setupConnects() {
-
-    if (executeButton != nullptr)
-        connect(executeButton, &QPushButton::clicked, this, &MainWindow::onExecuteButtonClicked);
-    connect(gptProcessor, &GPTProcessor::predictionReady, this, &MainWindow::onPredictionReady);
-}
 
 QWidget* MainWindow::createInputLine(QWidget* parent) {
 
