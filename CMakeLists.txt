@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Manually set Python header and library paths
 set(PYTHON_INCLUDE_DIR "C:/Users/95439/scoop/apps/python/3.12.3/include")
 set(PYTHON_LIBRARY "C:/Users/95439/scoop/apps/python/3.12.3/libs/python312.lib")
+set(OpenCASCADE_DIR "C:/Users/95439/Sources/OCCT/out/install/x64-debug/cmake")
 
 # Check if the Python include directory exists
 if(NOT EXISTS ${PYTHON_INCLUDE_DIR})
@@ -26,7 +27,7 @@ endif()
 
 # Include directories and link directories
 include_directories(${PYTHON_INCLUDE_DIR})
-link_directories(${PYTHON_LIBRARY})
+link_directories(${PYTHON_LIBRARY}) 
 
 # Find Qt and OpenGL packages
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
@@ -70,6 +71,10 @@ set(PROJECT_SOURCES
     src/core/gptprocessor.cpp
     src/core/OcctEntity.h 
     src/core/OcctEntity.cpp
+
+    src/core/cadmodule.cpp
+    src/core/cadmodule.h
+
     src/gui/ioverlaywidget.h 
     src/gui/ioverlaywidget.cpp
     src/gui/OcctGlTools.cpp
@@ -85,6 +90,8 @@ set(PROJECT_SOURCES
     src/helper/Viewer.cpp
     src/helper/ViewerInteractor.h   
     src/helper/ViewerInteractor.cpp
+     
+    src/core/pybind11_bindings.cpp
 )
 
 # Add Windows specific resources
@@ -111,20 +118,37 @@ else()
     endif()
 endif()
 
+
+# Ìí¼Ó pybind11 Ä£¿é
+pybind11_add_module(PyEchoCAD 
+    src/core/pybind11_bindings.cpp 
+    src/core/cadmodule.cpp
+    src/core/cadmodule.h
+)
+
+# Link pybind11 and Python libraries
+target_link_libraries(PyEchoCAD PRIVATE pybind11::module)
+target_link_libraries(PyEchoCAD PRIVATE ${PYTHON_LIBRARIES})
+
+    # Link OpenCASCADE libraries
+foreach (LIB ${OpenCASCADE_LIBRARIES})
+  target_link_libraries(PyEchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
+  target_link_libraries(PyEchoCAD PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
+endforeach()
+
 # Link OpenCASCADE libraries
 foreach (LIB ${OpenCASCADE_LIBRARIES})
   target_link_libraries(EchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
   target_link_libraries(EchoCAD PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
+
 endforeach()
 
 # Link Qt and OpenGL libraries
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
-target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender )
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
-
-# Link pybind11 and Python libraries
-target_link_libraries(EchoCAD PRIVATE pybind11::module ${PYTHON_LIBRARY})
+target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
 
 # Set bundle identifier and other properties for macOS and Windows
 if(${QT_VERSION} VERSION_LESS 6.1.0)

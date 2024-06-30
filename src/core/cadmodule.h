@@ -11,6 +11,10 @@ public:
     CadModule();
     void initialize();
     TopoDS_Shape createBox(double x, double y, double z);
+
+    std::string test() {
+		return "Hello from CadModule!";
+	}
 };
 
 #endif // CADMODULE_H
