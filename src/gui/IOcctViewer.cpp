@@ -219,7 +219,8 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
 
   // create viewer
   myViewer = new V3d_Viewer (aDriver);
-  myViewer->SetDefaultBackgroundColor (Quantity_NOC_GRAY25);
+  myViewer->SetDefaultBackgroundColor (Quantity_NOC_BLACK);
+
   myViewer->SetDefaultLights();
   myViewer->SetLightOn();
   myViewer->ActivateGrid (Aspect_GT_Rectangular, Aspect_GDM_Lines);
@@ -256,6 +257,7 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();
   myView->SetImmediateUpdate (false);
+  myView->SetBgGradientColors(Quantity_NOC_GRAY25, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
 
   myView->SetEye(200, -450, 250);
   myView->SetAt(0.0, 0.0, 0.0);

@@ -12,7 +12,7 @@ GPTProcessor::~GPTProcessor() {
 
 void GPTProcessor::processInput(const QString &input) {
     QStringList arguments;
-    arguments << "scripts/openai_client.py" << input;
+    arguments << "C:/Users/95439/Documents/Github/EchoCAD/scripts/openai_client.py" << input;
 
     process->start("python3", arguments);
 }

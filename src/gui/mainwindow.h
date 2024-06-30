@@ -20,6 +20,7 @@
 #include "Scene.h"
 #include "GPTProcessor.h"
 #include "IOcctViewer.h"
+#include "ilineedit.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -39,7 +40,7 @@ private slots:
     void onPredictionReady(const QString &prediction);
 
 private:
-    QLineEdit *input;
+    ILineEdit *mInput;
     QPushButton *executeButton;
     GPTProcessor *gptProcessor;
 

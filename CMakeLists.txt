@@ -75,9 +75,13 @@ set(PROJECT_SOURCES
     src/gui/OcctGlTools.cpp
     src/gui/OcctGlTools.h
     src/gui/IOcctViewer.cpp
-    src/gui/IOcctViewer.h 
+    src/gui/IOcctViewer.h
+    src/gui/ilineedit.cpp
+    src/gui/ilineedit.h 
+    src/gui/stylemanager.cpp
+    src/gui/stylemanager.h 
     src/helper/Python_wrapper.h      
-    src/helper/Viewer.h   
+    src/helper/Viewer.h
     src/helper/Viewer.cpp
     src/helper/ViewerInteractor.h   
     src/helper/ViewerInteractor.cpp

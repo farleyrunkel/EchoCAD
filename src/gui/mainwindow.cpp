@@ -11,7 +11,7 @@
 #include <AIS_Shape.hxx>
 
 #include "ioverlaywidget.h"
-
+#include "stylemanager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -23,12 +23,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     setupMenuBar();
     setupOcctViewer();
+
+    connect(gptProcessor, &GPTProcessor::predictionReady, this, &MainWindow::onPredictionReady);
 }
 
 void MainWindow::setupMainUi() {
     resize(1260, 800);
+
     mViewer = new IOcctWidget();
     setCentralWidget(mViewer);
+
+    StyleManager::instance().loadStyleSheet("://resources/styles/style.qss");
+
+    // StyleManager::instance().enableBorders(true);
+
+    StyleManager::instance().applyStyleSheet(this);
+    StyleManager::instance().applyPalette(this);
+
 }
 
 void MainWindow::setupOcctViewer()
@@ -38,35 +49,42 @@ void MainWindow::setupOcctViewer()
     aLayout->setDirection(QBoxLayout::BottomToTop);
     aLayout->setAlignment(Qt::AlignBottom);
 	{
-		QWidget* aInputLine = createInputLine(mViewer);
-		aLayout->addWidget(aInputLine);
-		connect(executeButton, &QPushButton::clicked, this, &MainWindow::onExecuteButtonClicked);
-		connect(gptProcessor, &GPTProcessor::predictionReady, this, &MainWindow::onPredictionReady);
-	}
+        // Set up the bottom area of the chats page
+        mInput = new ILineEdit(this);
+        mInput->setPlaceholderText("Describe what you want to create ...");
+        mInput->setFixedHeight(40);
+        mInput->rightButton()->setIcon(QIcon("://resources/icons/send.svg"));
 
+		aLayout->addWidget(mInput);
+		connect(mInput->rightButton(), &QPushButton::clicked, mInput, &ILineEdit::returnPressed);
+        connect(mInput, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
+	}
     {
         QWidget* aSliderBox = new QWidget();
         QHBoxLayout* aSliderLayout = new QHBoxLayout(aSliderBox);
+        aSliderLayout->setAlignment(Qt::AlignRight);
         {
-            QLabel* aSliderLabel = new QLabel("Background");
-            aSliderLabel->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 0); color: white; }");
-            aSliderLabel->setGeometry(50, 50, 50, 50);
-            aSliderLabel->adjustSize();
-            aSliderLayout->addWidget(aSliderLabel);
-        }
-        {
-            QSlider* aSlider = new QSlider(Qt::Horizontal);
+            QSlider* aSlider = new QSlider(Qt::Vertical);
+            aSlider->setValue(0);
             aSlider->setRange(0, 255);
             aSlider->setSingleStep(1);
             aSlider->setPageStep(15);
             aSlider->setTickInterval(15);
             aSlider->setTickPosition(QSlider::TicksRight);
-            aSlider->setValue(0);
+
+            // Set initial value
+			Quantity_Color aColor1(Quantity_NOC_BLACK);
+            Quantity_Color aColor2(Quantity_NOC_BLACK);
+            mViewer->View()->GradientBackground().Colors(aColor1, aColor2);
+
             aSliderLayout->addWidget(aSlider);
-            connect(aSlider, &QSlider::valueChanged, [this](int theValue)
+
+            connect(aSlider, &QSlider::valueChanged, [this, aSlider](int theValue)
                 {
-                    const float aVal = theValue / 255.0f;
+                    const float aVal = theValue / (float)aSlider->maximum();
                     const Quantity_Color aColor(aVal, aVal, aVal, Quantity_TOC_sRGB);
+                    qDebug() << "Slider value:" << theValue;
+                    qDebug() << "Color value:" << aVal;
 
                     for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
                     {
@@ -78,6 +96,8 @@ void MainWindow::setupOcctViewer()
                     mViewer->View()->Invalidate();
                     mViewer->update();
                 });
+
+            aSlider->setValue(aColor1.Red() * aSlider->maximum());
         }
         aLayout->addWidget(aSliderBox);
     }
@@ -177,12 +197,12 @@ void MainWindow::setupMenuBar()
 QWidget* MainWindow::createInputLine(QWidget* parent) {
 
     QWidget* widget = new QWidget(parent);
-    input = new QLineEdit(widget);
+    mInput = new ILineEdit(widget);
     executeButton = new QPushButton("Execute", widget);
 
     auto inputLayout = new QHBoxLayout(widget);
 
-    inputLayout->addWidget(input);
+    inputLayout->addWidget(mInput);
     inputLayout->addWidget(executeButton);
 
     return widget;
@@ -190,12 +210,12 @@ QWidget* MainWindow::createInputLine(QWidget* parent) {
 
 
 void MainWindow::onExecuteButtonClicked() {
-    QString userInput = input->text();
+    QString userInput = mInput->text();
     gptProcessor->processInput(userInput);
 }
 
 void MainWindow::onPredictionReady(const QString &prediction) {
     qDebug() << "Prediction:" << prediction;
     // 这里可以处理预测结果，比如更新UI等
-    input->setText(prediction);
+    mInput->setText(prediction);
 }
