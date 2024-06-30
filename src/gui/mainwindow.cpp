@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 #include <QCalendarWidget>
 #include <QScrollArea>
+#include <QDesktopServices>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
@@ -42,19 +43,7 @@ void MainWindow::setupOcctViewer()
 		connect(executeButton, &QPushButton::clicked, this, &MainWindow::onExecuteButtonClicked);
 		connect(gptProcessor, &GPTProcessor::predictionReady, this, &MainWindow::onPredictionReady);
 	}
-    {
-        QPushButton* aQuitBtn = new QPushButton("About");
-        aLayout->addWidget(aQuitBtn);
-        connect(aQuitBtn, &QPushButton::clicked, [this]()
-            {
-                QMessageBox::information(0, "About Sample", QString()
-                    + "OCCT 3D Viewer sample embedded into Qt Widgets.\n\n"
-                    + "Open CASCADE Technology v." OCC_VERSION_STRING_EXT "\n"
-                    + "Qt v." QT_VERSION_STR "\n\n"
-                    + "OpenGL info:\n"
-                    + mViewer->getGlInfo());
-            });
-    }
+
     {
         QWidget* aSliderBox = new QWidget();
         QHBoxLayout* aSliderLayout = new QHBoxLayout(aSliderBox);
@@ -106,11 +95,11 @@ void MainWindow::setupMenuBar()
 {
     // menu bar with Quit item
     QMenuBar* aMenuBar = new QMenuBar();
-    QMenu* aMenuWindow = aMenuBar->addMenu("&File");
+    QMenu* aMenuFile = aMenuBar->addMenu("&File");
     {
-        QAction* anActionSplit = new QAction(aMenuWindow);
+        QAction* anActionSplit = new QAction(aMenuFile);
         anActionSplit->setText("Split Views");
-        aMenuWindow->addAction(anActionSplit);
+        aMenuFile->addAction(anActionSplit);
         connect(anActionSplit, &QAction::triggered, [this]()
             {
                 if (!mViewer->View()->Subviews().IsEmpty())
@@ -146,13 +135,40 @@ void MainWindow::setupMenuBar()
             });
     }
     {
-        QAction* anActionQuit = new QAction(aMenuWindow);
+        QAction* anActionQuit = new QAction(aMenuFile);
         anActionQuit->setText("Quit");
-        aMenuWindow->addAction(anActionQuit);
+        aMenuFile->addAction(anActionQuit);
         connect(anActionQuit, &QAction::triggered, [this]()
             {
                 close();
             });
+    } 
+    QMenu* aMenuAbout = aMenuBar->addMenu("About");
+    {  
+        {
+            QAction* anActionGoto = new QAction(aMenuFile);
+            anActionGoto->setText("Goto EchoCAD");
+            aMenuAbout->addAction(anActionGoto);
+            connect(anActionGoto, &QAction::triggered, [this]()
+                {
+                    // Goto the office website
+                    QDesktopServices::openUrl(QUrl("https://github.com/farleyrunkel/EchoCAD"));
+                });
+        }
+        {
+            QAction* anActionAbout = new QAction(aMenuFile);
+            anActionAbout->setText("About");
+            aMenuAbout->addAction(anActionAbout);
+            connect(anActionAbout, &QAction::triggered, [this]()
+                {
+                    QMessageBox::information(0, "About Sample", QString()
+                        + "OCCT 3D Viewer sample embedded into Qt Widgets.\n\n"
+                        + "Open CASCADE Technology v." OCC_VERSION_STRING_EXT "\n"
+                        + "Qt v." QT_VERSION_STR "\n\n"
+                        + "OpenGL info:\n"
+                        + mViewer->getGlInfo());
+                });
+        }
     }
     setMenuBar(aMenuBar);
 }

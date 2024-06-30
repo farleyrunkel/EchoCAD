@@ -1,19 +1,16 @@
 
+#include "MainWindow.h"
+
 #include <QApplication>
 #include <QSurfaceFormat>
-
-#include <Standard_Version.hxx>
-
-#include "MainWindow.h"
 
 
 int main(int theNbArgs, char** theArgVec)
 {
     QApplication aQApp(theNbArgs, theArgVec);
 
-    QCoreApplication::setApplicationName("OCCT Qt Viewer sample");
-    QCoreApplication::setOrganizationName("OpenCASCADE");
-    QCoreApplication::setApplicationVersion(OCC_VERSION_STRING_EXT);
+    QApplication::setApplicationName("EchoCAD");
+    QApplication::setOrganizationName("EchoCAD");
 
 #ifdef __APPLE__
     // suppress Qt warning "QCocoaGLContext: Falling back to unshared context"
@@ -29,5 +26,6 @@ int main(int theNbArgs, char** theArgVec)
     MainWindow aMainWindow;
     aMainWindow.resize(1250, 800);
     aMainWindow.show();
+
     return aQApp.exec();
 }
