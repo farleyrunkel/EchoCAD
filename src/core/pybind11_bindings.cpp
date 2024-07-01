@@ -5,8 +5,12 @@
 
 namespace py = pybind11;
 
+
 PYBIND11_MODULE(PyEchoCAD, m) {
     m.doc() = "Python bindings for Open CASCADE Technology";
+
+    // ×¢²á TopoDS_Shape ÀàÐÍ
+    py::class_<TopoDS_Shape>(m, "TopoDS_Shape");
 
     py::class_<CadModule>(m, "CadModule")
         .def(py::init<>())

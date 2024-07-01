@@ -30,21 +30,30 @@ int main(int theNbArgs, char** theArgVec)
     QSurfaceFormat::setDefaultFormat(aGlFormat);
 #endif
 
-    {
+    try {
+        // Initialize Python interpreter
         py::scoped_interpreter guard{};
 
-        // Use your Pybind11 module
+        // Import the PyEchoCAD module
         py::module echocad = py::module::import("PyEchoCAD");
 
-         //Create an instance of CadModule
-        CadModule cadModule;
+        // Create an instance of the CadModule class
+        auto module = echocad.attr("CadModule")();
 
-         //Call methods defined in CadModule from Python
-        echocad.attr("CadModule")().attr("initialize")();
-       //auto test =  echocad.attr("CadModule")().attr("test")();
-       //std::cout << "Test: " << py::str(test) << std::endl;
-        // auto box = echocad.attr("CadModule")().attr("create_box")(1.0, 2.0, 3.0);
-        //std::cout << "Created box shape in Python: " << py::str(box) << std::endl;
+        // Call methods defined in CadModule from Python
+        module.attr("initialize")();
+
+        auto test = module.attr("test")();
+        qDebug() << "Test: " << QString::fromStdString(py::str(test).cast<std::string>());
+
+        auto box = module.attr("create_box")(1.0, 2.0, 3.0);
+        qDebug() << "Created box shape in Python: " << QString::fromStdString(py::str(box).cast<std::string>());
+    }
+    catch (const py::error_already_set& e) {
+        qDebug() << "Python error: " << QString::fromStdString(e.what());
+    }
+    catch (const std::exception& e) {
+        qDebug() << "C++ exception: " << QString::fromStdString(e.what());
     }
 
 
