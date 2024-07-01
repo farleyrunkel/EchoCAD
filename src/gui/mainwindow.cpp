@@ -40,7 +40,7 @@ void MainWindow::setupMainUi() {
     mViewer = new IOcctWidget();
     setCentralWidget(mViewer);
 
-    StyleManager::instance().loadStyleSheet("://resources/styles/style.qss");
+    StyleManager::instance().loadStyleSheet("://styles/style.qss");
 
     // StyleManager::instance().enableBorders(true);
 
@@ -60,7 +60,7 @@ void MainWindow::setupOcctViewer()
         mInput = new ILineEdit(this);
         mInput->setPlaceholderText("Describe what you want to create ...");
         mInput->setFixedHeight(40);
-        mInput->rightButton()->setIcon(QIcon("://resources/icons/send.svg"));
+        mInput->rightButton()->setIcon(QIcon("://icons/send.svg"));
 
 		aLayout->addWidget(mInput);
 		connect(mInput->rightButton(), &QPushButton::clicked, mInput, &ILineEdit::returnPressed);

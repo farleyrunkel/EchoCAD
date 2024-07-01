@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/EchoCAD.svg</file>
+        <file>icons/send.svg</file>
+        <file>icons/EchoCAD.ico</file>
+        <file>styles/style.qss</file>
+    </qresource>
+</RCC>

@@ -52,7 +52,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11)
 
 # Define project resources
-set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources.qrc) 
+set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
 
 # Define project source files
 set(PROJECT_SOURCES
@@ -72,7 +72,7 @@ set(PROJECT_SOURCES
     src/core/OcctEntity.h 
     src/core/OcctEntity.cpp
 
-    src/core/cadmodule.cpp
+    src/core/cadmodule.cpp 
     src/core/cadmodule.h
 
     src/gui/ioverlaywidget.h 
