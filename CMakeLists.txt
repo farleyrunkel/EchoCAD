@@ -31,7 +31,7 @@ link_directories(${PYTHON_LIBRARY})
 
 # Find Qt and OpenGL packages
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Test 3DCore 3DExtras 3DInput 3DRender)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core5Compat Test 3DCore 3DExtras 3DInput 3DRender)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS OpenGLWidgets)
 find_package(OpenGL REQUIRED)
 
@@ -124,12 +124,20 @@ pybind11_add_module(PyEchoCAD
     src/core/pybind11_bindings.cpp 
     src/core/cadmodule.cpp
     src/core/cadmodule.h
+    src/gui/IOcctViewer.cpp
+    src/gui/IOcctViewer.h
+    src/gui/OcctGlTools.cpp
+    src/gui/OcctGlTools.h
 )
 
 # Link pybind11 and Python libraries
 target_link_libraries(PyEchoCAD PRIVATE pybind11::module)
 target_link_libraries(PyEchoCAD PRIVATE ${PYTHON_LIBRARIES})
-
+target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+target_link_libraries(PyEchoCAD PRIVATE ${OPENGL_LIBRARIES})
+target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
+target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
+target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
     # Link OpenCASCADE libraries
 foreach (LIB ${OpenCASCADE_LIBRARIES})
   target_link_libraries(PyEchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
@@ -140,13 +148,13 @@ endforeach()
 foreach (LIB ${OpenCASCADE_LIBRARIES})
   target_link_libraries(EchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
   target_link_libraries(EchoCAD PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
-
 endforeach()
 
 # Link Qt and OpenGL libraries
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
 target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
 

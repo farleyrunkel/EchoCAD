@@ -6,12 +6,19 @@
 #include <QCalendarWidget>
 #include <QScrollArea>
 #include <QDesktopServices>
+#include <QRegExp>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
 
+#include <pybind11/embed.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/eval.h>
+
 #include "ioverlaywidget.h"
 #include "stylemanager.h"
+
+namespace py = pybind11;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -216,6 +223,42 @@ void MainWindow::onExecuteButtonClicked() {
 
 void MainWindow::onPredictionReady(const QString &prediction) {
     qDebug() << "Prediction:" << prediction;
-    // 这里可以处理预测结果，比如更新UI等
+    // Extract Python code from the prediction
+    QString pythonCode = extractPythonCode(prediction);
+
+    // Execute the extracted Python code
+    executePythonCode(pythonCode);                                                                                                                  
+
+    // Update UI with the prediction
     mInput->setText(prediction);
+}
+
+
+QString MainWindow::extractPythonCode(const QString& text) {
+    // Extract Python code from the GPT response
+    // This is a simple example, you may need to handle different formats or multiple code blocks
+    QRegExp regex("```(python)?([\\s\\S]+?)```");
+    if (regex.indexIn(text) != -1) {
+        return regex.cap(2).trimmed();
+    }
+    return QString();
+}
+
+void MainWindow::executePythonCode(const QString& code) {
+    try {
+        // Convert QString to std::string for pybind11
+        std::string codeStr = code.toStdString();
+
+        // Execute the Python code
+        py::exec(codeStr);
+    }
+    catch (const py::error_already_set& e) {
+        qDebug() << "Python error: " << e.what();
+    }
+    catch (const std::exception& e) {
+        qDebug() << "Standard exception: " << e.what();
+    }
+    catch (...) {
+        qDebug() << "Unknown error occurred";
+    }
 }

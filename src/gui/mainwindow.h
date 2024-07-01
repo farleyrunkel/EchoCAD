@@ -28,6 +28,8 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
 
+    IOcctWidget* viewer() const { return mViewer; }
+
 private:
     void setupMainUi();
     void setupOcctViewer();
@@ -38,6 +40,10 @@ private:
 private slots:
     void onExecuteButtonClicked();
     void onPredictionReady(const QString &prediction);
+
+    QString extractPythonCode(const QString& text);
+
+    void executePythonCode(const QString& code);
 
 private:
     ILineEdit *mInput;

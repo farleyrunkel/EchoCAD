@@ -1,8 +1,10 @@
-
 #include "MainWindow.h"
 
 #include <QApplication>
 #include <QSurfaceFormat>
+
+#include <TopoDS_Shape.hxx>
+#include <AIS_Shape.hxx>
 
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
@@ -20,46 +22,68 @@ int main(int theNbArgs, char** theArgVec)
     QApplication::setOrganizationName("EchoCAD");
 
 #ifdef __APPLE__
-    // suppress Qt warning "QCocoaGLContext: Falling back to unshared context"
+    // Suppress Qt warning "QCocoaGLContext: Falling back to unshared context"
     bool isCoreProfile = true;
     QSurfaceFormat aGlFormat;
     aGlFormat.setDepthBufferSize(24);
     aGlFormat.setStencilBufferSize(8);
-    if (isCoreProfile) { aGlFormat.setVersion(4, 5); }
+    if (isCoreProfile) {
+        aGlFormat.setVersion(4, 5);
+    }
     aGlFormat.setProfile(isCoreProfile ? QSurfaceFormat::CoreProfile : QSurfaceFormat::CompatibilityProfile);
     QSurfaceFormat::setDefaultFormat(aGlFormat);
 #endif
 
-    try {
-        // Initialize Python interpreter
-        py::scoped_interpreter guard{};
-
-        // Import the PyEchoCAD module
-        py::module echocad = py::module::import("PyEchoCAD");
-
-        // Create an instance of the CadModule class
-        auto module = echocad.attr("CadModule")();
-
-        // Call methods defined in CadModule from Python
-        module.attr("initialize")();
-
-        auto test = module.attr("test")();
-        qDebug() << "Test: " << QString::fromStdString(py::str(test).cast<std::string>());
-
-        auto box = module.attr("create_box")(1.0, 2.0, 3.0);
-        qDebug() << "Created box shape in Python: " << QString::fromStdString(py::str(box).cast<std::string>());
-    }
-    catch (const py::error_already_set& e) {
-        qDebug() << "Python error: " << QString::fromStdString(e.what());
-    }
-    catch (const std::exception& e) {
-        qDebug() << "C++ exception: " << QString::fromStdString(e.what());
-    }
-
-
     MainWindow aMainWindow;
     aMainWindow.resize(1250, 800);
     aMainWindow.show();
+
+    try {
+        // Initialize the Python interpreter
+        py::scoped_interpreter guard{};
+
+        // Create a Python code
+        std::string str = R"(
+import PyEchoCAD
+
+module = PyEchoCAD.CadModule()
+
+module.initialize()
+
+box = module.create_box(1000.0, 200.0, 3000.0)
+
+
+    )";
+
+        // Execute Python code
+        py::exec(py::str(str));
+
+        // Get the global namespace
+        py::object global = py::globals();
+
+        // Retrieve the 'box' object from the global namespace
+        py::object box = global["box"];
+
+        qDebug() << "Created box shape in Python: " << QString::fromStdString(py::str(box).cast<std::string>());
+
+        // Convert the Python object to TopoDS_Shape
+        TopoDS_Shape boxShape = box.cast<TopoDS_Shape>();
+
+        // Display the boxShape in the OCCT viewer
+        Handle(AIS_Shape) aisBox = new AIS_Shape(boxShape);
+
+        // Assuming aMainWindow is an instance of the main window that contains the OCCT viewer
+        aMainWindow.viewer()->Context()->Display(aisBox, true);
+    }
+    catch (const py::error_already_set& e) {
+        qDebug() << "Python error: " << e.what();
+    }
+    catch (const std::exception& e) {
+        qDebug() << "Standard exception: " << e.what();
+    }
+    catch (...) {
+        qDebug() << "Unknown error occurred";
+    }
 
     return aQApp.exec();
 }
