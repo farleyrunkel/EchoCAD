@@ -42,38 +42,20 @@ int main(int theNbArgs, char** theArgVec)
         // Initialize the Python interpreter
         py::scoped_interpreter guard{};
 
+        // 将 QApplication 实例传递给 Python
+        py::module sys = py::module::import("sys");
+        sys.attr("main_window") = py::cast(&aMainWindow);
+
         // Create a Python code
         std::string str = R"(
 import PyEchoCAD
+import sys
 
-module = PyEchoCAD.CadModule()
-
-module.initialize()
-
-box = module.create_box(1000.0, 200.0, 3000.0)
-
-
+main_window = sys.main_window
     )";
 
         // Execute Python code
         py::exec(py::str(str));
-
-        // Get the global namespace
-        py::object global = py::globals();
-
-        // Retrieve the 'box' object from the global namespace
-        py::object box = global["box"];
-
-        qDebug() << "Created box shape in Python: " << QString::fromStdString(py::str(box).cast<std::string>());
-
-        // Convert the Python object to TopoDS_Shape
-        TopoDS_Shape boxShape = box.cast<TopoDS_Shape>();
-
-        // Display the boxShape in the OCCT viewer
-        Handle(AIS_Shape) aisBox = new AIS_Shape(boxShape);
-
-        // Assuming aMainWindow is an instance of the main window that contains the OCCT viewer
-        aMainWindow.viewer()->Context()->Display(aisBox, true);
     }
     catch (const py::error_already_set& e) {
         qDebug() << "Python error: " << e.what();

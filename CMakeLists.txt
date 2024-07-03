@@ -10,24 +10,20 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Manually set Python header and library paths
-set(PYTHON_INCLUDE_DIR "C:/Users/95439/scoop/apps/python/3.12.3/include")
-set(PYTHON_LIBRARY "C:/Users/95439/scoop/apps/python/3.12.3/libs/python312.lib")
-set(OpenCASCADE_DIR "C:/Users/95439/Sources/OCCT/out/install/x64-debug/cmake")
+set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
 
-# Check if the Python include directory exists
-if(NOT EXISTS ${PYTHON_INCLUDE_DIR})
-    message(FATAL_ERROR "Python include directory not found: ${PYTHON_INCLUDE_DIR}")
-endif()
+# Include the file to download and extract Python
+include(cmake/DownloadPython.cmake) 
 
-# Check if the Python library exists
-if(NOT EXISTS ${PYTHON_LIBRARY})
-    message(FATAL_ERROR "Python library not found: ${PYTHON_LIBRARY}")
-endif()
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+message(STATUS "Python3 interpreter: ${Python3_EXECUTABLE}")
+message(STATUS "Python include directory: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python library release: ${Python3_LIBRARY_RELEASE}")
 
 # Include directories and link directories
-include_directories(${PYTHON_INCLUDE_DIR})
-link_directories(${PYTHON_LIBRARY}) 
+include_directories(${Python3_INCLUDE_DIRS})
+link_directories(${Python3_LIBRARY_RELEASE}) 
 
 # Find Qt and OpenGL packages
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
@@ -50,49 +46,10 @@ endforeach()
 include_directories(${OpenCASCADE_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
-
-# Define project source files
-set(PROJECT_SOURCES
-    src/main.cpp
-    src/gui/mainwindow.cpp
-    src/gui/mainwindow.h
-    src/tests/itestwidget.cpp
-    src/tests/itestwidget.h
-    src/gui/initializer.cpp
-    src/gui/initializer.h
-    src/3d/grid.h 
-    src/3d/grid.cpp
-    src/3d/scene.h 
-    src/3d/scene.cpp
-    src/core/gptprocessor.h 
-    src/core/gptprocessor.cpp
-    src/core/OcctEntity.h 
-    src/core/OcctEntity.cpp
-
-    src/core/cadmodule.cpp 
-    src/core/cadmodule.h
-
-    src/gui/ioverlaywidget.h 
-    src/gui/ioverlaywidget.cpp
-    src/gui/OcctGlTools.cpp
-    src/gui/OcctGlTools.h
-    src/gui/IOcctViewer.cpp
-    src/gui/IOcctViewer.h
-    src/gui/ilineedit.cpp
-    src/gui/ilineedit.h 
-    src/gui/stylemanager.cpp
-    src/gui/stylemanager.h 
-    src/helper/Python_wrapper.h      
-    src/helper/Viewer.h
-    src/helper/Viewer.cpp
-    src/helper/ViewerInteractor.h   
-    src/helper/ViewerInteractor.cpp
-     
-    src/core/pybind11_bindings.cpp
-)
 
 # Add Windows specific resources
 if(WIN32)
@@ -118,8 +75,6 @@ else()
     endif()
 endif()
 
-
-# Ìí¼Ó pybind11 Ä£¿é
 pybind11_add_module(PyEchoCAD 
     src/core/pybind11_bindings.cpp 
     src/core/cadmodule.cpp
@@ -170,7 +125,7 @@ set_target_properties(EchoCAD PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
-
+ 
 # Install target
 include(GNUInstallDirs)
 install(TARGETS EchoCAD

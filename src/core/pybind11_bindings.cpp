@@ -4,15 +4,13 @@
 
 #include "IOcctViewer.h"
 #include "CadModule.h"
+#include "MainWindow.h"
 
 namespace py = pybind11;
 
 
 PYBIND11_MODULE(PyEchoCAD, m) {
     m.doc() = "Python bindings for Open CASCADE Technology";
-
-    // ×¢²á TopoDS_Shape ÀàÐÍ
-    py::class_<TopoDS_Shape>(m, "TopoDS_Shape");
 
     py::class_<CadModule>(m, "CadModule")
         .def(py::init<>())
@@ -29,5 +27,9 @@ PYBIND11_MODULE(PyEchoCAD, m) {
         .def("minimumSizeHint", &IOcctWidget::minimumSizeHint)
         .def("sizeHint", &IOcctWidget::sizeHint)
         .def("OnSubviewChanged", &IOcctWidget::OnSubviewChanged);
+
+    py::class_<MainWindow, QMainWindow>(m, "MainWindow")
+        .def(py::init<QWidget*>(), py::arg("parent") = nullptr)
+        .def("viewer", &MainWindow::viewer, py::return_value_policy::reference);
 }
 
