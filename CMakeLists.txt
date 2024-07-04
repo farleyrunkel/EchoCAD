@@ -11,9 +11,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
+set(PYTHON_DIR "${CMAKE_BINARY_DIR}/python")
+set(PYTHONOCC_INSTALL_DIRECTORY ${PYTHON_DIR}/Lib/site-packages)
 
 # Include the file to download and extract Python
-include(cmake/DownloadPython.cmake) 
+include(cmake/setupPython.cmake) 
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
@@ -79,10 +81,13 @@ pybind11_add_module(PyEchoCAD
     src/core/pybind11_bindings.cpp 
     src/core/cadmodule.cpp
     src/core/cadmodule.h
+    src/gui/mainwindow.cpp
+    src/gui/mainwindow.h
     src/gui/IOcctViewer.cpp
     src/gui/IOcctViewer.h
     src/gui/OcctGlTools.cpp
     src/gui/OcctGlTools.h
+            ${PROJECT_SOURCES}
 )
 
 # Link pybind11 and Python libraries
@@ -125,7 +130,13 @@ set_target_properties(EchoCAD PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
- 
+
+# 生成配置头文件
+message(STATUS "Generating config.h")
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+# 包含生成的配置头文件
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})
+
 # Install target
 include(GNUInstallDirs)
 install(TARGETS EchoCAD

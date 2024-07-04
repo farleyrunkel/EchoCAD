@@ -1,61 +1,54 @@
 #include "MainWindow.h"
+#include "config.h"
 
 #include <QApplication>
 #include <QSurfaceFormat>
-
-#include <TopoDS_Shape.hxx>
-#include <AIS_Shape.hxx>
+#include <QDebug>
 
 #include <pybind11/embed.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-#include <pybind11/stl.h>
-#include "CadModule.h"
 
 namespace py = pybind11;
 
-int main(int theNbArgs, char** theArgVec)
-{
-    QApplication aQApp(theNbArgs, theArgVec);
-
+int main(int argc, char** argv) {
+    QApplication app(argc, argv);
     QApplication::setApplicationName("EchoCAD");
     QApplication::setOrganizationName("EchoCAD");
 
 #ifdef __APPLE__
     // Suppress Qt warning "QCocoaGLContext: Falling back to unshared context"
     bool isCoreProfile = true;
-    QSurfaceFormat aGlFormat;
-    aGlFormat.setDepthBufferSize(24);
-    aGlFormat.setStencilBufferSize(8);
+    QSurfaceFormat glFormat;
+    glFormat.setDepthBufferSize(24);
+    glFormat.setStencilBufferSize(8);
     if (isCoreProfile) {
-        aGlFormat.setVersion(4, 5);
+        glFormat.setVersion(4, 5);
     }
-    aGlFormat.setProfile(isCoreProfile ? QSurfaceFormat::CoreProfile : QSurfaceFormat::CompatibilityProfile);
-    QSurfaceFormat::setDefaultFormat(aGlFormat);
+    glFormat.setProfile(isCoreProfile ? QSurfaceFormat::CoreProfile : QSurfaceFormat::CompatibilityProfile);
+    QSurfaceFormat::setDefaultFormat(glFormat);
 #endif
 
-    MainWindow aMainWindow;
-    aMainWindow.resize(1250, 800);
-    aMainWindow.show();
+    MainWindow mainWindow;
+    mainWindow.resize(1250, 800);
+    mainWindow.show();
 
     try {
         // Initialize the Python interpreter
         py::scoped_interpreter guard{};
 
-        // 将 QApplication 实例传递给 Python
-        py::module sys = py::module::import("sys");
-        sys.attr("main_window") = py::cast(&aMainWindow);
+        // Get OCCT DLL path from config.h
+        std::string occt_install_path = OCCT_DLL_PATH;
 
-        // Create a Python code
-        std::string str = R"(
-import PyEchoCAD
-import sys
+        // Construct Python code as a string
+        std::string python_code = std::string(R"(
+import os
+os.add_dll_directory(')") + occt_install_path + "')";
 
-main_window = sys.main_window
-    )";
+        // Convert Python code string to pybind11::str object
+        py::str python_code_pystr(python_code);
 
         // Execute Python code
-        py::exec(py::str(str));
+        py::exec(python_code_pystr);
+
     }
     catch (const py::error_already_set& e) {
         qDebug() << "Python error: " << e.what();
@@ -67,5 +60,5 @@ main_window = sys.main_window
         qDebug() << "Unknown error occurred";
     }
 
-    return aQApp.exec();
+    return app.exec();
 }

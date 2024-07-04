@@ -1,0 +1,6 @@
+// config.h.in
+#ifdef _DEBUG
+#define OCCT_DLL_PATH "@OpenCASCADE_BINARY_DIR@d"
+#else
+#define OCCT_DLL_PATH "@OpenCASCADE_BINARY_DIR@"
+#endif
