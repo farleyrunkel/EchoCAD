@@ -37,6 +37,6 @@ set(PROJECT_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/helper/ViewerInteractor.h   
     ${CMAKE_CURRENT_SOURCE_DIR}/helper/ViewerInteractor.cpp
      
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/pybind11_bindings.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/binding/pybind11_bindings.cpp
     CACHE INTERNAL "List of source files for the project"
 )

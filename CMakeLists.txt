@@ -49,6 +49,7 @@ include_directories(${OpenCASCADE_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/binding)
 
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
@@ -77,32 +78,6 @@ else()
     endif()
 endif()
 
-pybind11_add_module(PyEchoCAD 
-    src/core/pybind11_bindings.cpp 
-    src/core/cadmodule.cpp
-    src/core/cadmodule.h
-    src/gui/mainwindow.cpp
-    src/gui/mainwindow.h
-    src/gui/IOcctViewer.cpp
-    src/gui/IOcctViewer.h
-    src/gui/OcctGlTools.cpp
-    src/gui/OcctGlTools.h
-            ${PROJECT_SOURCES}
-)
-
-# Link pybind11 and Python libraries
-target_link_libraries(PyEchoCAD PRIVATE pybind11::module)
-target_link_libraries(PyEchoCAD PRIVATE ${PYTHON_LIBRARIES})
-target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
-target_link_libraries(PyEchoCAD PRIVATE ${OPENGL_LIBRARIES})
-target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
-target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
-target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
-    # Link OpenCASCADE libraries
-foreach (LIB ${OpenCASCADE_LIBRARIES})
-  target_link_libraries(PyEchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
-  target_link_libraries(PyEchoCAD PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
-endforeach()
 
 # Link OpenCASCADE libraries
 foreach (LIB ${OpenCASCADE_LIBRARIES})
@@ -135,7 +110,7 @@ set_target_properties(EchoCAD PROPERTIES
 message(STATUS "Generating config.h")
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
 # 包含生成的配置头文件
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_BINARY_DIR})
 
 # Install target
 include(GNUInstallDirs)
