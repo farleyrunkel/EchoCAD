@@ -4,3 +4,6 @@
 [submodule "src/3rdparty/pybind11"]
 	path = src/3rdparty/pybind11
 	url = git@github.com:pybind/pybind11.git
+[submodule "src/3rdparty/QScintilla"]
+	path = src/3rdparty/QScintilla
+	url = git@github.com:farleyrunkel/QScintilla.git
