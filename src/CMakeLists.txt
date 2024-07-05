@@ -2,41 +2,41 @@
 
 # Define project source files
 set(PROJECT_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/itestwidget.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/itestwidget.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/initializer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/initializer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/3d/grid.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/3d/grid.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3d/scene.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/3d/scene.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/gptprocessor.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/gptprocessor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/OcctEntity.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/OcctEntity.cpp
+    ${CMAKE_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/mainwindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/mainwindow.h
+    ${CMAKE_SOURCE_DIR}/src/tests/itestwidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/tests/itestwidget.h
+    ${CMAKE_SOURCE_DIR}/src/gui/initializer.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/initializer.h
+    ${CMAKE_SOURCE_DIR}/src/3d/grid.h 
+    ${CMAKE_SOURCE_DIR}/src/3d/grid.cpp
+    ${CMAKE_SOURCE_DIR}/src/3d/scene.h 
+    ${CMAKE_SOURCE_DIR}/src/3d/scene.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/gptprocessor.h 
+    ${CMAKE_SOURCE_DIR}/src/core/gptprocessor.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/OcctEntity.h 
+    ${CMAKE_SOURCE_DIR}/src/core/OcctEntity.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/cadmodule.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/cadmodule.h
+    ${CMAKE_SOURCE_DIR}/src/core/cadmodule.cpp 
+    ${CMAKE_SOURCE_DIR}/src/core/cadmodule.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ioverlaywidget.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ioverlaywidget.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/OcctGlTools.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/OcctGlTools.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/IOcctViewer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/IOcctViewer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ilineedit.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/ilineedit.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/stylemanager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui/stylemanager.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/helper/Python_wrapper.h      
-    ${CMAKE_CURRENT_SOURCE_DIR}/helper/Viewer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/helper/Viewer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/helper/ViewerInteractor.h   
-    ${CMAKE_CURRENT_SOURCE_DIR}/helper/ViewerInteractor.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.h 
+    ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/OcctGlTools.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/OcctGlTools.h
+    ${CMAKE_SOURCE_DIR}/src/gui/IOcctViewer.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/IOcctViewer.h
+    ${CMAKE_SOURCE_DIR}/src/gui/ilineedit.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/ilineedit.h 
+    ${CMAKE_SOURCE_DIR}/src/gui/stylemanager.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/stylemanager.h 
+    ${CMAKE_SOURCE_DIR}/src/helper/Python_wrapper.h      
+    ${CMAKE_SOURCE_DIR}/src/helper/Viewer.h
+    ${CMAKE_SOURCE_DIR}/src/helper/Viewer.cpp
+    ${CMAKE_SOURCE_DIR}/src/helper/ViewerInteractor.h   
+    ${CMAKE_SOURCE_DIR}/src/helper/ViewerInteractor.cpp
      
-    ${CMAKE_CURRENT_SOURCE_DIR}/binding/pybind11_bindings.cpp
+    ${CMAKE_SOURCE_DIR}/src/binding/pybind11_bindings.cpp
     CACHE INTERNAL "List of source files for the project"
 )
