@@ -5,9 +5,7 @@
 #include <QSurfaceFormat>
 #include <QDebug>
 
-#include <pybind11/embed.h>
-
-namespace py = pybind11;
+#include "PythonInterpreter.h"
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
@@ -32,9 +30,6 @@ int main(int argc, char** argv) {
     mainWindow.show();
 
     try {
-        // Initialize the Python interpreter
-        py::scoped_interpreter guard{};
-
         // Get OCCT DLL path from config.h
         std::string occt_install_path = OCCT_DLL_PATH;
 
@@ -43,22 +38,18 @@ int main(int argc, char** argv) {
 import os
 os.add_dll_directory(')") + occt_install_path + "')";
 
-        // Convert Python code string to pybind11::str object
-        py::str python_code_pystr(python_code);
+        // Create an instance of PythonInterpreter
+        PythonInterpreter pyInterpreter;
 
-        // Execute Python code
-        py::exec(python_code_pystr);
-
+        // Execute the constructed Python script
+        pyInterpreter.executeScript(python_code);
     }
-    catch (const py::error_already_set& e) {
-        qDebug() << "Python error: " << e.what();
-    }
-    catch (const std::exception& e) {
-        qDebug() << "Standard exception: " << e.what();
-    }
-    catch (...) {
-        qDebug() << "Unknown error occurred";
-    }
+	catch (const std::exception& e) {
+		qDebug() << "Standard exception: " << e.what();
+	}
+	catch (...) {
+		qDebug() << "Unknown error occurred";
+	}
 
     return app.exec();
 }

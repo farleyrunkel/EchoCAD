@@ -8,3 +8,10 @@
 
 # # Include the OCCT source directory as a subdirectory
 # add_subdirectory(${OCCT_DIR})
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11)
+
+# if set qscintilla not add_subdirectory
+if(NOT QScintilla_DIR)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty/QScintilla)
+endif()

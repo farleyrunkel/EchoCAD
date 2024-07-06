@@ -58,3 +58,14 @@ QPushButton#circleButton:menu-indicator {
     width: 0px;
     image: none;
 }
+
+QPushButton#RoundedButton{
+    background-color: #ececec; /*@White*/
+    border-style: solid;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+}
+QPushButton#RoundedButton:hover {
+    background-color: #ececec; /*@NeutralBackground*/
+}

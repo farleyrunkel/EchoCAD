@@ -13,9 +13,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
 set(PYTHON_DIR "${CMAKE_BINARY_DIR}/python")
 set(PYTHONOCC_INSTALL_DIRECTORY ${PYTHON_DIR}/Lib/site-packages)
+set(QScintilla_DIR "E:/Temp/untitled3/out/install/x64-Debug/lib/cmake/QScintilla")
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
+
+message(STATUS "pybind11_INCLUDE_DIR: ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include")
+message(STATUS "QSCINTILLA_INCLUDE_DIR: ${QSCINTILLA_INCLUDE_DIR}")
 
 # Include the file to download and extract Python
-include(cmake/setupPython.cmake) 
+include(cmake/setupPython.cmake)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
@@ -23,9 +30,6 @@ message(STATUS "Python3 interpreter: ${Python3_EXECUTABLE}")
 message(STATUS "Python include directory: ${Python3_INCLUDE_DIRS}")
 message(STATUS "Python library release: ${Python3_LIBRARY_RELEASE}")
 
-# Include directories and link directories
-include_directories(${Python3_INCLUDE_DIRS})
-link_directories(${Python3_LIBRARY_RELEASE}) 
 
 # Find Qt and OpenGL packages
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test)
@@ -35,21 +39,13 @@ find_package(OpenGL REQUIRED)
 
 # Find OpenCASCADE package
 find_package(OpenCASCADE REQUIRED)
+find_package(QScintilla REQUIRED)
 
-# Include the src directory and all its subdirectories
-set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
-file(GLOB SUBDIRS RELATIVE ${SRC_DIR} ${SRC_DIR}/*) 
-foreach(subdir ${SUBDIRS})
-    if(IS_DIRECTORY ${SRC_DIR}/${subdir})
-        include_directories(${SRC_DIR}/${subdir})
-    endif()
-endforeach() 
-
-include_directories(${OpenCASCADE_INCLUDE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/binding)
+if(QScintilla_FOUND)
+    message(STATUS "QScintilla found")
+else()
+    message(FATAL_ERROR "QScintilla not found")
+endif()
 
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
@@ -78,7 +74,6 @@ else()
     endif()
 endif()
 
-
 # Link OpenCASCADE libraries
 foreach (LIB ${OpenCASCADE_LIBRARIES})
   target_link_libraries(EchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
@@ -93,6 +88,31 @@ target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
 target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
 
+target_link_libraries(EchoCAD PRIVATE debug QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
+target_link_libraries(EchoCAD PRIVATE optimized QScintilla::qscintilla2_qt${QT_VERSION_MAJOR})
+target_link_libraries(EchoCAD PRIVATE ${Python3_LIBRARY_RELEASE}) 
+
+# Include the src directory and all its subdirectories
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+file(GLOB SUBDIRS RELATIVE ${SRC_DIR} ${SRC_DIR}/*) 
+foreach(subdir ${SUBDIRS})
+    if(IS_DIRECTORY ${SRC_DIR}/${subdir})
+        target_include_directories(EchoCAD PRIVATE ${SRC_DIR}/${subdir})
+    endif()
+endforeach() 
+
+# Include directories
+target_include_directories(EchoCAD PRIVATE ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include) 
+target_include_directories(EchoCAD PRIVATE ${QSCINTILLA_INCLUDE_DIR})
+target_include_directories(EchoCAD PRIVATE ${OpenCASCADE_INCLUDE_DIR})
+target_include_directories(EchoCAD PRIVATE ${Python3_INCLUDE_DIRS})
+target_include_directories(EchoCAD PRIVATE ${QScintilla_INCLUDE_DIRS})
+
+# Generating config.h
+message(STATUS "Generating config.h")
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
+
 # Set bundle identifier and other properties for macOS and Windows
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EchoCAD)
@@ -106,12 +126,6 @@ set_target_properties(EchoCAD PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-# 生成配置头文件
-message(STATUS "Generating config.h")
-configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
-# 包含生成的配置头文件
-include_directories(${CMAKE_BINARY_DIR})
-
 # Install target
 include(GNUInstallDirs)
 install(TARGETS EchoCAD
@@ -124,3 +138,5 @@ install(TARGETS EchoCAD
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(EchoCAD)
 endif()
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/binding)

@@ -12,10 +12,14 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QSlider>
+#include <QSplitter>
 
 #include <Standard_WarningsDisable.hxx>
 #include <Standard_WarningsRestore.hxx>
 #include <Standard_Version.hxx>
+
+#include <Qsci/qsciscintilla.h>
+#include <Qsci/QsciLexerPython.h>
 
 #include "Scene.h"
 #include "GPTProcessor.h"
@@ -26,31 +30,39 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *theParent = nullptr);
 
     IOcctWidget* viewer() const { return mViewer; }
 
 private:
-    void setupMainUi();
-    void setupOcctViewer();
-    void setupMenuBar();
+    void setConnects();
+    void setupMainUi(QSplitter* theSplitter);
+    void setupPythonEditor(QWidget* theEditor);
+    void setupOcctViewer(IOcctWidget* theViewer);
+    void setupMenuBar(QMenuBar* theMenuBar);
 
-    QWidget* createInputLine(QWidget* parent);
+    void setGPTProcessor(GptProcessor* theGptProcessor);
+
+    QWidget* createInputLine(QWidget* theParent);
 
 private slots:
     void onExecuteButtonClicked();
-    void onPredictionReady(const QString &prediction);
+    void onPredictionReady(const QString &thePrediction);
 
-    QString extractPythonCode(const QString& text);
+    QString extractPythonCode(const QString& theText);
 
-    void executePythonCode(const QString& code);
+    void executePythonCode(const QString& theCode);
 
 private:
-    ILineEdit *mInput;
-    QPushButton *executeButton;
-    GPTProcessor *gptProcessor;
+    ILineEdit *mLineEdit;
+    GptProcessor *mGptProcessor;
 
     IOcctWidget* mViewer;
+    QSplitter* mSplitter;
+
+    QsciScintilla* mEditor;
+
+    QPushButton* mSplitterButtons[2];
 };
 
 #endif // MAINWINDOW_H

@@ -7,6 +7,7 @@
 #include <QScrollArea>
 #include <QDesktopServices>
 #include <QRegExp>
+#include <QTextBrowser>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
@@ -20,25 +21,40 @@
 
 namespace py = pybind11;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent),
+MainWindow::MainWindow(QWidget *theParent)
+    : QMainWindow(theParent),
     mViewer(nullptr),
-    gptProcessor(new GPTProcessor(this)),
-    executeButton(nullptr)
+    mGptProcessor(nullptr),
+    mSplitter(nullptr),
+    mLineEdit(nullptr),
+    mEditor(nullptr)
 {
-    setupMainUi();
+    setupMainUi(new QSplitter);
+    setupMenuBar(new QMenuBar);
 
-    setupMenuBar();
-    setupOcctViewer();
+    setupPythonEditor(new QWidget);
+    setupOcctViewer(new IOcctWidget);
 
-    connect(gptProcessor, &GPTProcessor::predictionReady, this, &MainWindow::onPredictionReady);
+    setGPTProcessor(new GptProcessor);
+
+    setConnects();
+
+    emit mSplitterButtons[1]->clicked();
 }
 
-void MainWindow::setupMainUi() {
+void MainWindow::setGPTProcessor(GptProcessor*  theGpt) {
+    mGptProcessor = theGpt;
+}
+
+void MainWindow::setConnects() {
+    connect(mGptProcessor, &GptProcessor::predictionReady, this, &MainWindow::onPredictionReady);
+}
+
+void MainWindow::setupMainUi(QSplitter* splitter) {
     resize(1260, 800);
 
-    mViewer = new IOcctWidget();
-    setCentralWidget(mViewer);
+    mSplitter = splitter;
+    setCentralWidget(mSplitter);
 
     StyleManager::instance().loadStyleSheet("://styles/style.qss");
 
@@ -46,26 +62,127 @@ void MainWindow::setupMainUi() {
 
     StyleManager::instance().applyStyleSheet(this);
     StyleManager::instance().applyPalette(this);
+}
+void MainWindow::setupPythonEditor(QWidget* theEditor)
+{
+    mSplitter->addWidget(theEditor);
+    auto mPyEditor = theEditor;
+    auto aLayout = new QVBoxLayout(mPyEditor);
+    {
+        QWidget* aButtonsBox = new QWidget();
+        aLayout->addWidget(aButtonsBox);
+        QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
+ 
+        aButtonsLayout->setAlignment(Qt::AlignRight);
+        aButtonsLayout->setDirection(QBoxLayout::RightToLeft);
+        {
+            // add button
+            mSplitterButtons[0] = new QPushButton("", aButtonsBox);
+            mSplitterButtons[0]->setIcon(QIcon("://icons/sidebar-left.svg"));
+            mSplitterButtons[0]->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(mSplitterButtons[0]);
+
+            // add button
+            QObject::connect(mSplitterButtons[0], &QPushButton::clicked, [this]()
+                {
+                    mSplitter->widget(0)->setVisible(!mSplitter->widget(0)->isVisible());
+                    mSplitterButtons[1]->setHidden(false);
+                });
+        }
+        {
+            // add button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/arrow-rotate-right.svg"));
+            aButton->setObjectName("RoundedButton");
+
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    mEditor->setText(mLineEdit->text());
+                });
+
+        }
+        {
+            // add button
+			QPushButton* aButton = new QPushButton("", aButtonsBox);
+			aButton->setIcon(QIcon("://icons/caret-right.svg"));
+            aButton->setObjectName("RoundedButton");
+
+			aButtonsLayout->addWidget(aButton);
+			connect(aButton, &QPushButton::clicked, [this]()
+				{
+					mEditor->setText(mLineEdit->text());
+				});
+		
+        }
+    }
+    {
+        // set editor area
+		mEditor = new QsciScintilla(mPyEditor);
+		aLayout->addWidget(mEditor);
+
+        QFont aFont;
+        aFont.setFamily("Consolas"); // Set the font family to Consolas
+        aFont.setPointSize(10);
+
+        // Set the lexer to Python
+        auto aLexer = new QsciLexerPython();
+        aLexer->setDefaultFont(aFont);
+        aLexer->setFont(aFont, 1); // comment
+        aLexer->setFont(aFont, 3); // singlequotes
+        aLexer->setFont(aFont, 4); // doublequotes
+        aLexer->setFont(aFont, 6); // triplequotes
+        aLexer->setColor(Qt::red, 1); // comment color
+        aLexer->setColor(Qt::darkGreen, 5); // keyword color
+        aLexer->setColor(Qt::darkBlue, 15); // decorator color
+
+        mEditor->setLexer(aLexer);
+
+        mEditor->setFont(aFont);
+        mEditor->setMarginsFont(aFont);
+
+        // Margin 0 is used for line numbers
+        mEditor->setMarginType(0, QsciScintilla::NumberMargin);
+        mEditor->setMarginWidth(0, "0000");
+        mEditor->setMarginsBackgroundColor("#cccccc");
+
+        // Brace matching
+        mEditor->setBraceMatching(QsciScintilla::SloppyBraceMatch);
+
+        // Current line visible with special background color
+        mEditor->setCaretLineVisible(true);
+        mEditor->setCaretLineBackgroundColor("#ffe4e4");
+    }
 
 }
 
-void MainWindow::setupOcctViewer()
+
+void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
 {
+    mViewer = theViewer;
+    mSplitter->addWidget(mViewer);
+
     // 3D Viewer and some controls on top of it
     QVBoxLayout* aLayout = new QVBoxLayout(mViewer);
-    aLayout->setDirection(QBoxLayout::BottomToTop);
-    aLayout->setAlignment(Qt::AlignBottom);
-	{
-        // Set up the bottom area of the chats page
-        mInput = new ILineEdit(this);
-        mInput->setPlaceholderText("Describe what you want to create ...");
-        mInput->setFixedHeight(40);
-        mInput->rightButton()->setIcon(QIcon("://icons/send.svg"));
+    {
+        QWidget* aButtonsBox = new QWidget();
+        QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
+        aButtonsLayout->setAlignment(Qt::AlignLeft);
 
-		aLayout->addWidget(mInput);
-		connect(mInput->rightButton(), &QPushButton::clicked, mInput, &ILineEdit::returnPressed);
-        connect(mInput, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
-	}
+        // add button
+        mSplitterButtons[1] = new QPushButton("", aButtonsBox);
+        mSplitterButtons[1]->setIcon(QIcon("://icons/sidebar-left.svg"));
+        // Set object name for rounded button
+        mSplitterButtons[1]->setObjectName("RoundedButton");
+        aButtonsLayout->addWidget(mSplitterButtons[1]);
+        aLayout->addWidget(aButtonsBox);
+        // add button
+        QObject::connect(mSplitterButtons[1], &QPushButton::clicked, [this]()
+            {
+                mSplitter->widget(0)->setVisible(!mSplitter->widget(0)->isVisible());
+                mSplitterButtons[1]->setHidden(true);
+            });
+    }
     {
         QWidget* aSliderBox = new QWidget();
         QHBoxLayout* aSliderLayout = new QHBoxLayout(aSliderBox);
@@ -80,7 +197,7 @@ void MainWindow::setupOcctViewer()
             aSlider->setTickPosition(QSlider::TicksRight);
 
             // Set initial value
-			Quantity_Color aColor1(Quantity_NOC_BLACK);
+            Quantity_Color aColor1(Quantity_NOC_BLACK);
             Quantity_Color aColor2(Quantity_NOC_BLACK);
             mViewer->View()->GradientBackground().Colors(aColor1, aColor2);
 
@@ -108,6 +225,18 @@ void MainWindow::setupOcctViewer()
         }
         aLayout->addWidget(aSliderBox);
     }
+	{
+        // Set up the bottom area of the chats page
+        mLineEdit = new ILineEdit(this);
+        mLineEdit->setPlaceholderText("Describe what you want to create ...");
+        mLineEdit->setFixedHeight(40);
+        mLineEdit->rightButton()->setIcon(QIcon("://icons/send.svg"));
+
+		aLayout->addWidget(mLineEdit);
+		connect(mLineEdit->rightButton(), &QPushButton::clicked, mLineEdit, &ILineEdit::returnPressed);
+        connect(mLineEdit, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
+	}
+
     {
         // Create a sphere shape
         TopoDS_Shape aSphere = BRepPrimAPI_MakeSphere(gp_Pnt(0, 0, 0), 100.0).Shape();
@@ -118,10 +247,12 @@ void MainWindow::setupOcctViewer()
     }
 }
 
-void MainWindow::setupMenuBar() 
+void MainWindow::setupMenuBar(QMenuBar* theMenuBar)
 {
     // menu bar with Quit item
-    QMenuBar* aMenuBar = new QMenuBar();
+    QMenuBar* aMenuBar = theMenuBar;
+    setMenuBar(aMenuBar);
+
     QMenu* aMenuFile = aMenuBar->addMenu("&File");
     {
         QAction* anActionSplit = new QAction(aMenuFile);
@@ -197,60 +328,59 @@ void MainWindow::setupMenuBar()
                 });
         }
     }
-    setMenuBar(aMenuBar);
 }
 
 
-QWidget* MainWindow::createInputLine(QWidget* parent) {
+QWidget* MainWindow::createInputLine(QWidget* theParent) {
 
-    QWidget* widget = new QWidget(parent);
-    mInput = new ILineEdit(widget);
-    executeButton = new QPushButton("Execute", widget);
+    QWidget* aWidget = new QWidget(theParent);
+    mLineEdit = new ILineEdit(aWidget);
+    auto aButton = new QPushButton("Execute", aWidget);
 
-    auto inputLayout = new QHBoxLayout(widget);
+    auto aLayout = new QHBoxLayout(aWidget);
 
-    inputLayout->addWidget(mInput);
-    inputLayout->addWidget(executeButton);
+    aLayout->addWidget(mLineEdit);
+    aLayout->addWidget(aButton);
 
-    return widget;
+    return aWidget;
 }
 
 
 void MainWindow::onExecuteButtonClicked() {
-    QString userInput = mInput->text();
-    gptProcessor->processInput(userInput);
+    QString aString = mLineEdit->text();
+    mGptProcessor->processInput(aString);
 }
 
-void MainWindow::onPredictionReady(const QString &prediction) {
-    qDebug() << "Prediction:" << prediction;
+void MainWindow::onPredictionReady(const QString &thePrediction) {
+    qDebug() << "Prediction:" << thePrediction;
     // Extract Python code from the prediction
-    QString pythonCode = extractPythonCode(prediction);
+    QString aCode = extractPythonCode(thePrediction);
 
     // Execute the extracted Python code
-    executePythonCode(pythonCode);                                                                                                                  
+    executePythonCode(aCode);                                                                                                                  
 
     // Update UI with the prediction
-    mInput->setText(prediction);
+    mLineEdit->setText(thePrediction);
 }
 
 
-QString MainWindow::extractPythonCode(const QString& text) {
+QString MainWindow::extractPythonCode(const QString& theText) {
     // Extract Python code from the GPT response
     // This is a simple example, you may need to handle different formats or multiple code blocks
-    QRegExp regex("```(python)?([\\s\\S]+?)```");
-    if (regex.indexIn(text) != -1) {
-        return regex.cap(2).trimmed();
+    QRegExp aRegex("```(python)?([\\s\\S]+?)```");
+    if (aRegex.indexIn(theText) != -1) {
+        return aRegex.cap(2).trimmed();
     }
     return QString();
 }
 
-void MainWindow::executePythonCode(const QString& code) {
+void MainWindow::executePythonCode(const QString& theCode) {
     try {
         // Convert QString to std::string for pybind11
-        std::string codeStr = code.toStdString();
+        std::string aCode = theCode.toStdString();
 
         // Execute the Python code
-        py::exec(codeStr);
+        py::exec(aCode);
     }
     catch (const py::error_already_set& e) {
         qDebug() << "Python error: " << e.what();

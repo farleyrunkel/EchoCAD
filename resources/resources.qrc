@@ -4,5 +4,8 @@
         <file>icons/send.svg</file>
         <file>icons/EchoCAD.ico</file>
         <file>styles/style.qss</file>
+        <file>icons/sidebar-left.svg</file>
+        <file>icons/caret-right.svg</file>
+        <file>icons/arrow-rotate-right.svg</file>
     </qresource>
 </RCC>

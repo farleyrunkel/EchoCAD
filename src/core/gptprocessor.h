@@ -5,12 +5,12 @@
 #include <QString>
 #include <QProcess>
 
-class GPTProcessor : public QObject {
+class GptProcessor : public QObject {
     Q_OBJECT
 
 public:
-    explicit GPTProcessor(QObject *parent = nullptr);
-    ~GPTProcessor();
+    explicit GptProcessor(QObject *parent = nullptr);
+    ~GptProcessor();
 
 signals:
     void predictionReady(const QString &prediction);

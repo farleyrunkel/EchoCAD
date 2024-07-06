@@ -1,5 +1,4 @@
 
-
 # Define project source files
 set(PROJECT_SOURCES
     ${CMAKE_SOURCE_DIR}/src/main.cpp
@@ -20,6 +19,8 @@ set(PROJECT_SOURCES
 
     ${CMAKE_SOURCE_DIR}/src/core/cadmodule.cpp 
     ${CMAKE_SOURCE_DIR}/src/core/cadmodule.h
+    ${CMAKE_SOURCE_DIR}/src/core/PythonInterpreter.cpp 
+    ${CMAKE_SOURCE_DIR}/src/core/PythonInterpreter.h
 
     ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.h 
     ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.cpp
@@ -40,3 +41,4 @@ set(PROJECT_SOURCES
     ${CMAKE_SOURCE_DIR}/src/binding/pybind11_bindings.cpp
     CACHE INTERNAL "List of source files for the project"
 )
+
