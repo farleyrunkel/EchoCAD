@@ -1,15 +1,33 @@
 #include "PythonInterpreter.h"
+
 #include <QDebug>
 
 PythonInterpreter::PythonInterpreter() : guard{} {
-    // Initialization code if needed
+  connect(this, &PythonInterpreter::dllNeeded, this, &PythonInterpreter::exportDLL);
 }
 
 PythonInterpreter::~PythonInterpreter() {
     // Cleanup code if needed
 }
 
+void PythonInterpreter::exportDLL(const QString& theDll) {
+    // Convert QString to std::string
+    std::string dllPath = theDll.toStdString();
+
+    // Construct Python code as a string
+    std::string python_code = R"(
+import os
+os.add_dll_directory(')" + dllPath + R"('))";
+
+    // Execute the constructed Python script
+    executeScript(python_code);
+}
+
+
 void PythonInterpreter::executeScript(const std::string& script) {
+
+    emit logMessage(QString::fromStdString(script));
+
     try {
         // Convert the script to a pybind11 string
         py::str python_code_pystr(script);

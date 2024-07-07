@@ -25,12 +25,15 @@
 #include "GPTProcessor.h"
 #include "IOcctViewer.h"
 #include "ilineedit.h"
+#include "PythonInterpreter.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     MainWindow(QWidget *theParent = nullptr);
+
+    void setPythonInterpreter(PythonInterpreter* thePython);
 
     IOcctWidget* viewer() const { return mViewer; }
 
@@ -63,6 +66,8 @@ private:
     QsciScintilla* mEditor;
 
     QPushButton* mSplitterButtons[2];
+
+    PythonInterpreter* mPythonInterpreter;
 };
 
 #endif // MAINWINDOW_H

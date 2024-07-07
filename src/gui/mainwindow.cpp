@@ -18,6 +18,7 @@
 
 #include "ioverlaywidget.h"
 #include "stylemanager.h"
+#include "config.h"
 
 namespace py = pybind11;
 
@@ -27,7 +28,8 @@ MainWindow::MainWindow(QWidget *theParent)
     mGptProcessor(nullptr),
     mSplitter(nullptr),
     mLineEdit(nullptr),
-    mEditor(nullptr)
+    mEditor(nullptr),
+    mPythonInterpreter(nullptr)
 {
     setupMainUi(new QSplitter);
     setupMenuBar(new QMenuBar);
@@ -36,10 +38,17 @@ MainWindow::MainWindow(QWidget *theParent)
     setupOcctViewer(new IOcctWidget);
 
     setGPTProcessor(new GptProcessor);
+    setPythonInterpreter(new PythonInterpreter);
 
     setConnects();
 
     emit mSplitterButtons[1]->clicked();
+    emit mPythonInterpreter->dllNeeded(OCCT_DLL_PATH);
+}
+
+void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {
+    mPythonInterpreter = thePython;
+
 }
 
 void MainWindow::setGPTProcessor(GptProcessor*  theGpt) {
@@ -48,6 +57,10 @@ void MainWindow::setGPTProcessor(GptProcessor*  theGpt) {
 
 void MainWindow::setConnects() {
     connect(mGptProcessor, &GptProcessor::predictionReady, this, &MainWindow::onPredictionReady);
+    connect(mPythonInterpreter, &PythonInterpreter::logMessage, [this](const QString& message) {
+		qDebug() << "Python log: " << message;
+        mEditor->append(message);
+	});
 }
 
 void MainWindow::setupMainUi(QSplitter* splitter) {
@@ -152,8 +165,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         aLexer->setColor(Qt::red, 1); // comment color
         aLexer->setColor(Qt::darkGreen, 5); // keyword color
         aLexer->setColor(Qt::darkBlue, 15); // decorator color
-        aLexer->setColor(Qt::white, 0); // default color
-        aLexer->setColor(Qt::darkMagenta, 2); // number color
+        // aLexer->setColor(Qt::white); // default color
 
         aLexer->setDefaultPaper(QColor(StyleManager::instance().colorPalette("DarkBackground")));
 
@@ -168,7 +180,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         mEditor->setMarginsBackgroundColor(QColor(StyleManager::instance().colorPalette("DarkBackground")));
         mEditor->setMarginsForegroundColor(Qt::white);
 
-        mEditor->setFolding(QsciScintilla::NoFoldStyle, 1);
+        mEditor->setFolding(QsciScintilla::NoFoldStyle, 2);
 
         // Brace matching
         mEditor->setBraceMatching(QsciScintilla::SloppyBraceMatch);
