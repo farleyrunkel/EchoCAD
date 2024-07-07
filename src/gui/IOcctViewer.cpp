@@ -257,7 +257,7 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();
   myView->SetImmediateUpdate (false);
-  myView->SetBgGradientColors(Quantity_NOC_GRAY25, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
+  myView->SetBackgroundColor(Quantity_Color(63 / 255.0, 63 / 255.0, 63 / 255.0, Quantity_TOC_RGB));
 
   myView->SetEye(200, -450, 250);
   myView->SetAt(0.0, 0.0, 0.0);

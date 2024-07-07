@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *theParent)
     mGptProcessor(nullptr),
     mSplitter(nullptr),
     mLineEdit(nullptr),
-    mScintilla(nullptr)
+    mEditor(nullptr)
 {
     setupMainUi(new QSplitter);
     setupMenuBar(new QMenuBar);
@@ -53,21 +53,23 @@ void MainWindow::setConnects() {
 void MainWindow::setupMainUi(QSplitter* splitter) {
     resize(1260, 800);
 
+    setCentralWidget(splitter);
+
     mSplitter = splitter;
-    setCentralWidget(mSplitter);
+    mSplitter->setHandleWidth(0);
 
     StyleManager::instance().loadStyleSheet("://styles/style.qss");
-
     // StyleManager::instance().enableBorders(true);
-
     StyleManager::instance().applyStyleSheet(this);
     StyleManager::instance().applyPalette(this);
 }
 void MainWindow::setupPythonEditor(QWidget* theEditor)
 {
     mSplitter->addWidget(theEditor);
-    auto mPyEditor = theEditor;
-    auto aLayout = new QVBoxLayout(mPyEditor);
+    auto mEditorWidget = theEditor;
+    mEditorWidget->setObjectName("EditorWidget");
+
+    auto aLayout = new QVBoxLayout(mEditorWidget);
     aLayout->setContentsMargins(0, 0, 0, 0);
     aLayout->setSpacing(0);
     {
@@ -81,6 +83,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         {
             // add button
             mSplitterButtons[0] = new QPushButton("", aButtonsBox);
+
             mSplitterButtons[0]->setIcon(QIcon("://icons/sidebar-left.svg"));
             mSplitterButtons[0]->setObjectName("RoundedButton");
             aButtonsLayout->addWidget(mSplitterButtons[0]);
@@ -101,7 +104,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
                 {
-                    mScintilla->setText(mLineEdit->text());
+                    mEditor->setText(mLineEdit->text());
                 });
 
         }
@@ -114,25 +117,26 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
 			aButtonsLayout->addWidget(aButton);
 			connect(aButton, &QPushButton::clicked, [this]()
 				{
-					mScintilla->setText(mLineEdit->text());
+					mEditor->setText(mLineEdit->text());
 				});
 		
         }
     }
     {
         // add horizontal line with bottom margin shadow
-        QFrame* aLine = new QFrame(mPyEditor);
+        QFrame* aLine = new QFrame(mEditorWidget);
         aLine->setFrameShape(QFrame::NoFrame);
         aLine->setFixedHeight(1);
-        aLine->setStyleSheet("background-color: #cccccc;");
+        aLine->setStyleSheet("background-color: #383838;");
         aLayout->addWidget(aLine);
     }
     {
         // set editor area
-		mScintilla = new QsciScintilla(mPyEditor);
+		mEditor = new QsciScintilla(mEditorWidget);
+        mEditor->setObjectName("PythonEditor");
 
-        mScintilla->setFrameShape(QFrame::NoFrame);
-		aLayout->addWidget(mScintilla);
+        mEditor->setFrameShape(QFrame::NoFrame);
+		aLayout->addWidget(mEditor);
 
         QFont aFont;
         aFont.setFamily("Consolas"); // Set the font family to Consolas
@@ -148,35 +152,48 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         aLexer->setColor(Qt::red, 1); // comment color
         aLexer->setColor(Qt::darkGreen, 5); // keyword color
         aLexer->setColor(Qt::darkBlue, 15); // decorator color
-        //aLexer->setDefaultPaper(QColor("#cccccc"));
-        mScintilla->setLexer(aLexer);
+        aLexer->setColor(Qt::white, 0); // default color
+        aLexer->setColor(Qt::darkMagenta, 2); // number color
 
-        mScintilla->setFont(aFont);
-        mScintilla->setMarginsFont(aFont);
+        aLexer->setDefaultPaper(QColor(StyleManager::instance().colorPalette("DarkBackground")));
+
+        mEditor->setLexer(aLexer);
+
+        mEditor->setFont(aFont);
+        mEditor->setMarginsFont(aFont);
 
         // Margin 0 is used for line numbers
-        mScintilla->setMarginType(0, QsciScintilla::NumberMargin);
-        mScintilla->setMarginWidth(0, "0000");
-        //mScintilla->setMarginsBackgroundColor("#cccccc");
-        mScintilla->setFolding(QsciScintilla::NoFoldStyle, 1);
+        mEditor->setMarginType(0, QsciScintilla::NumberMargin);
+        mEditor->setMarginWidth(0, "0000");
+        mEditor->setMarginsBackgroundColor(QColor(StyleManager::instance().colorPalette("DarkBackground")));
+        mEditor->setMarginsForegroundColor(Qt::white);
+
+        mEditor->setFolding(QsciScintilla::NoFoldStyle, 1);
 
         // Brace matching
-        mScintilla->setBraceMatching(QsciScintilla::SloppyBraceMatch);
+        mEditor->setBraceMatching(QsciScintilla::SloppyBraceMatch);
 
         // Current line visible with special background color
-        mScintilla->setCaretLineVisible(true);
-        mScintilla->setCaretLineBackgroundColor("#ffe4e4");
+        mEditor->setCaretLineVisible(true);
+        mEditor->setCaretLineBackgroundColor(QColor(StyleManager::instance().colorPalette("DarkBackground")));
+
+        // set pointer color white
+        mEditor->setCaretForegroundColor(Qt::white);
+
     }
 }
 
 
 void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
 {
-    mViewer = theViewer;
-    mSplitter->addWidget(mViewer);
+    mSplitter->addWidget(theViewer);
 
+    mViewer = theViewer;
+    mViewer->setObjectName("OcctViewer");
     // 3D Viewer and some controls on top of it
     QVBoxLayout* aLayout = new QVBoxLayout(mViewer);
+    aLayout->setContentsMargins(0, 0, 0, 20);
+    aLayout->setSpacing(0);
     {
         QWidget* aButtonsBox = new QWidget();
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
@@ -210,9 +227,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aSlider->setTickPosition(QSlider::TicksRight);
 
             // Set initial value
-            Quantity_Color aColor1(Quantity_NOC_BLACK);
-            Quantity_Color aColor2(Quantity_NOC_BLACK);
-            mViewer->View()->GradientBackground().Colors(aColor1, aColor2);
+            Quantity_Color aColor1 = mViewer->View()->BackgroundColor();
 
             aSliderLayout->addWidget(aSlider);
 
@@ -225,11 +240,11 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
 
                     for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
                     {
-                        aSubviewIter->SetBgGradientColors(aColor, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
+                        aSubviewIter->SetBackgroundColor(aColor);
                         aSubviewIter->Invalidate();
                     }
                     //myViewer->View()->SetBackgroundColor (aColor);
-                    mViewer->View()->SetBgGradientColors(aColor, Quantity_NOC_BLACK, Aspect_GradientFillMethod_Elliptical);
+                    mViewer->View()->SetBackgroundColor(aColor);
                     mViewer->View()->Invalidate();
                     mViewer->update();
                 });

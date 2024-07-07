@@ -18,16 +18,21 @@ public:
     void loadStyleSheet(const QString &filePath);
     void applyStyleSheet(QWidget *widget);
     void enableBorders(bool enable);
+    QString colorPalette(QString theColor) const { return mColorPalette[theColor]; }
+
     static QPixmap roundedPixmap(const QPixmap &src);
 
     static void applyPalette(QWidget *widget);
+
+    static QPixmap coloredSvgPixmap(const QString& filePath, const QColor& color);
+
 private:
     QString replaceColors(const QString &styleSheet);
     QMap<QString, QString> parseColorPalette(const QString &styleSheet);
     QString addBorderStyles() const;
 
     QString currentStyleSheet;
-    QMap<QString, QString> colorPalette;
+    QMap<QString, QString> mColorPalette;
 
     bool showBorders;
 

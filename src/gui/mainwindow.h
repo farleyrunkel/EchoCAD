@@ -60,7 +60,7 @@ private:
     IOcctWidget* mViewer;
     QSplitter* mSplitter;
 
-    QsciScintilla* mScintilla;
+    QsciScintilla* mEditor;
 
     QPushButton* mSplitterButtons[2];
 };

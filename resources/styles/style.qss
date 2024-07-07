@@ -28,7 +28,7 @@
     Background Colors:
         @LightBackground:     #F5F5F5;  (245, 245, 245)
         @NeutralBackground:   #E0E0E0;  (224, 224, 224)
-        @DarkBackground:      #BDBDBD;  (189, 189, 189)
+        @DarkBackground:      #282828;  (40, 40, 40)
 
     Border Colors:
         @LightBorder:         #E0E0E0;  (224, 224, 224)
@@ -39,6 +39,11 @@
 Example#Usage {
    background-color: transparent; /*@LightBackground*/
    border: 1px solid transparent; /*@LightBorder*/
+}
+
+IOcctWidget,
+QWidget#EditorWidget{
+   background-color: transparent; /*@DarkBackground*/
 }
 
 ILineEdit {
@@ -60,12 +65,32 @@ QPushButton#circleButton:menu-indicator {
 }
 
 QPushButton#RoundedButton{
-    background-color: #ececec; /*@White*/
+    background-color: #282828;
     border-style: solid;
     border-radius: 5px;
     width: 30px;
     height: 30px;
 }
 QPushButton#RoundedButton:hover {
-    background-color: #ececec; /*@NeutralBackground*/
+    background-color: #303030;
+}
+
+QScrollBar:vertical,
+QScrollBar:horizontal {
+    height: 8px;
+ background-color: #f7f7f5;  /*@DarkBackground*/
+}
+QScrollBar::handle:vertical,
+QScrollBar::handle:horizontal {
+    background-color: #f7f7f5;  /*@LightBackground*/
+    border-radius:4px;
+}
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:horizontal:hover {
+    background-color: #f7f7f5;  /*@NeutralBackground*/
+}
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical,
+QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {
+    width: 0;
+    height: 0;
 }

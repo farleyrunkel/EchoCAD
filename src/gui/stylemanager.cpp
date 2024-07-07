@@ -5,6 +5,7 @@
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QWidget>
+#include <QSvgRenderer>
 
 StyleManager::StyleManager(QObject *parent)
     : QObject(parent), showBorders(false) {}
@@ -21,7 +22,7 @@ void StyleManager::loadStyleSheet(const QString &filePath) {
     file.close();
 
     // Parse the color palette from the QSS comments
-    colorPalette = parseColorPalette(styleSheet);
+    mColorPalette = parseColorPalette(styleSheet);
 
     // Replace color variables with actual values
     currentStyleSheet = replaceColors(styleSheet);
@@ -69,7 +70,7 @@ QString StyleManager::replaceColors(const QString &styleSheet) {
             QString placeHolder = match.captured(1);
             QString color = match.captured(2);
             QString newFullMatch =
-                fullMatch.replace(placeHolder, colorPalette[color]);
+                fullMatch.replace(placeHolder, mColorPalette[color]);
 
             newStyleSheet.replace(match.captured(), newFullMatch);
         }
@@ -137,4 +138,32 @@ QString StyleManager::addBorderStyles() const {
         border: 1px solid red;
     }
     )";
+}
+
+QPixmap StyleManager::coloredSvgPixmap(const QString& filePath, const QColor& color) {
+    // 加载 SVG 文件内容
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open SVG file:" << filePath;
+        return QPixmap();
+    }
+
+    QByteArray svgData = file.readAll();
+    file.close();
+
+    QSvgRenderer svgRenderer(svgData);
+
+    QSize size(56, 56);  // 设置图像大小
+    QPixmap pixmap(size);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // 使用 QPainterPath 手动设置颜色
+    svgRenderer.render(&painter);
+    QPainterPath path;
+    painter.fillPath(path, color);
+
+    return pixmap;
 }
