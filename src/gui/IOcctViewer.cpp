@@ -252,7 +252,17 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   myViewCube->SetViewAnimation (myViewAnimation);
   myViewCube->SetFixedAnimationLoop (false);
   myViewCube->SetAutoStartAnimation (true);
-  myViewCube->TransformPersistence()->SetOffset2d (Graphic3d_Vec2i (100, 200));
+// set offset for the cube at topright corner
+
+Handle(Graphic3d_TransformPers) aTrsfPers = new Graphic3d_TransformPers(
+Graphic3d_TMF_TriedronPers,
+Aspect_TOTP_RIGHT_UPPER,
+Graphic3d_Vec2i(70, 110) 
+);
+myViewCube->SetTransformPersistence(aTrsfPers);
+
+// set view cube size smaller
+myViewCube->SetSize(40);
 
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();

@@ -16,6 +16,7 @@ void PythonInterpreter::exportDLL(const QString& theDll) {
 
     // Construct Python code as a string
     std::string python_code = R"(
+// Import dll path
 import os
 os.add_dll_directory(')" + dllPath + R"('))";
 

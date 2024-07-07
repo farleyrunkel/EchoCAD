@@ -209,6 +209,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
     aLayout->setAlignment(Qt::AlignTop);
     {
         QWidget* aButtonsBox = new QWidget();
+
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
         aButtonsLayout->setAlignment(Qt::AlignLeft);
 
@@ -253,49 +254,41 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aButtonsLayout->addWidget(aSpacer);
         }
         {
-            QWidget* aSliderBox = new QWidget();
-            aSliderBox->setFixedWidth(200);
-            QHBoxLayout* aSliderLayout = new QHBoxLayout(aSliderBox);
-            aSliderLayout->setAlignment(Qt::AlignRight);
-            {
-                QSlider* aSlider = new QSlider(Qt::Horizontal);
-                aSlider->setValue(0);
-                aSlider->setRange(0, 255);
-                aSlider->setSingleStep(1);
-                aSlider->setPageStep(15);
-                aSlider->setTickInterval(15);
-                aSlider->setTickPosition(QSlider::TicksRight);
+            QSlider* aSlider = new QSlider(Qt::Horizontal);
+            aSlider->setValue(0);
+            aSlider->setRange(0, 255);
+            aSlider->setSingleStep(1);
+            aSlider->setPageStep(15);
+            aSlider->setTickInterval(15);
+            aSlider->setTickPosition(QSlider::TicksRight);
+            aSlider->setFixedWidth(200);
 
-                // Set initial value
-                Quantity_Color aColor1 = mViewer->View()->BackgroundColor();
+            // Set initial value
+            Quantity_Color aColor1 = mViewer->View()->BackgroundColor();
 
-                aSliderLayout->addWidget(aSlider);
+            aButtonsLayout->addWidget(aSlider);
 
-                connect(aSlider, &QSlider::valueChanged, [this, aSlider](int theValue)
+            connect(aSlider, &QSlider::valueChanged, [this, aSlider](int theValue)
+                {
+                    const float aVal = theValue / (float)aSlider->maximum();
+                    const Quantity_Color aColor(aVal, aVal, aVal, Quantity_TOC_sRGB);
+                    qDebug() << "Slider value:" << theValue;
+                    qDebug() << "Color value:" << aVal;
+
+                    for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
                     {
-                        const float aVal = theValue / (float)aSlider->maximum();
-                        const Quantity_Color aColor(aVal, aVal, aVal, Quantity_TOC_sRGB);
-                        qDebug() << "Slider value:" << theValue;
-                        qDebug() << "Color value:" << aVal;
+                        aSubviewIter->SetBackgroundColor(aColor);
+                        aSubviewIter->Invalidate();
+                    }
+                    //myViewer->View()->SetBackgroundColor (aColor);
+                    mViewer->View()->SetBackgroundColor(aColor);
+                    mViewer->View()->Invalidate();
+                    mViewer->update();
+                });
 
-                        for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
-                        {
-                            aSubviewIter->SetBackgroundColor(aColor);
-                            aSubviewIter->Invalidate();
-                        }
-                        //myViewer->View()->SetBackgroundColor (aColor);
-                        mViewer->View()->SetBackgroundColor(aColor);
-                        mViewer->View()->Invalidate();
-                        mViewer->update();
-                    });
-
-                aSlider->setValue(aColor1.Red() * aSlider->maximum());
-            }
-            aButtonsLayout->addWidget(aSliderBox);
+            aSlider->setValue(aColor1.Red() * aSlider->maximum());
         }
     }
-
-
     {
         // Set up the bottom area of the chats page
         QFrame* aFrame = new QFrame;
