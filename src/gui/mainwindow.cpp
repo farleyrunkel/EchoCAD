@@ -206,77 +206,130 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
     QVBoxLayout* aLayout = new QVBoxLayout(mViewer);
     aLayout->setContentsMargins(0, 0, 0, 20);
     aLayout->setSpacing(0);
+    aLayout->setAlignment(Qt::AlignTop);
     {
         QWidget* aButtonsBox = new QWidget();
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
         aButtonsLayout->setAlignment(Qt::AlignLeft);
 
-        // add button
-        mSplitterButtons[1] = new QPushButton("", aButtonsBox);
-        mSplitterButtons[1]->setIcon(QIcon("://icons/sidebar-left.svg"));
-        // Set object name for rounded button
-        mSplitterButtons[1]->setObjectName("RoundedButton");
-        aButtonsLayout->addWidget(mSplitterButtons[1]);
-        aLayout->addWidget(aButtonsBox);
-        // add button
-        QObject::connect(mSplitterButtons[1], &QPushButton::clicked, [this]()
-            {
-                mSplitter->widget(0)->setVisible(!mSplitter->widget(0)->isVisible());
-                mSplitterButtons[1]->setHidden(true);
-            });
-    }
-    {
-        QWidget* aSliderBox = new QWidget();
-        QHBoxLayout* aSliderLayout = new QHBoxLayout(aSliderBox);
-        aSliderLayout->setAlignment(Qt::AlignRight);
         {
-            QSlider* aSlider = new QSlider(Qt::Vertical);
-            aSlider->setValue(0);
-            aSlider->setRange(0, 255);
-            aSlider->setSingleStep(1);
-            aSlider->setPageStep(15);
-            aSlider->setTickInterval(15);
-            aSlider->setTickPosition(QSlider::TicksRight);
-
-            // Set initial value
-            Quantity_Color aColor1 = mViewer->View()->BackgroundColor();
-
-            aSliderLayout->addWidget(aSlider);
-
-            connect(aSlider, &QSlider::valueChanged, [this, aSlider](int theValue)
+            // add button
+            mSplitterButtons[1] = new QPushButton("", aButtonsBox);
+            mSplitterButtons[1]->setIcon(QIcon("://icons/sidebar-left.svg"));
+            // Set object name for rounded button
+            mSplitterButtons[1]->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(mSplitterButtons[1]);
+            aLayout->addWidget(aButtonsBox);
+            // add button
+            QObject::connect(mSplitterButtons[1], &QPushButton::clicked, [this]()
                 {
-                    const float aVal = theValue / (float)aSlider->maximum();
-                    const Quantity_Color aColor(aVal, aVal, aVal, Quantity_TOC_sRGB);
-                    qDebug() << "Slider value:" << theValue;
-                    qDebug() << "Color value:" << aVal;
-
-                    for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
-                    {
-                        aSubviewIter->SetBackgroundColor(aColor);
-                        aSubviewIter->Invalidate();
-                    }
-                    //myViewer->View()->SetBackgroundColor (aColor);
-                    mViewer->View()->SetBackgroundColor(aColor);
-                    mViewer->View()->Invalidate();
-                    mViewer->update();
+                    mSplitter->widget(0)->setVisible(!mSplitter->widget(0)->isVisible());
+                    mSplitterButtons[1]->setHidden(true);
                 });
-
-            aSlider->setValue(aColor1.Red() * aSlider->maximum());
         }
-        aLayout->addWidget(aSliderBox);
+        {
+            // add spacer
+            QWidget* aSpacer = new QWidget();
+            aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            aSpacer->setFixedWidth(20);
+            aButtonsLayout->addWidget(aSpacer);
+        }
+        {
+            // add expand button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/expand.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+				{
+					mViewer->View()->FitAll();
+					mViewer->View()->Redraw();
+				});
+        }
+        {
+            // add spacer
+            QWidget* aSpacer = new QWidget();
+            aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            aButtonsLayout->addWidget(aSpacer);
+        }
+        {
+            QWidget* aSliderBox = new QWidget();
+            aSliderBox->setFixedWidth(200);
+            QHBoxLayout* aSliderLayout = new QHBoxLayout(aSliderBox);
+            aSliderLayout->setAlignment(Qt::AlignRight);
+            {
+                QSlider* aSlider = new QSlider(Qt::Horizontal);
+                aSlider->setValue(0);
+                aSlider->setRange(0, 255);
+                aSlider->setSingleStep(1);
+                aSlider->setPageStep(15);
+                aSlider->setTickInterval(15);
+                aSlider->setTickPosition(QSlider::TicksRight);
+
+                // Set initial value
+                Quantity_Color aColor1 = mViewer->View()->BackgroundColor();
+
+                aSliderLayout->addWidget(aSlider);
+
+                connect(aSlider, &QSlider::valueChanged, [this, aSlider](int theValue)
+                    {
+                        const float aVal = theValue / (float)aSlider->maximum();
+                        const Quantity_Color aColor(aVal, aVal, aVal, Quantity_TOC_sRGB);
+                        qDebug() << "Slider value:" << theValue;
+                        qDebug() << "Color value:" << aVal;
+
+                        for (const Handle(V3d_View)& aSubviewIter : mViewer->View()->Subviews())
+                        {
+                            aSubviewIter->SetBackgroundColor(aColor);
+                            aSubviewIter->Invalidate();
+                        }
+                        //myViewer->View()->SetBackgroundColor (aColor);
+                        mViewer->View()->SetBackgroundColor(aColor);
+                        mViewer->View()->Invalidate();
+                        mViewer->update();
+                    });
+
+                aSlider->setValue(aColor1.Red() * aSlider->maximum());
+            }
+            aButtonsLayout->addWidget(aSliderBox);
+        }
     }
-	{
+
+
+    {
         // Set up the bottom area of the chats page
-        mLineEdit = new ILineEdit(this);
-        mLineEdit->setPlaceholderText("Describe what you want to create ...");
-        mLineEdit->setFixedHeight(40);
-        mLineEdit->rightButton()->setIcon(QIcon("://icons/send.svg"));
+        QFrame* aFrame = new QFrame;
+		aLayout->addWidget(aFrame);
+        aFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        aFrame->setFixedWidth(240);
+        aFrame->setStyleSheet("border: none; border-radius: 10px; background-color: rgba(40, 40, 40, 0.5);");
 
-		aLayout->addWidget(mLineEdit);
-		connect(mLineEdit->rightButton(), &QPushButton::clicked, mLineEdit, &ILineEdit::returnPressed);
-        connect(mLineEdit, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
-	}
+        auto aFrameLayout = new QVBoxLayout(aFrame);
+        aFrameLayout->setContentsMargins(0, 0, 0, 0);
+        aFrameLayout->setSpacing(0);
+        {
+            // Add a text browser
+            QTextBrowser* aTextBrowser = new QTextBrowser(aFrame);
+            aTextBrowser->setObjectName("TextBrowser");
+            aTextBrowser->setOpenExternalLinks(true);
+            aTextBrowser->setOpenLinks(true);
+            aTextBrowser->setFrameShape(QFrame::NoFrame);
+            aTextBrowser->setStyleSheet("background-color: transparent;");
+            aFrameLayout->addWidget(aTextBrowser);
+        }
+        {
+            // Set up the bottom area of the chats page
+            mLineEdit = new ILineEdit(this);
+            mLineEdit->setPlaceholderText("Describe what you want to create ...");
+            mLineEdit->setFixedHeight(40);
+            mLineEdit->rightButton()->setIcon(QIcon("://icons/send.svg"));
 
+            aFrameLayout->addWidget(mLineEdit);
+        	connect(mLineEdit->rightButton(), &QPushButton::clicked, mLineEdit, &ILineEdit::returnPressed);
+            connect(mLineEdit, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
+        }
+
+    }
     {
         // Create a sphere shape
         TopoDS_Shape aSphere = BRepPrimAPI_MakeSphere(gp_Pnt(0, 0, 0), 100.0).Shape();

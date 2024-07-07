@@ -7,5 +7,6 @@
         <file>icons/sidebar-left.svg</file>
         <file>icons/caret-right.svg</file>
         <file>icons/arrow-rotate-right.svg</file>
+        <file>icons/expand.svg</file>
     </qresource>
 </RCC>

@@ -47,10 +47,11 @@ QWidget#EditorWidget{
 }
 
 ILineEdit {
-    Background-color: gray; /*@LightBackground*/
+    Background-color: transparent;
     border-style: hidden;
     border-radius: 20px;
     padding-left: 40px;
+    color: white;
 }
 QPushButton#circleButton{
     border-style: hidden;
