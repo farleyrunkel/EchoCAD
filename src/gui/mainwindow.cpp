@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *theParent)
     mGptProcessor(nullptr),
     mSplitter(nullptr),
     mLineEdit(nullptr),
-    mEditor(nullptr)
+    mScintilla(nullptr)
 {
     setupMainUi(new QSplitter);
     setupMenuBar(new QMenuBar);
@@ -68,8 +68,11 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
     mSplitter->addWidget(theEditor);
     auto mPyEditor = theEditor;
     auto aLayout = new QVBoxLayout(mPyEditor);
+    aLayout->setContentsMargins(0, 0, 0, 0);
+    aLayout->setSpacing(0);
     {
         QWidget* aButtonsBox = new QWidget();
+
         aLayout->addWidget(aButtonsBox);
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
  
@@ -98,7 +101,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
                 {
-                    mEditor->setText(mLineEdit->text());
+                    mScintilla->setText(mLineEdit->text());
                 });
 
         }
@@ -111,15 +114,25 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
 			aButtonsLayout->addWidget(aButton);
 			connect(aButton, &QPushButton::clicked, [this]()
 				{
-					mEditor->setText(mLineEdit->text());
+					mScintilla->setText(mLineEdit->text());
 				});
 		
         }
     }
     {
+        // add horizontal line with bottom margin shadow
+        QFrame* aLine = new QFrame(mPyEditor);
+        aLine->setFrameShape(QFrame::NoFrame);
+        aLine->setFixedHeight(1);
+        aLine->setStyleSheet("background-color: #cccccc;");
+        aLayout->addWidget(aLine);
+    }
+    {
         // set editor area
-		mEditor = new QsciScintilla(mPyEditor);
-		aLayout->addWidget(mEditor);
+		mScintilla = new QsciScintilla(mPyEditor);
+
+        mScintilla->setFrameShape(QFrame::NoFrame);
+		aLayout->addWidget(mScintilla);
 
         QFont aFont;
         aFont.setFamily("Consolas"); // Set the font family to Consolas
@@ -135,25 +148,25 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         aLexer->setColor(Qt::red, 1); // comment color
         aLexer->setColor(Qt::darkGreen, 5); // keyword color
         aLexer->setColor(Qt::darkBlue, 15); // decorator color
+        //aLexer->setDefaultPaper(QColor("#cccccc"));
+        mScintilla->setLexer(aLexer);
 
-        mEditor->setLexer(aLexer);
-
-        mEditor->setFont(aFont);
-        mEditor->setMarginsFont(aFont);
+        mScintilla->setFont(aFont);
+        mScintilla->setMarginsFont(aFont);
 
         // Margin 0 is used for line numbers
-        mEditor->setMarginType(0, QsciScintilla::NumberMargin);
-        mEditor->setMarginWidth(0, "0000");
-        mEditor->setMarginsBackgroundColor("#cccccc");
+        mScintilla->setMarginType(0, QsciScintilla::NumberMargin);
+        mScintilla->setMarginWidth(0, "0000");
+        //mScintilla->setMarginsBackgroundColor("#cccccc");
+        mScintilla->setFolding(QsciScintilla::NoFoldStyle, 1);
 
         // Brace matching
-        mEditor->setBraceMatching(QsciScintilla::SloppyBraceMatch);
+        mScintilla->setBraceMatching(QsciScintilla::SloppyBraceMatch);
 
         // Current line visible with special background color
-        mEditor->setCaretLineVisible(true);
-        mEditor->setCaretLineBackgroundColor("#ffe4e4");
+        mScintilla->setCaretLineVisible(true);
+        mScintilla->setCaretLineBackgroundColor("#ffe4e4");
     }
-
 }
 
 
