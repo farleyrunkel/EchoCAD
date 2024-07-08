@@ -18,7 +18,7 @@ public:
 
     void exportDLL(const QString& theDll);
 
-    void executeScript(const std::string& script);
+    void executeScript(const QString& script);
 
 signals:
 	void logMessage(const QString& theMessage);
