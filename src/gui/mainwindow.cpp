@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *theParent)
     setConnects();
 
     emit mSplitterButtons[1]->clicked();
-    emit mPythonInterpreter->dllNeeded(OCCT_DLL_PATH);
+    emit mPythonInterpreter->dllNeeded(OCCT_DLL_DIR);
 }
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {

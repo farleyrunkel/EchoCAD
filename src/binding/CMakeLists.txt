@@ -57,8 +57,8 @@ target_link_libraries(PyEchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
 target_link_libraries(PyEchoCAD PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(PyEchoCAD PRIVATE ${PYTHON_LIBRARIES})
 target_link_libraries(PyEchoCAD PRIVATE ${Python3_LIBRARY_RELEASE}) 
-target_link_libraries(PyEchoCAD PRIVATE debug QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
-target_link_libraries(PyEchoCAD PRIVATE optimized QScintilla::qscintilla2_qt${QT_VERSION_MAJOR})
+target_link_libraries(PyEchoCAD PRIVATE debug qscintilla2_qt${QT_VERSION_MAJOR}d)
+target_link_libraries(PyEchoCAD PRIVATE optimized qscintilla2_qt${QT_VERSION_MAJOR})
 
 # Include the src directory and all its subdirectories
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
@@ -74,5 +74,6 @@ target_include_directories(PyEchoCAD PRIVATE ${CMAKE_SOURCE_DIR}/src/3rdparty/py
 target_include_directories(PyEchoCAD PRIVATE ${Qt${QT_VERSION_MAJOR}PrintSupport_INCLUDE_DIRS})
 target_include_directories(PyEchoCAD PRIVATE ${OpenCASCADE_INCLUDE_DIR})
 target_include_directories(PyEchoCAD PRIVATE ${Python3_INCLUDE_DIRS})
-target_include_directories(PyEchoCAD PRIVATE ${QScintilla_INCLUDE_DIRS})
+target_include_directories(PyEchoCAD PRIVATE ${QScintilla_INCLUDE_DIR})
+
 target_include_directories(PyEchoCAD PRIVATE ${CMAKE_BINARY_DIR})

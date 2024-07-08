@@ -1,9 +1,12 @@
 // config.h.in
 #ifdef _DEBUG
-#define OCCT_DLL_PATH "@OpenCASCADE_BINARY_DIR@d"
+#define OCCT_DLL_DIR "@OpenCASCADE_BINARY_DIR@d"
 #else
-#define OCCT_DLL_PATH "@OpenCASCADE_BINARY_DIR@"
+#define OCCT_DLL_DIR "@OpenCASCADE_BINARY_DIR@"
 #endif
 
-#define QT_DLL_PATH "@Qt6_BINARY_DIR@"
-#define OPENGL_DLL_PATH "@OpenGL_BINARY_DIR@"
+#define QT_BIN_DIR "@QT_BIN_DIR@"
+
+if defined(_WIN32)
+#define OPENGL_DLL_DIR "C:/Windows/System32"
+#endif

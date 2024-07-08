@@ -11,7 +11,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
-set(QScintilla_DIR "E:/Temp/untitled3/out/install/x64-Debug/lib/cmake/QScintilla")
 
 set(PYTHON_DIR "${CMAKE_BINARY_DIR}/python")
 set(PYTHONOCC_INSTALL_DIRECTORY ${PYTHON_DIR}/Lib/site-packages)
@@ -41,18 +40,18 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Cor
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS OpenGLWidgets)
 find_package(OpenGL REQUIRED)
 
-# Find OpenCASCADE package
-find_package(OpenCASCADE REQUIRED)
-find_package(QScintilla REQUIRED)
-
-if(QScintilla_FOUND)
-    message(STATUS "QScintilla found") 
-    message(STATUS "QScintilla_INCLUDE_DIRS: ${QScintilla_INCLUDE_DIRS}")
-    message(STATUS "QScintilla library:" QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
+if(OpenGL_FOUND)
+	message(STATUS "OpenGL found")
+	message(STATUS "OpenGL include directory: ${OPENGL_INCLUDE_DIR}")
+	message(STATUS "OpenGL libraries: ${OPENGL_LIBRARIES}")
 
 else()
-    message(FATAL_ERROR "QScintilla not found")
+	message(FATAL_ERROR "OpenGL not found")
 endif()
+
+# Find OpenCASCADE package
+find_package(OpenCASCADE REQUIRED)
+# find_package(QScintilla REQUIRED)
 
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
@@ -94,6 +93,19 @@ if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EchoCAD)
 endif()
 
+# get Qt DLL directory
+get_filename_component(QT_BIN_DIR "${Qt6_DIR}/bin" ABSOLUTE)
+message("Qt DLL directory: ${QT_BIN_DIR}")
+
+# get OpenGL binary directory
+get_target_property(OPENGL_BIN_DIR OpenGL::GL IMPORTED_LOCATION_RELEASE)
+message("OpenGL binary directory: ${OPENGL_BIN_DIR}")
+
+# Generating config.h
+message(STATUS "Generating config.h")
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
+
 # Include the src directory and all its subdirectories
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 file(GLOB SUBDIRS RELATIVE ${SRC_DIR} ${SRC_DIR}/*) 
@@ -107,12 +119,8 @@ endforeach()
 target_include_directories(EchoCAD PRIVATE ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include) 
 target_include_directories(EchoCAD PRIVATE ${OpenCASCADE_INCLUDE_DIR})
 target_include_directories(EchoCAD PRIVATE ${Python3_INCLUDE_DIRS})
-target_include_directories(EchoCAD PRIVATE ${QScintilla_INCLUDE_DIRS})
-
-# Generating config.h
-message(STATUS "Generating config.h")
-configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
-target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(EchoCAD PRIVATE ${QScintilla_INCLUDE_DIR})
+message(STATUS "QScintilla include directory: ${QScintilla_INCLUDE_DIR}")
 
 # Link OpenCASCADE libraries
 foreach (LIB ${OpenCASCADE_LIBRARIES})
@@ -130,8 +138,8 @@ target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
 
 target_link_libraries(EchoCAD PRIVATE ${Python3_LIBRARY_RELEASE}) 
 
-target_link_libraries(EchoCAD PRIVATE debug QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
-target_link_libraries(EchoCAD PRIVATE optimized QScintilla::qscintilla2_qt${QT_VERSION_MAJOR})
+target_link_libraries(EchoCAD PRIVATE debug qscintilla2_qt${QT_VERSION_MAJOR}d)
+target_link_libraries(EchoCAD PRIVATE optimized qscintilla2_qt${QT_VERSION_MAJOR})
 
 # Install target
 include(GNUInstallDirs)
@@ -139,13 +147,6 @@ install(TARGETS EchoCAD
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-# copy QScintilla to cmake binary directory
-add_custom_command(TARGET EchoCAD POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
-	${QScintilla_BINARY_DIRS}
-	$<TARGET_FILE_DIR:EchoCAD>
 )
 
 # Finalize executable for Qt 6
