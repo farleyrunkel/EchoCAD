@@ -11,29 +11,33 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
+set(QScintilla_DIR "E:/Temp/untitled3/out/install/x64-Debug/lib/cmake/QScintilla")
+
 set(PYTHON_DIR "${CMAKE_BINARY_DIR}/python")
 set(PYTHONOCC_INSTALL_DIRECTORY ${PYTHON_DIR}/Lib/site-packages)
-set(QScintilla_DIR "E:/Temp/untitled3/out/install/x64-Debug/lib/cmake/QScintilla")
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
 
 message(STATUS "pybind11_INCLUDE_DIR: ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include")
-message(STATUS "QSCINTILLA_INCLUDE_DIR: ${QSCINTILLA_INCLUDE_DIR}")
 
 # Include the file to download and extract Python
 include(cmake/setupPython.cmake)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-message(STATUS "Python3 interpreter: ${Python3_EXECUTABLE}")
-message(STATUS "Python include directory: ${Python3_INCLUDE_DIRS}")
-message(STATUS "Python library release: ${Python3_LIBRARY_RELEASE}")
-
+if(Python3_FOUND)
+	message(STATUS "Python3 found")
+    message(STATUS "Python3 interpreter: ${Python3_EXECUTABLE}")
+    message(STATUS "Python include directory: ${Python3_INCLUDE_DIRS}")
+    message(STATUS "Python library release: ${Python3_LIBRARY_RELEASE}")
+else()
+	message(FATAL_ERROR "Python3 not found")
+endif()
 
 # Find Qt and OpenGL packages
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test Svg)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core5Compat Test 3DCore 3DExtras 3DInput 3DRender Svg)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test )
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core5Compat Test 3DCore 3DExtras 3DInput 3DRender )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS OpenGLWidgets)
 find_package(OpenGL REQUIRED)
 
@@ -42,7 +46,10 @@ find_package(OpenCASCADE REQUIRED)
 find_package(QScintilla REQUIRED)
 
 if(QScintilla_FOUND)
-    message(STATUS "QScintilla found")
+    message(STATUS "QScintilla found") 
+    message(STATUS "QScintilla_INCLUDE_DIRS: ${QScintilla_INCLUDE_DIRS}")
+    message(STATUS "QScintilla library:" QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
+
 else()
     message(FATAL_ERROR "QScintilla not found")
 endif()
@@ -74,23 +81,18 @@ else()
     endif()
 endif()
 
-# Link OpenCASCADE libraries
-foreach (LIB ${OpenCASCADE_LIBRARIES})
-  target_link_libraries(EchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
-  target_link_libraries(EchoCAD PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
-endforeach()
+set_target_properties(EchoCAD PROPERTIES
+    ${BUNDLE_ID_OPTION}
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
 
-# Link Qt and OpenGL libraries
-target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test Qt${QT_VERSION_MAJOR}::Svg)
-target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
-target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
-target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
-target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
-target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
-
-target_link_libraries(EchoCAD PRIVATE debug QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
-target_link_libraries(EchoCAD PRIVATE optimized QScintilla::qscintilla2_qt${QT_VERSION_MAJOR})
-target_link_libraries(EchoCAD PRIVATE ${Python3_LIBRARY_RELEASE}) 
+# Set bundle identifier and other properties for macOS and Windows
+if(${QT_VERSION} VERSION_LESS 6.1.0)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EchoCAD)
+endif()
 
 # Include the src directory and all its subdirectories
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
@@ -103,7 +105,6 @@ endforeach()
 
 # Include directories
 target_include_directories(EchoCAD PRIVATE ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include) 
-target_include_directories(EchoCAD PRIVATE ${QSCINTILLA_INCLUDE_DIR})
 target_include_directories(EchoCAD PRIVATE ${OpenCASCADE_INCLUDE_DIR})
 target_include_directories(EchoCAD PRIVATE ${Python3_INCLUDE_DIRS})
 target_include_directories(EchoCAD PRIVATE ${QScintilla_INCLUDE_DIRS})
@@ -113,18 +114,24 @@ message(STATUS "Generating config.h")
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
 target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
 
-# Set bundle identifier and other properties for macOS and Windows
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EchoCAD)
-endif()
+# Link OpenCASCADE libraries
+foreach (LIB ${OpenCASCADE_LIBRARIES})
+  target_link_libraries(EchoCAD PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
+  target_link_libraries(EchoCAD PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
+endforeach()
 
-set_target_properties(EchoCAD PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
+# Link Qt and OpenGL libraries
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test )
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::3DCore Qt${QT_VERSION_MAJOR}::3DExtras Qt${QT_VERSION_MAJOR}::3DInput Qt${QT_VERSION_MAJOR}::3DRender)
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
+target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
+target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
+
+target_link_libraries(EchoCAD PRIVATE ${Python3_LIBRARY_RELEASE}) 
+
+target_link_libraries(EchoCAD PRIVATE debug QScintilla::qscintilla2_qt${QT_VERSION_MAJOR}d)
+target_link_libraries(EchoCAD PRIVATE optimized QScintilla::qscintilla2_qt${QT_VERSION_MAJOR})
 
 # Install target
 include(GNUInstallDirs)
@@ -132,6 +139,13 @@ install(TARGETS EchoCAD
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# copy QScintilla to cmake binary directory
+add_custom_command(TARGET EchoCAD POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${QScintilla_BINARY_DIRS}
+	$<TARGET_FILE_DIR:EchoCAD>
 )
 
 # Finalize executable for Qt 6

@@ -24,8 +24,6 @@ public:
 
     static void applyPalette(QWidget *widget);
 
-    static QPixmap coloredSvgPixmap(const QString& filePath, const QColor& color);
-
 private:
     QString replaceColors(const QString &styleSheet);
     QMap<QString, QString> parseColorPalette(const QString &styleSheet);
