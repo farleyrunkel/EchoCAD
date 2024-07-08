@@ -29,27 +29,5 @@ int main(int argc, char** argv) {
     mainWindow.resize(1250, 800);
     mainWindow.show();
 
-    try {
-        // Get OCCT DLL path from config.h
-        std::string occt_install_path = OCCT_DLL_PATH;
-
-        // Construct Python code as a string
-        std::string python_code = std::string(R"(
-import os
-os.add_dll_directory(')") + occt_install_path + "')";
-
-        // Create an instance of PythonInterpreter
-        PythonInterpreter pyInterpreter;
-
-        // Execute the constructed Python script
-        pyInterpreter.executeScript(python_code);
-    }
-	catch (const std::exception& e) {
-		qDebug() << "Standard exception: " << e.what();
-	}
-	catch (...) {
-		qDebug() << "Unknown error occurred";
-	}
-
     return app.exec();
 }

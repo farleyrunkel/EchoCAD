@@ -59,7 +59,7 @@ void MainWindow::setConnects() {
     connect(mGptProcessor, &GptProcessor::predictionReady, this, &MainWindow::onPredictionReady);
     connect(mPythonInterpreter, &PythonInterpreter::logMessage, [this](const QString& message) {
 		qDebug() << "Python log: " << message;
-        mEditor->append(message);
+        mTextBrowser->append(message);
 	});
 }
 
@@ -130,7 +130,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
 			aButtonsLayout->addWidget(aButton);
 			connect(aButton, &QPushButton::clicked, [this]()
 				{
-					mEditor->setText(mLineEdit->text());
+					mPythonInterpreter->executeScript(mEditor->text());
 				});
 		
         }
@@ -227,6 +227,12 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
                     mSplitter->widget(0)->setVisible(!mSplitter->widget(0)->isVisible());
                     mSplitterButtons[1]->setHidden(true);
                 });
+            // connect mSpltterButton1 and widget 0 when width of widget 0 is zero set button show
+            QObject::connect(mSplitter, &QSplitter::splitterMoved, this, [this] {
+                if (0 == mSplitter->widget(0)->width()) {
+                    mSplitterButtons[1]->setHidden(false);
+                }
+                ; });
         }
         {
             // add spacer
@@ -302,13 +308,13 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
         aFrameLayout->setSpacing(0);
         {
             // Add a text browser
-            QTextBrowser* aTextBrowser = new QTextBrowser(aFrame);
-            aTextBrowser->setObjectName("TextBrowser");
-            aTextBrowser->setOpenExternalLinks(true);
-            aTextBrowser->setOpenLinks(true);
-            aTextBrowser->setFrameShape(QFrame::NoFrame);
-            aTextBrowser->setStyleSheet("background-color: transparent;");
-            aFrameLayout->addWidget(aTextBrowser);
+            mTextBrowser = new QTextBrowser(aFrame);
+            mTextBrowser->setObjectName("TextBrowser");
+            mTextBrowser->setOpenExternalLinks(true);
+            mTextBrowser->setOpenLinks(true);
+            mTextBrowser->setFrameShape(QFrame::NoFrame);
+            mTextBrowser->setStyleSheet("background-color: transparent;");
+            aFrameLayout->addWidget(mTextBrowser);
         }
         {
             // Set up the bottom area of the chats page

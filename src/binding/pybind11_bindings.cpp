@@ -10,7 +10,7 @@ namespace py = pybind11;
 
 
 PYBIND11_MODULE(PyEchoCAD, m) {
-    m.doc() = "Python bindings for Open CASCADE Technology";
+    m.doc() = "Python bindings for EchoCAD";
 
     py::class_<CadModule>(m, "CadModule")
         .def(py::init<>())

@@ -13,6 +13,7 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QSplitter>
+#include <QTextBrowser>
 
 #include <Standard_WarningsDisable.hxx>
 #include <Standard_WarningsRestore.hxx>
@@ -62,6 +63,7 @@ private:
 
     IOcctWidget* mViewer;
     QSplitter* mSplitter;
+    QTextBrowser* mTextBrowser;
 
     QsciScintilla* mEditor;
 

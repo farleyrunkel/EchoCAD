@@ -75,6 +75,8 @@ build
 
 .vs/
 
+enc_temp_folder/
+
 CMakePresets.json
 CMakeUserPresets.json
 
