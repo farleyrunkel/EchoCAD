@@ -7,12 +7,14 @@ PythonInterpreter::PythonInterpreter() : guard{} {
 }
 
 PythonInterpreter::~PythonInterpreter() {
-    // Cleanup code if needed
 }
 
-void PythonInterpreter::exportDLL(const QString& theDll) {
-    py::module::import("os").attr("add_dll_directory")(theDll.toStdString());
-    emit logMessage("DLL imported successfully:\n" + theDll);
+void PythonInterpreter::exportDLL(const QStringList& theDll) {
+    py::module_ os  = py::module::import("os");
+    for (auto dll : theDll) {
+        os.attr("add_dll_directory")(dll.toStdString());
+        emit logMessage("DLL imported successfully:\n" + dll);
+    }
 }
 
 
