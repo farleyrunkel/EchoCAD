@@ -34,6 +34,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *theParent = nullptr);
 
+
     void setPythonInterpreter(PythonInterpreter* thePython);
 
     IOcctWidget* viewer() const { return mViewer; }
@@ -46,6 +47,7 @@ private:
     void setupMenuBar(QMenuBar* theMenuBar);
 
     void setGPTProcessor(GptProcessor* theGptProcessor);
+    void setParameters();
 
     QWidget* createInputLine(QWidget* theParent);
 

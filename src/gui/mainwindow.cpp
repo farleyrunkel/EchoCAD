@@ -45,6 +45,12 @@ MainWindow::MainWindow(QWidget *theParent)
     emit mPythonInterpreter->dllNeeded({ OCCT_DLL_DIR, QT_DLL_DIR, OPENGL_DLL_DIR, ECHOCAD_BIN_DIR });
     emit mPythonInterpreter->moduleNeeded( PYECHOCAD_PYD_DIR );
     emit mSplitter->widget(0)->setVisible(false);
+
+    setParameters();
+}
+
+void MainWindow::setParameters() {
+    mPythonInterpreter->setSysVariable("mainWindow", py::cast(this));
 }
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {

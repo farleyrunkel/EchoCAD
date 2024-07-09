@@ -2,7 +2,7 @@
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 
-#include <QOpenGLWidget>  // Include necessary Qt headers
+#include <QOpenGLWidget>
 #include "IOcctViewer.h"
 #include "CadModule.h"
 #include "MainWindow.h"
@@ -34,9 +34,9 @@ PYBIND11_MODULE(PyEchoCAD, m) {
         .def("sizeHint", &IOcctWidget::sizeHint)
         .def("OnSubviewChanged", &IOcctWidget::OnSubviewChanged);
 
+    // MainWindow binding
     py::class_<QMainWindow>(m, "QMainWindow");
 
-    // MainWindow binding
     py::class_<MainWindow, QMainWindow>(m, "MainWindow")
         .def(py::init<QWidget*>(), py::arg("parent") = nullptr)
         .def("viewer", &MainWindow::viewer, py::return_value_policy::reference);

@@ -22,6 +22,8 @@ public:
 
     void executeScript(const QString& script);
 
+    void setSysVariable(const QString& name, py::object value);
+
 signals:
 	void logMessage(const QString& theMessage);
     void dllNeeded(const QStringList& theDll);

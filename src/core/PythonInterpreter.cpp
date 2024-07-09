@@ -20,6 +20,10 @@ void PythonInterpreter::exportDLL(const QStringList& theDll) {
     }
 }
 
+// add set sys variable function
+
+
+
 void PythonInterpreter::loadModule(const QString& thePath) {
 
     emit logMessage("Loading module from path:\n" + thePath);
@@ -79,6 +83,12 @@ void PythonInterpreter::loadModule(const QString& thePath) {
     catch (...) {
         qDebug() << "Unknown error occurred";
     }
+}
+
+void PythonInterpreter::setSysVariable(const QString& name, py::object value) {
+    py::module_ sys = py::module::import("sys");
+    sys.attr(name.toStdString().c_str()) = value;
+    emit logMessage("Set sys variable:\n" + name);
 }
 
 void PythonInterpreter::executeScript(const QString& script) {
