@@ -94,12 +94,12 @@ if(${QT_VERSION} VERSION_LESS 6.1.0)
 endif()
 
 # get Qt DLL directory
-get_filename_component(QT_BIN_DIR "${Qt6_DIR}/../../../bin" ABSOLUTE)
-message("Qt DLL directory: ${QT_BIN_DIR}")
+get_filename_component(QT_DLL_DIR "${Qt6_DIR}/../../../bin" ABSOLUTE)
+message("Qt DLL directory: ${QT_DLL_DIR}")
 
-# get OpenGL binary directory
-get_target_property(OPENGL_BIN_DIR OpenGL::GL IMPORTED_LOCATION_RELEASE)
-message("OpenGL binary directory: ${OPENGL_BIN_DIR}")
+# set exe directory for the config
+set(ECHOCAD_BIN_DIR "${CMAKE_BINARY_DIR}")
+message("Exe directory: ${ECHOCAD_BIN_DIR}")
 
 # Generating config.h
 message(STATUS "Generating config.h")

@@ -42,8 +42,8 @@ MainWindow::MainWindow(QWidget *theParent)
 
     setConnects();
 
-    emit mSplitterButtons[1]->clicked();
-    emit mPythonInterpreter->dllNeeded({ OCCT_DLL_DIR, QT_BIN_DIR, OPENGL_DLL_DIR});
+    emit mPythonInterpreter->dllNeeded({ OCCT_DLL_DIR, QT_DLL_DIR, OPENGL_DLL_DIR, ECHOCAD_BIN_DIR });
+    emit mSplitter->widget(0)->setVisible(false);
 }
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {

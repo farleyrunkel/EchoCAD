@@ -5,8 +5,10 @@
 #define OCCT_DLL_DIR "@OpenCASCADE_BINARY_DIR@"
 #endif
 
-#define QT_BIN_DIR "@QT_BIN_DIR@"
+#define QT_DLL_DIR "@QT_DLL_DIR@"
 
 #ifdef _WIN32
 #define OPENGL_DLL_DIR "C:/Windows/System32"
 #endif
+
+#define ECHOCAD_BIN_DIR "@ECHOCAD_BIN_DIR@"
