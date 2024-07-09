@@ -87,12 +87,8 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
     aLayout->setSpacing(0);
     {
         QWidget* aButtonsBox = new QWidget();
-
         aLayout->addWidget(aButtonsBox);
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
- 
-        aButtonsLayout->setAlignment(Qt::AlignRight);
-        aButtonsLayout->setDirection(QBoxLayout::RightToLeft);
         {
             // add button
             mSplitterButtons[0] = new QPushButton("", aButtonsBox);
@@ -109,6 +105,22 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
                 });
         }
         {
+            // add stretch
+            aButtonsLayout->addStretch();
+        }
+        {
+            // add button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/caret-right.svg"));
+            aButton->setObjectName("RoundedButton");
+
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    mPythonInterpreter->executeScript(mEditor->text());
+                });
+        }
+        {
             // add button
             QPushButton* aButton = new QPushButton("", aButtonsBox);
             aButton->setIcon(QIcon("://icons/arrow-rotate-right.svg"));
@@ -120,19 +132,6 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
                     mEditor->setText(mLineEdit->text());
                 });
 
-        }
-        {
-            // add button
-			QPushButton* aButton = new QPushButton("", aButtonsBox);
-			aButton->setIcon(QIcon("://icons/caret-right.svg"));
-            aButton->setObjectName("RoundedButton");
-
-			aButtonsLayout->addWidget(aButton);
-			connect(aButton, &QPushButton::clicked, [this]()
-				{
-					mPythonInterpreter->executeScript(mEditor->text());
-				});
-		
         }
     }
     {
