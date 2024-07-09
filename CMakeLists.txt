@@ -151,3 +151,5 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/binding)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
