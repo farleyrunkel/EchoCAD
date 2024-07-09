@@ -49,7 +49,6 @@ MainWindow::MainWindow(QWidget *theParent)
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {
     mPythonInterpreter = thePython;
-
 }
 
 void MainWindow::setGPTProcessor(GptProcessor*  theGpt) {
@@ -327,7 +326,6 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
         	connect(mLineEdit->rightButton(), &QPushButton::clicked, mLineEdit, &ILineEdit::returnPressed);
             connect(mLineEdit, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
         }
-
     }
     {
         // Create a sphere shape
@@ -459,9 +457,12 @@ void MainWindow::onPredictionReady(const QString &thePrediction) {
 QString MainWindow::extractPythonCode(const QString& theText) {
     // Extract Python code from the GPT response
     // This is a simple example, you may need to handle different formats or multiple code blocks
-    QRegExp aRegex("```(python)?([\\s\\S]+?)```");
+
+    qDebug() << "Prediction:" << theText;
+
+    QRegExp aRegex("```");
     if (aRegex.indexIn(theText) != -1) {
-        return aRegex.cap(2).trimmed();
+        return aRegex.cap(1).trimmed();
     }
     return QString();
 }

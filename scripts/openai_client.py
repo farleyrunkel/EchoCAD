@@ -11,8 +11,10 @@ prompt = (
     "Your task is to generate appropriate Python code based on the user's instructions.\n"
     "Ensure the code is compatible with PythonOCC and follows the best practices of CAD modeling.\n"
     "Always provide supplemental code based on the existing code, including necessary components\n"
-    "to create and display the shape in the custom IOcctWidget viewer."
+    "to create and display the shape in the custom IOcctWidget viewer.\n"
+    "Wrap the output code in ```python blocks."
 )
+
 
 def generate(command):
     response = client.chat.completions.create(

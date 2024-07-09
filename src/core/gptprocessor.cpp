@@ -12,13 +12,12 @@ GptProcessor::~GptProcessor() {
 
 void GptProcessor::processInput(const QString &input) {
     QStringList arguments;
-    arguments << "C:/Users/95439/Documents/Github/EchoCAD/python/openai_client.py" << input;
+    arguments << "E:/Projects/Project-EchoCAD/EchoCAD/scripts/openai_client.py" << input;
 
-    process->start("python3", arguments);
+    process->start("python", arguments);
 }
 
 void GptProcessor::handleProcessOutput() {
     QString output = process->readAllStandardOutput().trimmed();
     emit predictionReady(output);
 }
-  
