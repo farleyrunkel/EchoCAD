@@ -460,9 +460,10 @@ QString MainWindow::extractPythonCode(const QString& theText) {
 
     qDebug() << "Prediction:" << theText;
 
-    QRegExp aRegex("```");
+    QRegExp aRegex("```(python)?(.*)```");
+
     if (aRegex.indexIn(theText) != -1) {
-        return aRegex.cap(1).trimmed();
+        return aRegex.cap(2).trimmed();
     }
     return QString();
 }
