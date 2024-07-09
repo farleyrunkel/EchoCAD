@@ -18,12 +18,15 @@ public:
 
     void exportDLL(const QStringList& theDll);
 
+    void loadModule(const QString& pydPath);
+
     void executeScript(const QString& script);
 
 signals:
 	void logMessage(const QString& theMessage);
     void dllNeeded(const QStringList& theDll);
 
+    void moduleNeeded(const QString& theDll);
 
 private:
     py::scoped_interpreter guard;

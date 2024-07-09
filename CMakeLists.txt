@@ -97,10 +97,6 @@ endif()
 get_filename_component(QT_DLL_DIR "${Qt6_DIR}/../../../bin" ABSOLUTE)
 message("Qt DLL directory: ${QT_DLL_DIR}")
 
-# set exe directory for the config
-set(ECHOCAD_BIN_DIR "${CMAKE_BINARY_DIR}")
-message("Exe directory: ${ECHOCAD_BIN_DIR}")
-
 # Generating config.h
 message(STATUS "Generating config.h")
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)

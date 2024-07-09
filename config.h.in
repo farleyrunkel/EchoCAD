@@ -11,4 +11,6 @@
 #define OPENGL_DLL_DIR "C:/Windows/System32"
 #endif
 
-#define ECHOCAD_BIN_DIR "@ECHOCAD_BIN_DIR@"
+#define ECHOCAD_BIN_DIR "@CMAKE_BINARY_DIR@"
+
+#define PYECHOCAD_PYD_DIR "@CMAKE_BINARY_DIR@/src/binding"
