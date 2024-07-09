@@ -5,7 +5,7 @@
 #include <QString>
 
 #include <pybind11/embed.h>
-#include <string>
+#include <QStringList>
 
 namespace py = pybind11;
 
@@ -16,13 +16,14 @@ public:
     PythonInterpreter();
     ~PythonInterpreter();
 
-    void exportDLL(const QString& theDll);
+    void exportDLL(const QStringList& theDll);
 
     void executeScript(const QString& script);
 
 signals:
 	void logMessage(const QString& theMessage);
-    void dllNeeded(const QString& theDll);
+    void dllNeeded(const QStringList& theDll);
+
 
 private:
     py::scoped_interpreter guard;

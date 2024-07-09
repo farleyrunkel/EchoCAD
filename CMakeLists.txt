@@ -94,7 +94,7 @@ if(${QT_VERSION} VERSION_LESS 6.1.0)
 endif()
 
 # get Qt DLL directory
-get_filename_component(QT_BIN_DIR "${Qt6_DIR}/bin" ABSOLUTE)
+get_filename_component(QT_BIN_DIR "${Qt6_DIR}/../../../bin" ABSOLUTE)
 message("Qt DLL directory: ${QT_BIN_DIR}")
 
 # get OpenGL binary directory
