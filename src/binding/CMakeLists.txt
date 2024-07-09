@@ -2,6 +2,14 @@
 # Specify the list of source files for creating the Python binding module
 message(STATUS "Creating Python binding module using pybind11")
 
+# Enable automatic MOC, UIC, and RCC
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 pybind11_add_module(PyEchoCAD 
     ${CMAKE_SOURCE_DIR}/src/main.cpp
     ${CMAKE_SOURCE_DIR}/src/gui/mainwindow.cpp

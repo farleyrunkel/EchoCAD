@@ -46,11 +46,8 @@ class ModuleLoader:
 # Example usage with command-line arguments
 if __name__ == "__main__":
     # Parse command-line arguments
-    if len(sys.argv) < 2:
-        print("Usage: python script.py <path_to_pyd_file>")
-        sys.exit(1)
     
-    pyd_path = sys.argv[1]  # Assume the first argument is the path to .pyd file
+    pyd_path = "E:/Projects/Project-EchoCAD/EchoCAD/out/build/x64-Debug/src/binding/PyEchoCAD.cp312-win_amd64.pyd"
 
     # Load the module dynamically
     try:
