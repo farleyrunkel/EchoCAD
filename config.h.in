@@ -7,6 +7,6 @@
 
 #define QT_BIN_DIR "@QT_BIN_DIR@"
 
-if defined(_WIN32)
+ifdef _WIN32
 #define OPENGL_DLL_DIR "C:/Windows/System32"
 #endif
