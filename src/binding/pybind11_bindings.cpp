@@ -3,7 +3,7 @@
 #include <pybind11/stl.h>
 
 #include <QOpenGLWidget>
-#include "IOcctViewer.h"
+#include "IOcctWidget.h"
 #include "CadModule.h"
 #include "MainWindow.h"
 

@@ -92,7 +92,7 @@ set_target_properties(EchoCAD PROPERTIES
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EchoCAD)
 endif()
- 
+
 # get Qt DLL directory
 get_filename_component(QT_DLL_DIR "${Qt6_DIR}/../../../bin" ABSOLUTE)
 message("Qt DLL directory: ${QT_DLL_DIR}")
@@ -104,7 +104,7 @@ foreach(subdir ${SUBDIRS})
     if(IS_DIRECTORY ${SRC_DIR}/${subdir})
         include_directories(EchoCAD PRIVATE ${SRC_DIR}/${subdir})
     endif()
-endforeach() 
+endforeach()
  
 # Generating config.h
 message(STATUS "Generating config.h")

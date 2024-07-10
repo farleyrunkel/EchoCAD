@@ -36,8 +36,8 @@ pybind11_add_module(PyEchoCAD
     ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.cpp
     ${CMAKE_SOURCE_DIR}/src/gui/OcctGlTools.cpp
     ${CMAKE_SOURCE_DIR}/src/gui/OcctGlTools.h
-    ${CMAKE_SOURCE_DIR}/src/gui/IOcctViewer.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/IOcctViewer.h
+    ${CMAKE_SOURCE_DIR}/src/gui/IOcctWidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/gui/IOcctWidget.h
     ${CMAKE_SOURCE_DIR}/src/gui/ilineedit.cpp
     ${CMAKE_SOURCE_DIR}/src/gui/ilineedit.h 
     ${CMAKE_SOURCE_DIR}/src/gui/stylemanager.cpp

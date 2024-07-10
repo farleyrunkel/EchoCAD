@@ -22,7 +22,7 @@
 
 #include <AIS_Axis.hxx>
 
-#include "IOcctViewer.h"
+#include "IOcctWidget.h"
 #include "OcctGlTools.h"
 
 

@@ -24,7 +24,7 @@
 
 #include "Scene.h"
 #include "GPTProcessor.h"
-#include "IOcctViewer.h"
+#include "IOcctWidget.h"
 #include "ilineedit.h"
 #include "PythonInterpreter.h"
 
