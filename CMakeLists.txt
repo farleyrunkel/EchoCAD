@@ -153,3 +153,5 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/binding)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/swig)
