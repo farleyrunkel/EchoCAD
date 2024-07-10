@@ -20,7 +20,6 @@ cmake_minimum_required(VERSION 3.12)
 project(PYTHONOCC)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
-set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install)
 
 # set pythonOCC version
 set(PYTHONOCC_VERSION_MAJOR 7)
@@ -266,18 +265,18 @@ endif(WIN32)
 set(CMAKE_SWIG_OUTDIR ${LIBRARY_OUTPUT_PATH})
 
 ##########
-# Temp #
+# Core #
 ##########
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory src/Temp)
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/Temp/Temp.i PROPERTIES CPLUSPLUS ON)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/Temp)
-set(TEMP_SOURCE_FILES
-${CMAKE_CURRENT_SOURCE_DIR}/src/Temp/Temp.i
-${CMAKE_CURRENT_SOURCE_DIR}/src/Temp/Temp.cpp 
-)
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory src/core)
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/core/cadmodule.i PROPERTIES CPLUSPLUS ON)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/core)
+set(CORE_SOURCE_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/src/core/cadmodule.i
+${CMAKE_CURRENT_SOURCE_DIR}/../src/core/cadmodule.cpp
+) 
 
-swig_add_library(Temp LANGUAGE python SOURCES ${TEMP_SOURCE_FILES} TYPE MODULE)
-swig_link_libraries(Temp ${OCCT_MODEL_LIBRARIES} ${OCCT_VISUALIZATION_LIBRARIES} Python3::Module)
+swig_add_library(Core LANGUAGE python SOURCES ${CORE_SOURCE_FILES} TYPE MODULE)
+swig_link_libraries(Core ${OCCT_MODEL_LIBRARIES} ${OCCT_VISUALIZATION_LIBRARIES} Python3::Module)
 
 # ################
 # # Installation #
@@ -289,8 +288,7 @@ else(WIN32)
 endif(WIN32)
 set(BUILD_DIR ${CMAKE_BINARY_DIR}/${LIBRARY_OUTPUT_PATH})
 
-
-# install Temp
-install(FILES ${BUILD_DIR}/Temp.py DESTINATION ${PYTHONOCC_INSTALL_DIRECTORY}/Core )
-install(TARGETS Temp DESTINATION ${PYTHONOCC_INSTALL_DIRECTORY}/Core )
+# install Core
+install(FILES ${BUILD_DIR}/Core.py DESTINATION ${PYTHONOCC_INSTALL_DIRECTORY}/Core )
+install(TARGETS Core DESTINATION ${PYTHONOCC_INSTALL_DIRECTORY}/Core )
 

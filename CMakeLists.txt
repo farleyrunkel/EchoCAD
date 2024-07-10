@@ -92,24 +92,24 @@ set_target_properties(EchoCAD PROPERTIES
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.EchoCAD)
 endif()
-
+ 
 # get Qt DLL directory
 get_filename_component(QT_DLL_DIR "${Qt6_DIR}/../../../bin" ABSOLUTE)
 message("Qt DLL directory: ${QT_DLL_DIR}")
-
-# Generating config.h
-message(STATUS "Generating config.h")
-configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
-target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
 
 # Include the src directory and all its subdirectories
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 file(GLOB SUBDIRS RELATIVE ${SRC_DIR} ${SRC_DIR}/*) 
 foreach(subdir ${SUBDIRS})
     if(IS_DIRECTORY ${SRC_DIR}/${subdir})
-        target_include_directories(EchoCAD PRIVATE ${SRC_DIR}/${subdir})
+        include_directories(EchoCAD PRIVATE ${SRC_DIR}/${subdir})
     endif()
 endforeach() 
+ 
+# Generating config.h
+message(STATUS "Generating config.h")
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
 
 # Include directories
 target_include_directories(EchoCAD PRIVATE ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include) 
