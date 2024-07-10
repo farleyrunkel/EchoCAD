@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 3.12)
 project(PYTHONOCC)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
-
+set(Pythonocc_DIR ${CMAKE_SOURCE_DIR}/external/pythonocc-core)
 # set pythonOCC version
 set(PYTHONOCC_VERSION_MAJOR 7)
 set(PYTHONOCC_VERSION_MINOR 8)
@@ -78,7 +78,7 @@ include_directories(OPENGL_INCLUDE_DIR)
 #################
 # Build options #
 #################
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/OCCT_Modules.cmake)
+include(${Pythonocc_DIR}/cmake/OCCT_Modules.cmake)
 # add an option to choose toolkits to compile
 if(OPENGL_FOUND)
   option_with_default(PYTHONOCC_WRAP_VISU "Compile Visualisation" ON)

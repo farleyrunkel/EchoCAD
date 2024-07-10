@@ -60,7 +60,7 @@ set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc)
 if(WIN32)
     list(APPEND PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.rc)
 endif()
-
+ 
 # Add executable
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(EchoCAD
@@ -104,7 +104,7 @@ foreach(subdir ${SUBDIRS})
     if(IS_DIRECTORY ${SRC_DIR}/${subdir})
         include_directories(EchoCAD PRIVATE ${SRC_DIR}/${subdir})
     endif()
-endforeach()
+endforeach() 
  
 # Generating config.h
 message(STATUS "Generating config.h")
