@@ -52,7 +52,7 @@ endif()
 # Find OpenCASCADE package
 find_package(OpenCASCADE REQUIRED)
 # find_package(QScintilla REQUIRED)
-
+ 
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
 
@@ -102,20 +102,21 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 file(GLOB SUBDIRS RELATIVE ${SRC_DIR} ${SRC_DIR}/*) 
 foreach(subdir ${SUBDIRS})
     if(IS_DIRECTORY ${SRC_DIR}/${subdir})
-        include_directories(EchoCAD PRIVATE ${SRC_DIR}/${subdir})
+        include_directories(${SRC_DIR}/${subdir})
     endif()
 endforeach() 
  
 # Generating config.h
 message(STATUS "Generating config.h")
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
-target_include_directories(EchoCAD PRIVATE ${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_BINARY_DIR})
 
 # Include directories
 target_include_directories(EchoCAD PRIVATE ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include) 
 target_include_directories(EchoCAD PRIVATE ${OpenCASCADE_INCLUDE_DIR})
 target_include_directories(EchoCAD PRIVATE ${Python3_INCLUDE_DIRS})
 target_include_directories(EchoCAD PRIVATE ${QScintilla_INCLUDE_DIR})
+
 message(STATUS "QScintilla include directory: ${QScintilla_INCLUDE_DIR}")
 
 # Link OpenCASCADE libraries

@@ -20,7 +20,9 @@ cmake_minimum_required(VERSION 3.12)
 project(PYTHONOCC)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
+
 set(Pythonocc_DIR ${CMAKE_SOURCE_DIR}/external/pythonocc-core)
+
 # set pythonOCC version
 set(PYTHONOCC_VERSION_MAJOR 7)
 set(PYTHONOCC_VERSION_MINOR 8)
@@ -280,7 +282,7 @@ swig_link_libraries(Core ${OCCT_MODEL_LIBRARIES} ${OCCT_VISUALIZATION_LIBRARIES}
 
 # ################
 # # Installation #
-# ################
+# ################ 
 if(WIN32)
     set(EXTENSION "pyd")
 else(WIN32)

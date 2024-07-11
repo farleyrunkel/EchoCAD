@@ -1,8 +1,7 @@
 
 %module(package="OCC") Core
 
-%include ../config.i
-%include ${PYTHONOCC_CORE_PATH}/src/SWIG_files/common/ExceptionCatcher.i
+%include ../../../external/pythonocc-core/src/SWIG_files/common/ExceptionCatcher.i
 
 %{
 #include <BRep_Builder.hxx>
