@@ -2,6 +2,7 @@
 %module(package="OCC") Core
 
 %include ../../../external/pythonocc-core/src/SWIG_files/common/ExceptionCatcher.i
+%include "python/std_string.i"
 
 %{
 #include <BRep_Builder.hxx>
