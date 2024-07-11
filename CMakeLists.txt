@@ -20,42 +20,60 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
 
 message(STATUS "pybind11_INCLUDE_DIR: ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include")
 
-# Include the file to download and extract Python
-include(cmake/setupPython.cmake)
+# append the cmake directory to the CMAKE_MODULE_PATH
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# Find Python3 package
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-
 if(Python3_FOUND)
 	message(STATUS "Python3 found")
     message(STATUS "Python3 interpreter: ${Python3_EXECUTABLE}")
     message(STATUS "Python include directory: ${Python3_INCLUDE_DIRS}")
     message(STATUS "Python library release: ${Python3_LIBRARY_RELEASE}")
+    
+    # Include the file to setup Python
+    include(setupPython)
 else()
 	message(FATAL_ERROR "Python3 not found")
 endif()
 
 # Find Qt and OpenGL packages
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test )
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core5Compat Test 3DCore 3DExtras 3DInput 3DRender )
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS OpenGLWidgets)
-find_package(OpenGL REQUIRED)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test OpenGLWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core5Compat Test OpenGLWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender)
 
+# Find OpenGL package
+find_package(OpenGL REQUIRED)
 if(OpenGL_FOUND)
 	message(STATUS "OpenGL found")
 	message(STATUS "OpenGL include directory: ${OPENGL_INCLUDE_DIR}")
 	message(STATUS "OpenGL libraries: ${OPENGL_LIBRARIES}")
-
 else()
 	message(FATAL_ERROR "OpenGL not found")
 endif()
 
 # Find OpenCASCADE package
 find_package(OpenCASCADE REQUIRED)
+if(OpenCASCADE_FOUND)
+	message(STATUS "OpenCASCADE found")
+	message(STATUS "OpenCASCADE include directory: ${OpenCASCADE_INCLUDE_DIR}")
+	message(STATUS "OpenCASCADE libraries: ${OpenCASCADE_LIBRARIES}")
+	message(STATUS "OpenCASCADE library directory: ${OpenCASCADE_LIBRARY_DIR}")
+else()
+	message(FATAL_ERROR "OpenCASCADE not found")
+endif()
+
+# Find QScintilla package
 # find_package(QScintilla REQUIRED)
- 
+message(STATUS "QScintilla include directory: " ${QScintilla_INCLUDE_DIR})
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(QSCINTILLA_LIB qscintilla2_qt${QT_VERSION_MAJOR}d)
+else()
+    set(QSCINTILLA_LIB qscintilla2_qt${QT_VERSION_MAJOR})
+endif()
+
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 
-
 # Add Windows specific resources
 if(WIN32)
     list(APPEND PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.rc)
@@ -132,11 +150,17 @@ target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 target_link_libraries(EchoCAD PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
 target_link_libraries(EchoCAD PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(EchoCAD PRIVATE ${PYTHON_LIBRARIES})
-
 target_link_libraries(EchoCAD PRIVATE ${Python3_LIBRARY_RELEASE}) 
+target_link_libraries(EchoCAD PRIVATE ${QSCINTILLA_LIB})
 
-target_link_libraries(EchoCAD PRIVATE debug qscintilla2_qt${QT_VERSION_MAJOR}d)
-target_link_libraries(EchoCAD PRIVATE optimized qscintilla2_qt${QT_VERSION_MAJOR})
+# Copy the qscintilla2 library to the EchoCAD build directory
+add_custom_command(
+    TARGET EchoCAD POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:${QSCINTILLA_LIB}>
+    $<TARGET_FILE_DIR:EchoCAD>
+    COMMENT "Copying ${QSCINTILLA_LIB} to ${CMAKE_BINARY_DIR}"
+)
 
 # Install target
 include(GNUInstallDirs)
