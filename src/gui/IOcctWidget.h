@@ -9,6 +9,8 @@
 #include <AIS_InteractiveContext.hxx>
 #include <AIS_ViewController.hxx>
 #include <V3d_View.hxx>
+#include <TopoDS_Shape.hxx>
+#include <AIS_Shape.hxx>
 
 class AIS_ViewCube;
 
@@ -32,6 +34,8 @@ public:
 
   //! Return AIS context.
   const Handle(AIS_InteractiveContext)& Context() const { return myContext; }
+
+  void Display(const TopoDS_Shape& shape) {myContext->Display(new AIS_Shape(shape), true);}
 
   //! Return OpenGL info.
   const QString& getGlInfo() const { return myGlInfo; }

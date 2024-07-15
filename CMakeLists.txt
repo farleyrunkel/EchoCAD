@@ -11,14 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
-
-set(PYTHON_DIR "${CMAKE_BINARY_DIR}/python")
-set(PYTHONOCC_INSTALL_DIRECTORY ${PYTHON_DIR}/Lib/site-packages)
-
-add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
-
-message(STATUS "pybind11_INCLUDE_DIR: ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include")
+set(PYTHONOCC_INSTALL_DIRECTORY ${CMAKE_BINARY_DIR}/python/Lib/site-packages)
 
 # append the cmake directory to the CMAKE_MODULE_PATH
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -36,6 +29,11 @@ if(Python3_FOUND)
 else()
 	message(FATAL_ERROR "Python3 not found")
 endif()
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
+
+message(STATUS "pybind11_INCLUDE_DIR: ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include")
 
 # Find Qt and OpenGL packages
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test OpenGLWidgets)
@@ -179,4 +177,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/binding)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/tests)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/swig)
+# add_subdirectory(${CMAKE_SOURCE_DIR}/swig)

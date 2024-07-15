@@ -50,7 +50,13 @@ MainWindow::MainWindow(QWidget *theParent)
 }
 
 void MainWindow::setParameters() {
-    mPythonInterpreter->setSysVariable("mainWindow", py::cast(this));
+    if (mPythonInterpreter && viewer()) {
+        mPythonInterpreter->setSysVariable("viewer", py::cast(viewer()));
+    }
+    else {
+        // Log an error message if mPythonInterpreter or viewer is null
+        qWarning() << "mPythonInterpreter or viewer is null!";
+    }
 }
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {

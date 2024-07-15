@@ -10,7 +10,6 @@ void CadModule::initialize() {
 }
 
 TopoDS_Shape CadModule::createBox(double x, double y, double z) {
-    BRepPrimAPI_MakeBox boxMaker(x, y, z);
-    return boxMaker.Shape();
+    return BRepPrimAPI_MakeBox(x, y, z).Shape();
 }
 

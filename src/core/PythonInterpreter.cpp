@@ -86,9 +86,15 @@ void PythonInterpreter::loadModule(const QString& thePath) {
 }
 
 void PythonInterpreter::setSysVariable(const QString& name, py::object value) {
-    py::module_ sys = py::module::import("sys");
-    sys.attr(name.toStdString().c_str()) = value;
-    emit logMessage("Set sys variable:\n" + name);
+    try {
+        py::module_ sys = py::module_::import("sys");
+        sys.attr(name.toStdString().c_str()) = value;
+        emit logMessage("Set sys variable:\n" + name);
+    }
+    catch (const py::error_already_set& e) {
+        // Log the Python error
+        qWarning() << "Failed to set sys variable:" << name << "\n" << e.what();
+    }
 }
 
 void PythonInterpreter::executeScript(const QString& script) {

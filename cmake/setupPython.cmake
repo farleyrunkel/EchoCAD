@@ -17,27 +17,27 @@ if(NOT Python3_Interpreter_FOUND OR NOT Python3_Development_FOUND)
 endif()
 
 # Check if the Python directory exists in the build directory
-if(NOT EXISTS ${PYTHON_DIR})
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/python)
     # Create the Python directory in the build directory
-    file(MAKE_DIRECTORY ${PYTHON_DIR})
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/python)
 
     # Determine the root directory of the found Python installation
     get_filename_component(PYTHON_ROOT ${Python3_EXECUTABLE} DIRECTORY)
     message(STATUS "Python root directory: ${PYTHON_ROOT}")
 
     # Copy the entire Python directory to the build directory
-    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${PYTHON_ROOT}" "${PYTHON_DIR}")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${PYTHON_ROOT}" "${CMAKE_BINARY_DIR}/python")
 else()
-    message(STATUS "Python directory already exists: ${PYTHON_DIR}")
+    message(STATUS "Python directory already exists: ${CMAKE_BINARY_DIR}/python")
 endif()
 
 # Copy Python directory to installation directory
 set(PYTHON_DIR_BASENAME python-${PYTHON_VERSION})
-install(DIRECTORY ${PYTHON_DIR}/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_DIR_BASENAME})
+install(DIRECTORY ${CMAKE_BINARY_DIR}/python/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_DIR_BASENAME})
 
 # Set environment variables
-set(PYTHONHOME ${PYTHON_DIR} CACHE INTERNAL "Path to Python home directory")
-set(PYTHONLIBS  ${PYTHON_DIR}/Lib CACHE INTERNAL "Path to Python library directory")
+set(PYTHONHOME ${CMAKE_BINARY_DIR}/python CACHE INTERNAL "Path to Python home directory")
+set(PYTHONLIBS  ${CMAKE_BINARY_DIR}/python/Lib CACHE INTERNAL "Path to Python library directory")
 
 # Display information
 message(STATUS "PythonHOME set to: ${PYTHONHOME}")
