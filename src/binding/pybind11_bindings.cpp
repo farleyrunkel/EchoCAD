@@ -9,7 +9,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(PyEchoCAD, m) {
+PYBIND11_MODULE(echocad, m) {
     m.doc() = "Python bindings for EchoCAD";
 
     py::class_<QOpenGLWidget>(m, "QOpenGLWidget");
@@ -24,16 +24,16 @@ PYBIND11_MODULE(PyEchoCAD, m) {
         .def("create_box", &CadModule::createBox, py::arg("x"), py::arg("y"), py::arg("z"), "Create a box shape given its dimensions");
 
     // IOcctWidget binding
-    py::class_<IOcctWidget, QOpenGLWidget, AIS_ViewController>(m, "IOcctWidget")
-        .def(py::init<QWidget*>(), py::arg("theParent") = nullptr)
-        .def("Viewer", &IOcctWidget::Viewer)
-        .def("View", &IOcctWidget::View)
-        .def("Context", &IOcctWidget::Context)
-        .def("getGlInfo", &IOcctWidget::getGlInfo)
-        .def("minimumSizeHint", &IOcctWidget::minimumSizeHint)
-        .def("sizeHint", &IOcctWidget::sizeHint)
-        .def("OnSubviewChanged", &IOcctWidget::OnSubviewChanged)
-        .def("Display", &IOcctWidget::Display);
+    py::class_<IOcctWidget, QOpenGLWidget, AIS_ViewController>(m, "iocctwidget")
+        .def(py::init<QWidget*>(), py::arg("theparent") = nullptr)
+        .def("viewer", &IOcctWidget::Viewer)
+        .def("view", &IOcctWidget::View)
+        .def("context", &IOcctWidget::Context)
+        .def("getglinfo", &IOcctWidget::getGlInfo)
+        .def("minimumsizehint", &IOcctWidget::minimumSizeHint)
+        .def("sizehint", &IOcctWidget::sizeHint)
+        .def("onsubviewchanged", &IOcctWidget::OnSubviewChanged)
+        .def("display", &IOcctWidget::Display);
 
     // bind function display using lambda and qt qapp to get main window
     m.def("display", [](const TopoDS_Shape& shape) {

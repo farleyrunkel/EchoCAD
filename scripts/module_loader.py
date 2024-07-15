@@ -47,7 +47,7 @@ class ModuleLoader:
 if __name__ == "__main__":
     # Parse command-line arguments
     
-    pyd_path = "E:/Projects/Project-EchoCAD/EchoCAD/out/build/x64-Debug/src/binding/PyEchoCAD.cp312-win_amd64.pyd"
+    pyd_path = "E:/Projects/Project-EchoCAD/EchoCAD/out/build/x64-Debug/src/binding/echocad.cp312-win_amd64.pyd"
 
     # Load the module dynamically
     try:

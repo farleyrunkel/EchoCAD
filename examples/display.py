@@ -1,4 +1,4 @@
-import PyEchoCAD as echo
+import echocad as echo
 
 # Create an instance of CadModule
 cad = echo.CadModule()
