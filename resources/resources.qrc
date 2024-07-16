@@ -1,12 +1,20 @@
 <RCC>
     <qresource prefix="/">
+        <file>styles/style.qss</file>
+        <file>icons/EchoCAD.ico</file>
         <file>icons/EchoCAD.svg</file>
         <file>icons/send.svg</file>
-        <file>icons/EchoCAD.ico</file>
-        <file>styles/style.qss</file>
         <file>icons/sidebar-left.svg</file>
-        <file>icons/caret-right.svg</file>
+        <file>icons/play.svg</file>
         <file>icons/arrow-rotate-right.svg</file>
         <file>icons/expand.svg</file>
+        <file>icons/box.svg</file>
+          <file>icons/sphere.svg</file>
+          <file>icons/cylinder.svg</file>
+          <file>icons/cone.svg</file>
+          <file>icons/torus.svg</file>
+          <file>icons/wedge.svg</file>
+          <file>icons/extrude.svg</file>
+
     </qresource>
 </RCC>

@@ -1,0 +1,39 @@
+<svg height="1600" viewBox="0 0 1600 1600" width="1600" xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd">
+  <sodipodi:namedview pagecolor="#303030" showgrid="true">
+    <inkscape:grid id="grid5" units="px" spacingx="100" spacingy="100" color="#4772b3" opacity="0.2" visible="true" />
+  </sodipodi:namedview>
+  <g fill="#fff">
+    <g enable-background="new" fill-rule="evenodd" transform="matrix(100 0 0 100 14500 -51500)">
+      <path d="m-141 519.5v1.5h1v-1.5zm0 2.5v2h1v-2zm0 3v1.2793l-2.58594 2.35156.67188.73828 2.60351-2.36719 1.31055-.00195v-1h-1v-1zm3.00781 1v1h2v-1zm2.99219 0v1h1.5v-1z" opacity=".6"/>
+      <path d="m303.5 242
+a.50005.50005 0 0 0 -.35352.14648
+l-3 3
+a.50005.50005 0 0 0 -.14648.35352
+v10
+a.50005.50005 0 0 0 .5.5
+h10
+a.50005.50005 0 0 0 .35352-.14648
+l3-3
+a.50005.50005 0 0 0 .14648-.35352
+v-10
+a.50005.50005 0 0 0 -.5-.5
+z
+m.20703 1
+h8.58594
+l-2 2
+h-8.58594
+z
+m9.29297.70703
+v8.58594
+l-2 2
+v-8.58594
+z
+m-12 2.29297
+h9
+v9
+h-9
+z  "
+      transform="translate(-444 274)"/>
+    </g>
+  </g>
+</svg>

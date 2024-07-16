@@ -5,14 +5,14 @@
 #include <QDir>
 
 PythonInterpreter::PythonInterpreter() : guard{} {
-  connect(this, &PythonInterpreter::dllNeeded, this, &PythonInterpreter::exportDLL);
+  connect(this, &PythonInterpreter::dllNeeded, this, &PythonInterpreter::importDLL);
   connect(this, &PythonInterpreter::moduleNeeded, this, &PythonInterpreter::loadModule);
 }
 
 PythonInterpreter::~PythonInterpreter() {
 }
 
-void PythonInterpreter::exportDLL(const QStringList& theDll) {
+void PythonInterpreter::importDLL(const QStringList& theDll) {
     py::module_ os  = py::module::import("os");
     for (auto dll : theDll) {
         os.attr("add_dll_directory")(dll.toStdString());

@@ -11,6 +11,14 @@
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
+#include <AIS_ViewCube.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
+#include <BRepPrimAPI_MakeCone.hxx>
+#include <BRepPrimAPI_MakeTorus.hxx>
+#include <BRepPrimAPI_MakeWedge.hxx>
+#include <BRepPrimAPI_MakePrism.hxx>
 
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
@@ -42,21 +50,15 @@ MainWindow::MainWindow(QWidget *theParent)
 
     setConnects();
 
-    emit mPythonInterpreter->dllNeeded({ OCCT_DLL_DIR, QT_DLL_DIR, OPENGL_DLL_DIR, ECHOCAD_BIN_DIR });
-    emit mPythonInterpreter->moduleNeeded( PYECHOCAD_PYD_DIR );
-    emit mSplitter->widget(0)->setVisible(false);
-
     setParameters();
 }
 
 void MainWindow::setParameters() {
-    if (mPythonInterpreter && viewer()) {
-        mPythonInterpreter->setSysVariable("viewer", py::cast(viewer()));
-    }
-    else {
-        // Log an error message if mPythonInterpreter or viewer is null
-        qWarning() << "mPythonInterpreter or viewer is null!";
-    }
+    mPythonInterpreter->importDLL({ OCCT_DLL_DIR, QT_DLL_DIR, OPENGL_DLL_DIR, ECHOCAD_BIN_DIR });
+    mPythonInterpreter->loadModule( PYECHOCAD_PYD_DIR );
+    mPythonInterpreter->setSysVariable("viewer", py::cast(viewer()));
+
+    mSplitter->widget(0)->setVisible(false);
 }
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {
@@ -123,7 +125,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         {
             // add button
             QPushButton* aButton = new QPushButton("", aButtonsBox);
-            aButton->setIcon(QIcon("://icons/caret-right.svg"));
+            aButton->setIcon(QIcon("://icons/play.svg"));
             aButton->setObjectName("RoundedButton");
 
             aButtonsLayout->addWidget(aButton);
@@ -253,22 +255,122 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aButtonsLayout->addWidget(aSpacer);
         }
         {
-            // add expand button
+            // add topods shape box button
             QPushButton* aButton = new QPushButton("", aButtonsBox);
-            aButton->setIcon(QIcon("://icons/expand.svg"));
+            aButton->setIcon(QIcon("://icons/box.svg"));
             aButton->setObjectName("RoundedButton");
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
 				{
-					mViewer->View()->FitAll();
-					mViewer->View()->Redraw();
+                    auto box = BRepPrimAPI_MakeBox(100, 100, 100).Shape();
+					mViewer->Context()->Display(new AIS_Shape(box), AIS_Shaded, 0, false);
+                   // update and show
+                    mViewer->View()->Update();             
 				});
+        }
+
+        {
+            // add topods shape sphere button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/sphere.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    auto sphere = BRepPrimAPI_MakeSphere(100).Shape();
+                    mViewer->Context()->Display(new AIS_Shape(sphere), AIS_Shaded, 0, false);
+                    // update and show
+                    mViewer->View()->Update();
+                    ; });
+        }
+        {
+            // add cylinder shape
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/cylinder.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    auto cylinder = BRepPrimAPI_MakeCylinder(50, 100).Shape();
+                    mViewer->Context()->Display(new AIS_Shape(cylinder), AIS_Shaded, 0, false);
+                    // update and show
+                    mViewer->View()->Update();
+                    ; });
+        }
+        {
+            // cone
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/cone.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+				{
+					auto cone = BRepPrimAPI_MakeCone(50, 0, 100).Shape();
+					mViewer->Context()->Display(new AIS_Shape(cone), AIS_Shaded, 0, false);
+					// update and show
+					mViewer->View()->Update();
+					; });
+        
+        }
+        {
+            // torus
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/torus.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    auto torus = BRepPrimAPI_MakeTorus(50, 20).Shape();
+                    mViewer->Context()->Display(new AIS_Shape(torus), AIS_Shaded, 0, false);
+                    // update and show
+                    mViewer->View()->Update();
+                    ; });
+        }
+		{
+			// wedge
+			QPushButton* aButton = new QPushButton("", aButtonsBox);
+			aButton->setIcon(QIcon("://icons/wedge.svg"));
+			aButton->setObjectName("RoundedButton");
+			aButtonsLayout->addWidget(aButton);
+			connect(aButton, &QPushButton::clicked, [this]()
+				{
+					auto wedge = BRepPrimAPI_MakeWedge(100, 100, 100, 50).Shape();
+                    mViewer->Context()->Display(new AIS_Shape(wedge), AIS_Shaded, 0, false);
+					// update and show
+					mViewer->View()->Update();
+					; });
+		}
+        {
+            // add spacer
+            QWidget* aSpacer = new QWidget();
+            aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            aSpacer->setFixedWidth(20);
+            aButtonsLayout->addWidget(aSpacer);
+        }
+        {
+            // extrude button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/extrude.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
         }
         {
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             aButtonsLayout->addWidget(aSpacer);
+        }
+        {
+            // add expand button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/expand.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    mViewer->View()->FitAll();
+                    mViewer->View()->Redraw();
+                });
         }
         {
             QSlider* aSlider = new QSlider(Qt::Horizontal);
@@ -338,14 +440,6 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
         	connect(mLineEdit->rightButton(), &QPushButton::clicked, mLineEdit, &ILineEdit::returnPressed);
             connect(mLineEdit, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
         }
-    }
-    {
-        // Create a sphere shape
-        TopoDS_Shape aSphere = BRepPrimAPI_MakeSphere(gp_Pnt(0, 0, 0), 100.0).Shape();
-        Handle(AIS_Shape) aShape = new AIS_Shape(aSphere);
-
-        // Display the sphere in the viewer
-        mViewer->Context()->Display(aShape, AIS_Shaded, 0, false);
     }
 }
 

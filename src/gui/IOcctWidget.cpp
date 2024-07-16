@@ -497,7 +497,6 @@ void IOcctWidget::mouseMoveEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseMoveEvent (theEvent);
   const Graphic3d_Vec2i aNewPos (theEvent->pos().x(), theEvent->pos().y());
-  qDebug() << "Mouse move event: " << aNewPos.x() << ", " << aNewPos.y();
 
   if (!myView.IsNull()
     && UpdateMousePosition (aNewPos,

@@ -35,7 +35,7 @@ public:
   //! Return AIS context.
   const Handle(AIS_InteractiveContext)& Context() const { return myContext; }
 
-  void Display(const TopoDS_Shape& shape) {myContext->Display(new AIS_Shape(shape), true);}
+  void Display(const TopoDS_Shape& shape) {myContext->Display(new AIS_Shape(shape), AIS_Shaded, 0, false);}
 
   //! Return OpenGL info.
   const QString& getGlInfo() const { return myGlInfo; }

@@ -16,7 +16,7 @@ public:
     PythonInterpreter();
     ~PythonInterpreter();
 
-    void exportDLL(const QStringList& theDll);
+    void importDLL(const QStringList& theDll);
 
     void loadModule(const QString& pydPath);
 
