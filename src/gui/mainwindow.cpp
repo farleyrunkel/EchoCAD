@@ -19,6 +19,7 @@
 #include <BRepPrimAPI_MakeTorus.hxx>
 #include <BRepPrimAPI_MakeWedge.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
+#include <TopoDS.hxx>
 
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
@@ -247,6 +248,34 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
                 }
                 ; });
         }
+        {
+            // add spacer
+            QWidget* aSpacer = new QWidget();
+            aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            aSpacer->setFixedWidth(20);
+            aButtonsLayout->addWidget(aSpacer);
+        }
+        {
+            // add selete mode point
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/select_point.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+        }
+        {
+			// add selete mode edge
+			QPushButton* aButton = new QPushButton("", aButtonsBox);
+			aButton->setIcon(QIcon("://icons/select_edge.svg"));
+			aButton->setObjectName("RoundedButton");
+			aButtonsLayout->addWidget(aButton);
+		}
+		{
+			// add selete mode face
+			QPushButton* aButton = new QPushButton("", aButtonsBox);
+			aButton->setIcon(QIcon("://icons/select_face.svg"));
+			aButton->setObjectName("RoundedButton");
+			aButtonsLayout->addWidget(aButton);
+		}
         {
             // add spacer
             QWidget* aSpacer = new QWidget();

@@ -15,6 +15,9 @@
           <file>icons/torus.svg</file>
           <file>icons/wedge.svg</file>
           <file>icons/extrude.svg</file>
+          <file>icons/select_point.svg</file>
+          <file>icons/select_edge.svg</file>
+          <file>icons/select_face.svg</file>
 
     </qresource>
 </RCC>
