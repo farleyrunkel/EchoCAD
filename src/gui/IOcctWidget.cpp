@@ -12,7 +12,12 @@
 #include <AIS_ViewCube.hxx>
 #include <Aspect_DisplayConnection.hxx>
 #include <Aspect_NeutralWindow.hxx>
+#include <Prs3d_ArrowAspect.hxx>
+#include <Prs3d_Drawer.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
+#include <StdSelect_BRepSelectionTool.hxx>
+#include <TopoDS.hxx>
+
 #include <Message.hxx>
 #include <OpenGl_GraphicDriver.hxx>
 #include <OpenGl_FrameBuffer.hxx>
@@ -227,12 +232,21 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   myViewer->SetRectangularGridGraphicValues(50000, 50000, 0);
   myViewer->SetRectangularGridValues(0, 0, 100, 100, 0);
 
+
   //! set grid echo <aMarker> to the hit point.
   Handle(Graphic3d_AspectMarker3d) aMaker = new Graphic3d_AspectMarker3d(Aspect_TOM_O, Quantity_NOC_ALICEBLUE, 1.0);
   myViewer->SetGridEcho(aMaker);
 
   // create AIS context
   myContext = new AIS_InteractiveContext (myViewer);
+  myContext->SetDisplayMode (AIS_Shaded, Standard_True);
+
+  // try to set all AIS_InteractiveContext options for test 
+  auto aSettings = new Prs3d_Drawer();
+  aSettings->SetFaceBoundaryDraw (true);
+  aSettings->SetArrowAspect (new Prs3d_ArrowAspect ( 1.0, 35.0));
+  aSettings->SetFaceBoundaryAspect (new Prs3d_LineAspect (Quantity_NOC_BLACK, Aspect_TOL_SOLID, 1.0));
+  myContext->SetHighlightStyle(aSettings);
 
   {
       // Create Z-axis with direction (0, 0, 1)

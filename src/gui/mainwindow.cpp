@@ -8,6 +8,7 @@
 #include <QDesktopServices>
 #include <QRegExp>
 #include <QTextBrowser>
+#include <QGraphicsDropShadowEffect>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
@@ -99,9 +100,11 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
 
     auto aLayout = new QVBoxLayout(mEditorWidget);
     aLayout->setContentsMargins(0, 0, 0, 0);
-    aLayout->setSpacing(0);
+    aLayout->setSpacing(2);
+
     {
         QWidget* aButtonsBox = new QWidget();
+
         aLayout->addWidget(aButtonsBox);
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
         {
@@ -138,6 +141,17 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         {
             // add button
             QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/plus.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            //connect(aButton, &QPushButton::clicked, [this]()
+            //    {
+            //        mPythonInterpreter->executeScript(mEditor->text());
+            //    });
+        }
+        {
+            // add button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
             aButton->setIcon(QIcon("://icons/arrow-rotate-right.svg"));
             aButton->setObjectName("RoundedButton");
 
@@ -150,11 +164,11 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         }
     }
     {
-        // add horizontal line with bottom margin shadow
-        QFrame* aLine = new QFrame(mEditorWidget);
-        aLine->setFrameShape(QFrame::NoFrame);
-        aLine->setFixedHeight(1);
-        aLine->setStyleSheet("background-color: #383838;");
+        // set a line
+        QFrame* aLine = new QFrame();
+        aLine->setFrameShape(QFrame::HLine);
+        aLine->setFrameShadow(QFrame::Sunken);
+        aLine->setStyleSheet("background-color: #333333;");
         aLayout->addWidget(aLine);
     }
     {
@@ -216,6 +230,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
 
     mViewer = theViewer;
     mViewer->setObjectName("OcctViewer");
+
     // 3D Viewer and some controls on top of it
     QVBoxLayout* aLayout = new QVBoxLayout(mViewer);
     aLayout->setContentsMargins(0, 0, 0, 20);
@@ -224,9 +239,9 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
     {
         QWidget* aButtonsBox = new QWidget();
 
+
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
         aButtonsLayout->setAlignment(Qt::AlignLeft);
-
         {
             // add button
             mSplitterButtons[1] = new QPushButton("", aButtonsBox);
@@ -252,7 +267,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            aSpacer->setFixedWidth(20);
+            aSpacer->setFixedWidth(10);
             aButtonsLayout->addWidget(aSpacer);
         }
         {
@@ -261,6 +276,11 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aButton->setIcon(QIcon("://icons/select_point.svg"));
             aButton->setObjectName("RoundedButton");
             aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+				{
+     //               mViewer->Context()->
+					//mViewer->Context()->SetSelectionMode(SelectionMode::SelectionMode_Vertex);
+				});
         }
         {
 			// add selete mode edge
@@ -280,7 +300,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            aSpacer->setFixedWidth(20);
+            aSpacer->setFixedWidth(10);
             aButtonsLayout->addWidget(aSpacer);
         }
         {
@@ -292,7 +312,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             connect(aButton, &QPushButton::clicked, [this]()
 				{
                     auto box = BRepPrimAPI_MakeBox(100, 100, 100).Shape();
-					mViewer->Context()->Display(new AIS_Shape(box), AIS_Shaded, 0, false);
+					mViewer->Context()->Display(new AIS_Shape(box), Standard_True);
                    // update and show
                     mViewer->View()->Update();             
 				});
@@ -307,7 +327,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             connect(aButton, &QPushButton::clicked, [this]()
                 {
                     auto sphere = BRepPrimAPI_MakeSphere(100).Shape();
-                    mViewer->Context()->Display(new AIS_Shape(sphere), AIS_Shaded, 0, false);
+                    mViewer->Context()->Display(new AIS_Shape(sphere), Standard_True);
                     // update and show
                     mViewer->View()->Update();
                     ; });
@@ -321,7 +341,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             connect(aButton, &QPushButton::clicked, [this]()
                 {
                     auto cylinder = BRepPrimAPI_MakeCylinder(50, 100).Shape();
-                    mViewer->Context()->Display(new AIS_Shape(cylinder), AIS_Shaded, 0, false);
+                    mViewer->Context()->Display(new AIS_Shape(cylinder), Standard_True);
                     // update and show
                     mViewer->View()->Update();
                     ; });
@@ -335,7 +355,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             connect(aButton, &QPushButton::clicked, [this]()
 				{
 					auto cone = BRepPrimAPI_MakeCone(50, 0, 100).Shape();
-					mViewer->Context()->Display(new AIS_Shape(cone), AIS_Shaded, 0, false);
+					mViewer->Context()->Display(new AIS_Shape(cone), Standard_True);
 					// update and show
 					mViewer->View()->Update();
 					; });
@@ -350,7 +370,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             connect(aButton, &QPushButton::clicked, [this]()
                 {
                     auto torus = BRepPrimAPI_MakeTorus(50, 20).Shape();
-                    mViewer->Context()->Display(new AIS_Shape(torus), AIS_Shaded, 0, false);
+                    mViewer->Context()->Display(new AIS_Shape(torus), Standard_True);
                     // update and show
                     mViewer->View()->Update();
                     ; });
@@ -364,7 +384,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
 			connect(aButton, &QPushButton::clicked, [this]()
 				{
 					auto wedge = BRepPrimAPI_MakeWedge(100, 100, 100, 50).Shape();
-                    mViewer->Context()->Display(new AIS_Shape(wedge), AIS_Shaded, 0, false);
+                    mViewer->Context()->Display(new AIS_Shape(wedge), Standard_True);
 					// update and show
 					mViewer->View()->Update();
 					; });
@@ -373,7 +393,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            aSpacer->setFixedWidth(20);
+            aSpacer->setFixedWidth(10);
             aButtonsLayout->addWidget(aSpacer);
         }
         {
@@ -382,6 +402,24 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aButton->setIcon(QIcon("://icons/extrude.svg"));
             aButton->setObjectName("RoundedButton");
             aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+				{
+                    // get selected box
+					auto box = mViewer->Context()->SelectedInteractive();
+                   					if (box.IsNull())
+					{
+                                     
+						QMessageBox::warning(this, "Warning", "Please select a shape first!");
+						return;
+					}
+
+                // extrude the box  
+     //                               auto shape = box->Shape();
+					//auto prism = BRepPrimAPI_MakePrism(box, gp_Vec(0, 0, 100)).Shape();
+					//mViewer->Context()->Display(new AIS_Shape(prism), Standard_True);
+					//// update and show
+					//mViewer->View()->Update();
+					; });
         }
         {
             // add spacer

@@ -18,6 +18,7 @@
           <file>icons/select_point.svg</file>
           <file>icons/select_edge.svg</file>
           <file>icons/select_face.svg</file>
+          <file>icons/plus.svg</file>
 
     </qresource>
 </RCC>
