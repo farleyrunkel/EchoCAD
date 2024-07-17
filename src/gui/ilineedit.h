@@ -17,6 +17,7 @@ public:
 
     QPushButton *rightButton() const;
 
+
 private:
     QPushButton *mButtonLeft;
     QPushButton *mButtonRight;

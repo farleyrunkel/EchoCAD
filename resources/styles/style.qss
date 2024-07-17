@@ -28,7 +28,7 @@
     Background Colors:
         @LightBackground:     #F5F5F5;  (245, 245, 245)
         @NeutralBackground:   #E0E0E0;  (224, 224, 224)
-        @DarkBackground:      #282828;  (40, 40, 40)
+        @DarkBackground:      #0d1117;  (40, 40, 40)
 
     Border Colors:
         @LightBorder:         #E0E0E0;  (224, 224, 224)

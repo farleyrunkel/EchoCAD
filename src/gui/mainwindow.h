@@ -27,6 +27,7 @@
 #include "IOcctWidget.h"
 #include "ilineedit.h"
 #include "PythonInterpreter.h"
+#include "IJupyterWidget.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -67,7 +68,7 @@ private:
     QSplitter* mSplitter;
     QTextBrowser* mTextBrowser;
 
-    QsciScintilla* mEditor;
+    IJupyterWidget* mEditor;
 
     QPushButton* mSplitterButtons[2];
 

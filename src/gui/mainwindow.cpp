@@ -29,6 +29,7 @@
 #include "ioverlaywidget.h"
 #include "stylemanager.h"
 #include "config.h"
+#include "IJupyterWidget.h"
 
 namespace py = pybind11;
 
@@ -133,17 +134,6 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
             aButton->setObjectName("RoundedButton");
 
             aButtonsLayout->addWidget(aButton);
-            connect(aButton, &QPushButton::clicked, [this]()
-                {
-                    mPythonInterpreter->executeScript(mEditor->text());
-                });
-        }
-        {
-            // add button
-            QPushButton* aButton = new QPushButton("", aButtonsBox);
-            aButton->setIcon(QIcon("://icons/plus.svg"));
-            aButton->setObjectName("RoundedButton");
-            aButtonsLayout->addWidget(aButton);
             //connect(aButton, &QPushButton::clicked, [this]()
             //    {
             //        mPythonInterpreter->executeScript(mEditor->text());
@@ -152,14 +142,25 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         {
             // add button
             QPushButton* aButton = new QPushButton("", aButtonsBox);
+            aButton->setIcon(QIcon("://icons/plus.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    mEditor->addItem(new IJupyterItem());
+                });
+        }
+        {
+            // add button
+            QPushButton* aButton = new QPushButton("", aButtonsBox);
             aButton->setIcon(QIcon("://icons/arrow-rotate-right.svg"));
             aButton->setObjectName("RoundedButton");
 
             aButtonsLayout->addWidget(aButton);
-            connect(aButton, &QPushButton::clicked, [this]()
-                {
-                    mEditor->setText(mLineEdit->text());
-                });
+            //connect(aButton, &QPushButton::clicked, [this]()
+            //    {
+            //        mEditor->setText(mLineEdit->text());
+            //    });
 
         }
     }
@@ -167,59 +168,16 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
         // set a line
         QFrame* aLine = new QFrame();
         aLine->setFrameShape(QFrame::HLine);
+        aLine->setFixedHeight(1);
         aLine->setFrameShadow(QFrame::Sunken);
-        aLine->setStyleSheet("background-color: #333333;");
+        aLine->setStyleSheet("background-color: #30363d;");
         aLayout->addWidget(aLine);
     }
     {
         // set editor area
-		mEditor = new QsciScintilla(mEditorWidget);
-        mEditor->setObjectName("PythonEditor");
-
-        mEditor->setFrameShape(QFrame::NoFrame);
-		aLayout->addWidget(mEditor);
-
-        QFont aFont;
-        aFont.setFamily("Consolas"); // Set the font family to Consolas
-        aFont.setPointSize(10);
-
-        // Set the lexer to Python
-        auto aLexer = new QsciLexerPython();
-        aLexer->setDefaultFont(aFont);
-        aLexer->setFont(aFont, 1); // comment
-        aLexer->setFont(aFont, 3); // singlequotes
-        aLexer->setFont(aFont, 4); // doublequotes
-        aLexer->setFont(aFont, 6); // triplequotes
-        aLexer->setColor(Qt::red, 1); // comment color
-        aLexer->setColor(Qt::darkGreen, 5); // keyword color
-        aLexer->setColor(Qt::darkBlue, 15); // decorator color
-        // aLexer->setColor(Qt::white); // default color
-
-        aLexer->setDefaultPaper(QColor(StyleManager::instance().colorPalette("DarkBackground")));
-
-        mEditor->setLexer(aLexer);
-
-        mEditor->setFont(aFont);
-        mEditor->setMarginsFont(aFont);
-
-        // Margin 0 is used for line numbers
-        mEditor->setMarginType(0, QsciScintilla::NumberMargin);
-        mEditor->setMarginWidth(0, "0000");
-        mEditor->setMarginsBackgroundColor(QColor(StyleManager::instance().colorPalette("DarkBackground")));
-        mEditor->setMarginsForegroundColor(Qt::white);
-
-        mEditor->setFolding(QsciScintilla::NoFoldStyle, 2);
-
-        // Brace matching
-        mEditor->setBraceMatching(QsciScintilla::SloppyBraceMatch);
-
-        // Current line visible with special background color
-        mEditor->setCaretLineVisible(true);
-        mEditor->setCaretLineBackgroundColor(QColor(StyleManager::instance().colorPalette("DarkBackground")));
-
-        // set pointer color white
-        mEditor->setCaretForegroundColor(Qt::white);
-
+		mEditor = new IJupyterWidget(mEditorWidget);
+        mEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        aLayout->addWidget(mEditor);
     }
 }
 
