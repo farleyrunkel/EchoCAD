@@ -1,6 +1,9 @@
 #include "ilineedit.h"
 
-ILineEdit::ILineEdit(QWidget *parent) : QLineEdit(parent) {
+ILineEdit::ILineEdit(QWidget *parent) : QLineEdit(parent),
+									   mButtonLeft(nullptr),
+									   mButtonRight(nullptr)
+{
     // Set maximum height of the line edit
     setMaximumHeight(40);
 
@@ -24,12 +27,18 @@ ILineEdit::ILineEdit(QWidget *parent) : QLineEdit(parent) {
     hLayout->addStretch(1);
     hLayout->addWidget(mButtonRight);
 
+    leftButton()->hide();
+    rightButton()->hide();
     // Set the layout for the line edit
     setLayout(hLayout);
 }
 
 // Get left button
-QPushButton *ILineEdit::leftButton() const { return mButtonLeft; }
+QPushButton *ILineEdit::leftButton() const { 
+    return mButtonLeft; 
+}
 
 // Get right button
-QPushButton *ILineEdit::rightButton() const { return mButtonRight; }
+QPushButton *ILineEdit::rightButton() const { 
+    return mButtonRight; 
+}

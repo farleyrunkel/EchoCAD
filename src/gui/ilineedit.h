@@ -17,6 +17,19 @@ public:
 
     QPushButton *rightButton() const;
 
+signals:
+    void focused(bool isFocused);
+
+protected:
+    void focusInEvent(QFocusEvent* event) override {
+        QLineEdit::focusInEvent(event);
+        emit focused(true);
+    }
+
+    void focusOutEvent(QFocusEvent* event) override {
+        QLineEdit::focusOutEvent(event);
+        emit focused(false);
+    }
 
 private:
     QPushButton *mButtonLeft;

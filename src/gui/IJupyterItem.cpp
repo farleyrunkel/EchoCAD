@@ -1,6 +1,7 @@
 #include "IJupyterItem.h"
 
-IJupyterItem::IJupyterItem(QWidget* parent) : QWidget(parent) {
+IJupyterItem::IJupyterItem(QWidget* parent) : QWidget(parent)
+{
 
     setMainUi();
     setFixedHeight(30);
@@ -12,64 +13,84 @@ IJupyterItem::IJupyterItem(QWidget* parent) : QWidget(parent) {
 
 void IJupyterItem::setMainUi() {
 
-    myLineEdit = new QLineEdit(this);
+    setObjectName("myIJupyterItem");
 
     aLayout = new QHBoxLayout(this);
 
     setLayout(aLayout);
 
-    aLayout->setContentsMargins(2, 2, 2, 2);
+    aLayout->setContentsMargins(4, 4, 4, 4);
+    aLayout->setSpacing(2);
     myColorLabel = new QLabel("", this);
 
     myColorLabel->setFixedWidth(6);
 
     myTagLabel = new QLabel(" [ ]:", this);
+    myTagLabel->setFixedWidth(26);
+
+    myLineEdit = new ILineEdit;
 
     aLayout->addWidget(myColorLabel);
     aLayout->addWidget(myTagLabel);
     aLayout->addWidget(myLineEdit);
 
+    aLayout->setAlignment(Qt::AlignLeft);
+    aLayout->setDirection(QBoxLayout::LeftToRight);
 
-    // setFixedHeight(40);
+    connect(myLineEdit, &ILineEdit::focused, [this](bool isFocused) {
+        this->setActiveStyleSheets();
+        emit itemClicked(this);
+      });
 
 }
 
-void IJupyterItem::setStyleSheets() {
-
-    this->setStyleSheet(R"(
-        IJupyterWidget {
-        background-color: #1e1e1e;
-        border: 1px;
-    }
-         IJupyterWidget:pressed {
-	    border: 1px solid #238635;
-}
-    )");
-
+void IJupyterItem::setActiveStyleSheets() {
     myColorLabel->setStyleSheet(R"(
 			QLabel {
 				background-color: #238635;
-       border-radius: 2px;
+            border-radius: 2px;
 			})");
     myTagLabel->setStyleSheet(R"(
 			QLabel {
 				color: #238635;
 			})");
+}
 
+void IJupyterItem::setStyleSheets() {
+    this->setStyleSheet(R"(
+        IJupyterItem {
+            border: 1px hidden #30363d;
+    }
+    )");
+
+    myColorLabel->setStyleSheet(R"(
+			QLabel {
+				background-color: transparent;
+            border-radius: 2px;
+			})");
+    myTagLabel->setStyleSheet(R"(
+			QLabel {
+				color: #FFFFF0;
+			})");
     myLineEdit->setStyleSheet(R"(
-        QLineEdit {
+        ILineEdit {
             border: 1px solid #30363d;
             border-radius: 5px;
-            background-color: #0d1117;  
             height: 20px;
             color: white;
             font-family: Consolas;
+			font-size: 10pt;
     }
-        QLineEdit:focus {
+        ILineEdit:focus {
             border: 1px solid #238635;
-        }
-    )");
+			}
+)");
 
+}
+
+inline void IJupyterItem::mousePressEvent(QMouseEvent* event) {
+    // if point is in this widget
+      emit itemClicked(this);
 }
 
 void IJupyterItem::setPythonLexer() {
