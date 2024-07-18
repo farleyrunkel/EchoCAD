@@ -101,19 +101,27 @@ void PythonInterpreter::executeScript(const QString& script) {
 
     emit logMessage("Executing script:\n" + script);
 
+    // first try to calculate, if not, exec this script
+
+    py::str python_code_pystr(script.toStdString());
+
     try {
-        // Convert the script to a pybind11 string
-        py::str python_code_pystr(script.toStdString());
-
-        // Execute the Python code      
-        py::exec(python_code_pystr);
-
-        emit logMessage("Executed successfully:\n");
-
+        // calculate the Python code      
+        auto result = py::eval(python_code_pystr);
+        QString result_str = QString::fromStdString(py::str(result));
+        emit logMessage("result_str : \n" + result_str);   
     }
     catch (const py::error_already_set& e) {
-        qDebug() << "Python error: " << e.what();
-        emit logMessage("Python error : \n" + QString(e.what()));
+        try {
+            py::exec(python_code_pystr);
+   
+            emit logMessage("exec successfully:\n");
+        }
+        catch (...) {
+            emit logMessage("exec unsuccessfully:\n");
+
+            qDebug() << "Unknown error occurred";
+        }
     }
     catch (const std::exception& e) {
         qDebug() << "Standard exception: " << e.what();

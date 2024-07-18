@@ -25,6 +25,10 @@ public:
 
     void setStyleSheets();
 
+    QString text() {
+        return myLineEdit->text();
+    }
+
 signals:
     void textEdited(IJupyterItem* item);
     void itemClicked(IJupyterItem* item);

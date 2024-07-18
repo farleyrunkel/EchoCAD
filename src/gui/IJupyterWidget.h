@@ -25,8 +25,14 @@ class IJupyterWidget : public QScrollArea
 public:
     IJupyterWidget(QWidget* parent = nullptr);
 
+	void setActiveStyleSheet();
+
     void setStyleSheet();
     void addItem(IJupyterItem* item);
+
+	QString activeText() {
+		return activeItem->text();
+	}
 
  //   void deleteItem(IJupyterItem* item)
 	//{

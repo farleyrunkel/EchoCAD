@@ -2,53 +2,15 @@
 # Specify the list of source files for creating the Python binding module
 message(STATUS "Creating Python binding module using pybind11")
 
-# Enable automatic MOC, UIC, and RCC
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+# Find all source and header files in all subdirectories under the src directory
+file(GLOB PROJECT_SUBSOURCES
+    "${CMAKE_SOURCE_DIR}/src/*/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/*/*.h"
+)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+pybind11_add_module(echocad MODULE
 
-pybind11_add_module(echocad 
-    ${CMAKE_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/mainwindow.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/mainwindow.h
-    ${CMAKE_SOURCE_DIR}/src/tests/itestwidget.cpp
-    ${CMAKE_SOURCE_DIR}/src/tests/itestwidget.h
-    ${CMAKE_SOURCE_DIR}/src/gui/initializer.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/initializer.h
-    ${CMAKE_SOURCE_DIR}/src/3d/grid.h 
-    ${CMAKE_SOURCE_DIR}/src/3d/grid.cpp
-    ${CMAKE_SOURCE_DIR}/src/3d/scene.h 
-    ${CMAKE_SOURCE_DIR}/src/3d/scene.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/gptprocessor.h 
-    ${CMAKE_SOURCE_DIR}/src/core/gptprocessor.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/OcctEntity.h  
-    ${CMAKE_SOURCE_DIR}/src/core/OcctEntity.cpp
-    ${CMAKE_SOURCE_DIR}/src/core/PythonInterpreter.cpp 
-    ${CMAKE_SOURCE_DIR}/src/core/PythonInterpreter.h
-
-    ${CMAKE_SOURCE_DIR}/src/core/cadmodule.cpp 
-    ${CMAKE_SOURCE_DIR}/src/core/cadmodule.h
-
-    ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.h 
-    ${CMAKE_SOURCE_DIR}/src/gui/ioverlaywidget.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/OcctGlTools.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/OcctGlTools.h
-    ${CMAKE_SOURCE_DIR}/src/gui/IOcctWidget.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/IOcctWidget.h
-    ${CMAKE_SOURCE_DIR}/src/gui/ilineedit.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/ilineedit.h 
-    ${CMAKE_SOURCE_DIR}/src/gui/stylemanager.cpp
-    ${CMAKE_SOURCE_DIR}/src/gui/stylemanager.h 
-    ${CMAKE_SOURCE_DIR}/src/helper/Python_wrapper.h      
-    ${CMAKE_SOURCE_DIR}/src/helper/Viewer.h
-    ${CMAKE_SOURCE_DIR}/src/helper/Viewer.cpp
-    ${CMAKE_SOURCE_DIR}/src/helper/ViewerInteractor.h   
-    ${CMAKE_SOURCE_DIR}/src/helper/ViewerInteractor.cpp
-     
-    ${CMAKE_SOURCE_DIR}/src/binding/pybind11_bindings.cpp
+    ${PROJECT_SUBSOURCES}
 )
 
 # Include directories
@@ -58,10 +20,8 @@ target_include_directories(echocad PRIVATE ${OpenCASCADE_INCLUDE_DIR})
 target_include_directories(echocad PRIVATE ${Python3_INCLUDE_DIRS})
 target_include_directories(echocad PRIVATE ${QScintilla_INCLUDE_DIR})
 
-target_include_directories(echocad PRIVATE ${QScintilla_INCLUDE_DIR})
-
 # Link OpenCASCADE libraries
-foreach (LIB ${OpenCASCADE_LIBRARIES})
+foreach (LIB ${OpenCASCADE_LIBRARIES}) 
   target_link_libraries(echocad PRIVATE debug ${OpenCASCADE_LIBRARY_DIR}d/${LIB}.lib)
   target_link_libraries(echocad PRIVATE optimized ${OpenCASCADE_LIBRARY_DIR}/${LIB}.lib)
 endforeach()
@@ -73,6 +33,6 @@ target_link_libraries(echocad PRIVATE Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
 target_link_libraries(echocad PRIVATE Qt${QT_VERSION_MAJOR}::Core5Compat)
 target_link_libraries(echocad PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(echocad PRIVATE ${PYTHON_LIBRARIES})
-target_link_libraries(echocad PRIVATE ${Python3_LIBRARY_RELEASE}) 
+target_link_libraries(echocad PRIVATE ${Python3_LIBRARY_RELEASE})
 target_link_libraries(echocad PRIVATE debug qscintilla2_qt${QT_VERSION_MAJOR}d)
 target_link_libraries(echocad PRIVATE optimized qscintilla2_qt${QT_VERSION_MAJOR})

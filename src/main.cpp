@@ -1,11 +1,9 @@
-#include "MainWindow.h"
+#include "mainwindow.h"
 #include "config.h"
 
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QDebug>
-
-#include "PythonInterpreter.h"
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);

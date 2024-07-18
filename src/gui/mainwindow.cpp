@@ -61,7 +61,7 @@ void MainWindow::setParameters() {
     mPythonInterpreter->loadModule( PYECHOCAD_PYD_DIR );
     mPythonInterpreter->setSysVariable("viewer", py::cast(viewer()));
 
-    mSplitter->widget(0)->setVisible(false);
+    mSplitter->widget(0)->setVisible(true);
 }
 
 void MainWindow::setPythonInterpreter(PythonInterpreter* thePython) {
@@ -78,6 +78,7 @@ void MainWindow::setConnects() {
 		qDebug() << "Python log: " << message;
         mTextBrowser->append(message);
 	});
+
 }
 
 void MainWindow::setupMainUi(QSplitter* splitter) {
@@ -134,10 +135,10 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
             aButton->setObjectName("RoundedButton");
 
             aButtonsLayout->addWidget(aButton);
-            //connect(aButton, &QPushButton::clicked, [this]()
-            //    {
-            //        mPythonInterpreter->executeScript(mEditor->text());
-            //    });
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    mPythonInterpreter->executeScript(mEditor->activeText());
+                });
         }
         {
             // add button

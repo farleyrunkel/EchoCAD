@@ -18,6 +18,10 @@ IJupyterWidget::IJupyterWidget(QWidget* parent) : QScrollArea(parent)
     setStyleSheet();
 }
 
+void IJupyterWidget::setActiveStyleSheet() {
+
+}
+
 void IJupyterWidget::setStyleSheet() {
 
     QScrollArea::setStyleSheet(R"(
@@ -46,6 +50,7 @@ void IJupyterWidget::addItem(IJupyterItem* item)
                 it->setStyleSheets();
 			}
             else {
+                activeItem = item;
                 it->setActiveStyleSheets();
             }
         }
@@ -55,3 +60,5 @@ void IJupyterWidget::addItem(IJupyterItem* item)
     myCentralLayout->addWidget(p);
     mItems.push_back(item);
 }
+
+

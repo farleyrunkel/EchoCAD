@@ -5,7 +5,8 @@
 #include <QOpenGLWidget>
 #include "IOcctWidget.h"
 #include "CadModule.h"
-#include <QApplication>
+#include <TopoDS_Shape.hxx>
+#include <AIS_ViewController.hxx>
 
 namespace py = pybind11;
 
@@ -24,8 +25,8 @@ PYBIND11_MODULE(echocad, m) {
         .def("create_box", &CadModule::createBox, py::arg("x"), py::arg("y"), py::arg("z"), "Create a box shape given its dimensions");
 
     // IOcctWidget binding
-    py::class_<IOcctWidget, QOpenGLWidget, AIS_ViewController>(m, "iocctwidget")
-        .def(py::init<QWidget*>(), py::arg("theparent") = nullptr)
+    py::class_<IOcctWidget, QOpenGLWidget, AIS_ViewController>(m, "IOcctWidget")
+        .def(py::init<QWidget*>(), py::arg("theParent") = nullptr)
         .def("viewer", &IOcctWidget::Viewer)
         .def("view", &IOcctWidget::View)
         .def("context", &IOcctWidget::Context)
