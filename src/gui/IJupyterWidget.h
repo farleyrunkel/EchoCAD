@@ -30,6 +30,15 @@ public:
     void setStyleSheet();
     void addItem(IJupyterItem* item);
 
+	void clearItems() {
+		// clear all item	
+		while (myCentralLayout->count() > 0) {
+			QWidget* widget = myCentralLayout->itemAt(0)->widget();
+			myCentralLayout->removeWidget(widget);
+			delete widget;
+		}
+	}
+
 	QString activeText() {
 		return activeItem->text();
 	}
@@ -47,7 +56,6 @@ public:
 	//}
 
 private:
-    std::vector<IJupyterItem*> mItems;
 
     QWidget * myCentralWidget;
     QVBoxLayout* myCentralLayout;

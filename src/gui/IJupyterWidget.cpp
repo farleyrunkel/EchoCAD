@@ -36,7 +36,6 @@ void IJupyterWidget::setStyleSheet() {
             border: 0px;
         }
     )");
-
 }
 
 void IJupyterWidget::addItem(IJupyterItem* item)
@@ -48,6 +47,9 @@ void IJupyterWidget::addItem(IJupyterItem* item)
         	IJupyterItem* it = reinterpret_cast<IJupyterItem*>(myCentralLayout->itemAt(i)->widget());
 			if (it != item) {
                 it->setStyleSheets();
+                if (it->isReadOnly()) {
+                    it->setCodeStyleSheets();
+                }
 			}
             else {
                 activeItem = item;
@@ -57,8 +59,18 @@ void IJupyterWidget::addItem(IJupyterItem* item)
         });
 
     QWidget* p = reinterpret_cast<QWidget*>(item);
-    myCentralLayout->addWidget(p);
-    mItems.push_back(item);
+
+    // add item behind active item
+    if (activeItem != nullptr) {
+		// myCentralLayout->removeWidget(p);
+		myCentralLayout->insertWidget(myCentralLayout->indexOf(activeItem) + 1, p);
+	}
+    else
+    {
+        myCentralLayout->addWidget(p);
+    }
+
+    emit item->itemClicked(item);
 }
 
 

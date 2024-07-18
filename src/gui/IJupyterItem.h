@@ -20,10 +20,25 @@ class IJupyterItem : public QWidget
 {
     Q_OBJECT
 public:
+    enum Type
+    {
+        Code = 0,
+        Note = 1,
+        Chat = 2
+    };
+
     IJupyterItem(QWidget* parent = nullptr);
+    IJupyterItem(const QString& theText, QWidget* parent = nullptr);
+    IJupyterItem(Type theType, const QString& theText = "", QWidget* parent = nullptr);
+
     void setActiveStyleSheets();
 
     void setStyleSheets();
+    void setCodeStyleSheets();
+
+    bool isReadOnly() const {
+		return myLineEdit->isReadOnly();
+	}
 
     QString text() {
         return myLineEdit->text();
@@ -35,6 +50,7 @@ signals:
 
 private:
     void setMainUi();
+
 
     void setupQsciScintilla() {
         mEditor = new QsciScintilla(this);
@@ -65,6 +81,8 @@ private:
     QString  myColor ;
     // background color
     QColor*  myBackgroundColor ;
+
+    Type myType;
 };
 
 

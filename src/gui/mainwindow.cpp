@@ -79,6 +79,16 @@ void MainWindow::setConnects() {
         mTextBrowser->append(message);
 	});
 
+    connect(mPythonInterpreter, &PythonInterpreter::executed, [this](const QString& result) {
+        if (result.isEmpty()) {
+            mEditor->addItem(new IJupyterItem(""));
+            return;
+        }
+        auto item = new IJupyterItem(result);
+        item->setCodeStyleSheets();
+        mEditor->addItem(item);
+        mEditor->addItem(new IJupyterItem(""));
+	});
 }
 
 void MainWindow::setupMainUi(QSplitter* splitter) {
@@ -158,10 +168,10 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
             aButton->setObjectName("RoundedButton");
 
             aButtonsLayout->addWidget(aButton);
-            //connect(aButton, &QPushButton::clicked, [this]()
-            //    {
-            //        mEditor->setText(mLineEdit->text());
-            //    });
+            connect(aButton, &QPushButton::clicked, [this]()
+                {
+                    mEditor->clearItems();
+                });
 
         }
     }

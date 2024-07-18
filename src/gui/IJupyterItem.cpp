@@ -2,18 +2,38 @@
 
 IJupyterItem::IJupyterItem(QWidget* parent) : QWidget(parent)
 {
-
     setMainUi();
     setFixedHeight(30);
     setStyleSheets();
+}
 
-    // clicked
+IJupyterItem::IJupyterItem(const QString& theText, QWidget* parent) : IJupyterItem(parent)
+{
+	myLineEdit->setText(theText);
+}
 
+IJupyterItem::IJupyterItem(Type theType, const QString& theText, QWidget* parent) : IJupyterItem(parent)
+{
+    myType = theType;
+
+	myLineEdit->setText(theText);
+
+	//switch (theType)
+	//{
+	//case Code:
+	//	setCodeStyleSheets();
+	//	setPythonLexer();
+	//	break;
+	//case Note:
+	//	break;
+	//case Chat:
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void IJupyterItem::setMainUi() {
-
-    setObjectName("myIJupyterItem");
 
     aLayout = new QHBoxLayout(this);
 
@@ -38,10 +58,39 @@ void IJupyterItem::setMainUi() {
     aLayout->setDirection(QBoxLayout::LeftToRight);
 
     connect(myLineEdit, &ILineEdit::focused, [this](bool isFocused) {
+
+        if (!this->isReadOnly()) {
+        myLineEdit->setStyleSheet(R"(
+        ILineEdit {
+            border: 1px solid #30363d;
+            border-radius: 5px;
+            height: 20px;
+            color: white;
+            font-family: Consolas;
+			font-size: 10pt;
+    }
+        ILineEdit:focus {
+            border: 1px solid #238635;
+			}
+)");
+        }
         this->setActiveStyleSheets();
         emit itemClicked(this);
       });
+}
 
+void IJupyterItem::setCodeStyleSheets() {
+    myLineEdit->setReadOnly(true);
+    myLineEdit->setStyleSheet(R"(
+        ILineEdit {
+            border: 1px hidden transparent;
+            border-radius: 5px;
+            height: 20px;
+            color: white;
+            font-family: Consolas;
+			font-size: 10pt;
+    }
+)");
 }
 
 void IJupyterItem::setActiveStyleSheets() {

@@ -41,13 +41,14 @@ public:
     IOcctWidget* viewer() const { return mViewer; }
 
 private:
-    void setConnects();
+
     void setupMainUi(QSplitter* theSplitter);
     void setupPythonEditor(QWidget* theEditor);
     void setupOcctViewer(IOcctWidget* theViewer);
     void setupMenuBar(QMenuBar* theMenuBar);
 
     void setGPTProcessor(GptProcessor* theGptProcessor);
+    void setConnects();
     void setParameters();
 
     QWidget* createInputLine(QWidget* theParent);

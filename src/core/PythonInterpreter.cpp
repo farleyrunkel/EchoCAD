@@ -109,12 +109,13 @@ void PythonInterpreter::executeScript(const QString& script) {
         // calculate the Python code      
         auto result = py::eval(python_code_pystr);
         QString result_str = QString::fromStdString(py::str(result));
+        emit executed(result_str);
         emit logMessage("result_str : \n" + result_str);   
     }
     catch (const py::error_already_set& e) {
         try {
             py::exec(python_code_pystr);
-   
+            emit executed("");
             emit logMessage("exec successfully:\n");
         }
         catch (...) {

@@ -25,6 +25,8 @@ public:
     void setSysVariable(const QString& name, py::object value);
 
 signals:
+    void executed(const QString& theResult);
+
 	void logMessage(const QString& theMessage);
     void dllNeeded(const QStringList& theDll);
 
