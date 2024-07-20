@@ -74,7 +74,20 @@ QPushButton#RoundedButton{
 QPushButton#RoundedButton:hover {
     background-color: #303030;
 }
-
+QToolButton#RoundedButton{
+    background-color: #282828;
+    border-style: solid;
+    border-radius: 5px;
+    width: 30px;
+  height: 30px;
+  padding-left: 0px;
+}
+QToolButton#RoundedButton:checked  {
+    background-color: #4772b3;
+}
+QToolButton#RoundedButton:hover:!checked {
+    background-color: #303030;
+}
 QScrollBar:vertical,
 QScrollBar:horizontal {
     height: 8px;

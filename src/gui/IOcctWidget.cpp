@@ -232,14 +232,13 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   myViewer->SetRectangularGridGraphicValues(50000, 50000, 0);
   myViewer->SetRectangularGridValues(0, 0, 100, 100, 0);
 
-
   //! set grid echo <aMarker> to the hit point.
   Handle(Graphic3d_AspectMarker3d) aMaker = new Graphic3d_AspectMarker3d(Aspect_TOM_O, Quantity_NOC_ALICEBLUE, 1.0);
   myViewer->SetGridEcho(aMaker);
 
   // create AIS context
   myContext = new AIS_InteractiveContext (myViewer);
-  myContext->SetDisplayMode (AIS_Shaded, Standard_True);
+  myContext->SetDisplayMode (AIS_Shaded, Standard_True); 
 
   // try to set all AIS_InteractiveContext options for test 
   auto aSettings = new Prs3d_Drawer();
@@ -266,17 +265,17 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
   myViewCube->SetViewAnimation (myViewAnimation);
   myViewCube->SetFixedAnimationLoop (false);
   myViewCube->SetAutoStartAnimation (true);
-// set offset for the cube at topright corner
+  // set offset for the cube at topright corner
 
-Handle(Graphic3d_TransformPers) aTrsfPers = new Graphic3d_TransformPers(
-Graphic3d_TMF_TriedronPers,
-Aspect_TOTP_RIGHT_UPPER,
-Graphic3d_Vec2i(70, 110) 
-);
-myViewCube->SetTransformPersistence(aTrsfPers);
+  Handle(Graphic3d_TransformPers) aTrsfPers = new Graphic3d_TransformPers(
+  Graphic3d_TMF_TriedronPers,
+  Aspect_TOTP_RIGHT_UPPER,
+  Graphic3d_Vec2i(70, 110) 
+  );
+  myViewCube->SetTransformPersistence(aTrsfPers);
 
-// set view cube size smaller
-myViewCube->SetSize(40);
+  // set view cube size smaller
+  myViewCube->SetSize(40);
 
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();

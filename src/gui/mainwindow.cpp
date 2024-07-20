@@ -9,6 +9,7 @@
 #include <QRegExp>
 #include <QTextBrowser>
 #include <QGraphicsDropShadowEffect>
+#include <QToolButton>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
@@ -241,29 +242,60 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
         }
         {
             // add selete mode point
-            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            QToolButton* aButton = new QToolButton(aButtonsBox);
             aButton->setIcon(QIcon("://icons/select_point.svg"));
             aButton->setObjectName("RoundedButton");
+            aButton->setToolTip("Select Mode: Vertex");
+            aButton->setAutoRaise(true);
+            aButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            aButton->setCheckable(true);
             aButtonsLayout->addWidget(aButton);
-            connect(aButton, &QPushButton::clicked, [this]()
-				{
-     //               mViewer->Context()->
-					//mViewer->Context()->SetSelectionMode(SelectionMode::SelectionMode_Vertex);
-				});
+            connect(aButton, &QToolButton::clicked, this, [this, aButton]() {
+                if (aButton->isChecked()) {
+                    mViewer->Context()->Activate(AIS_Shape::SelectionMode(TopAbs_VERTEX));
+                }
+                else {
+                    mViewer->Context()->Deactivate(AIS_Shape::SelectionMode(TopAbs_VERTEX));
+                }
+                ; });
         }
         {
 			// add selete mode edge
-			QPushButton* aButton = new QPushButton("", aButtonsBox);
-			aButton->setIcon(QIcon("://icons/select_edge.svg"));
-			aButton->setObjectName("RoundedButton");
-			aButtonsLayout->addWidget(aButton);
+            QToolButton* aButton = new QToolButton(aButtonsBox);
+            aButton->setIcon(QIcon("://icons/select_edge.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButton->setToolTip("Select Mode: Edge");
+            aButton->setAutoRaise(true);
+            aButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            aButton->setCheckable(true);
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QToolButton::clicked, this, [this, aButton]() {
+                if (aButton->isChecked()) {
+                    mViewer->Context()->Activate(AIS_Shape::SelectionMode(TopAbs_EDGE));
+                }
+                else {
+                    mViewer->Context()->Deactivate(AIS_Shape::SelectionMode(TopAbs_EDGE));
+                }
+                ; });
 		}
 		{
 			// add selete mode face
-			QPushButton* aButton = new QPushButton("", aButtonsBox);
+            QToolButton* aButton = new QToolButton( aButtonsBox);
 			aButton->setIcon(QIcon("://icons/select_face.svg"));
 			aButton->setObjectName("RoundedButton");
+            aButton->setToolTip("Select Mode: Face");
+            aButton->setAutoRaise(true);
+            aButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            aButton->setCheckable(true);
 			aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QToolButton::clicked, this, [this, aButton]() {       
+                if (aButton->isChecked()) {
+                    mViewer->Context()->Activate(AIS_Shape::SelectionMode(TopAbs_FACE));
+                }
+                else {
+                    mViewer->Context()->Deactivate(AIS_Shape::SelectionMode(TopAbs_FACE));
+                }
+                ;});
 		}
         {
             // add spacer
@@ -281,7 +313,7 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             connect(aButton, &QPushButton::clicked, [this]()
 				{
                     auto box = BRepPrimAPI_MakeBox(100, 100, 100).Shape();
-					mViewer->Context()->Display(new AIS_Shape(box), Standard_True);
+					mViewer->Context()->Display(new AIS_Shape(box), Standard_True, Standard_False, Standard_True, Standard_True);
                    // update and show
                     mViewer->View()->Update();             
 				});
@@ -404,8 +436,13 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
                 {
-                    mViewer->View()->FitAll();
-                    mViewer->View()->Redraw();
+                    if (mViewer->Context()->NbSelected() != 0) {
+                        mViewer->Context()->FitSelected(mViewer->View());
+                    }
+                    else {
+                        mViewer->View()->FitAll();
+                        mViewer->View()->Redraw();
+                    }
                 });
         }
         {
