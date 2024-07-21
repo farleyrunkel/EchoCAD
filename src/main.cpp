@@ -1,12 +1,15 @@
-#include "mainwindow.h"
-#include "config.h"
 
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QDebug>
+#include <QSettings>
+
+#include "MainWindow.h"
+#include "config.h"
 
 int main(int argc, char** argv) {
-    QApplication app(argc, argv);
+
+    QApplication aQApp(argc, argv);
     QApplication::setApplicationName("EchoCAD");
     QApplication::setOrganizationName("EchoCAD");
 
@@ -23,9 +26,34 @@ int main(int argc, char** argv) {
     QSurfaceFormat::setDefaultFormat(glFormat);
 #endif
 
-    MainWindow mainWindow;
-    mainWindow.resize(1250, 800);
-    mainWindow.show();
+    MainWindow* aWindow = new MainWindow;
 
-    return app.exec();
+    // if not exist EchoCAD.conf, create it
+    
+    QSettings settings("EchoCAD.conf", QSettings::IniFormat);
+
+    settings.beginGroup("WindowPosition");
+        int x = settings.value("x", -1).toInt();
+        int y = settings.value("y", -1).toInt();
+        int width = settings.value("width", -1).toInt();
+        int height = settings.value("height", -1).toInt();
+    settings.endGroup();
+
+    if (x > 0 && y > 0 && width > 0 && height > 0)
+    {
+        aWindow->setGeometry(x, y, width, height);
+    }
+
+    aWindow->show();
+
+    int aResult = aQApp.exec();
+
+    settings.beginGroup("WindowPosition");
+        settings.setValue("x", aWindow->x());
+        settings.setValue("y", aWindow->y());
+        settings.setValue("width", aWindow->width());
+        settings.setValue("height", aWindow->height());
+    settings.endGroup();
+
+    return aResult;
 }
