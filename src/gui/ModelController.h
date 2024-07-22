@@ -14,17 +14,19 @@
 
 class AIS_ViewCube;
 
+namespace echocad {
+
 //! OCCT 3D View.
-class IOcctWidget : public QOpenGLWidget, public AIS_ViewController
+class ModelController : public QOpenGLWidget, public AIS_ViewController
 {
   Q_OBJECT
 public:
 
   //! Main constructor.
-  IOcctWidget (QWidget* theParent = nullptr);
+  ModelController (QWidget* theParent = nullptr);
 
   //! Destructor.
-  virtual ~IOcctWidget();
+  virtual ~ModelController();
 
   //! Return Viewer.
   const Handle(V3d_Viewer)& Viewer() const { return myViewer; }
@@ -94,5 +96,9 @@ private:
   QString myGlInfo;
   bool myIsCoreProfile;
 };
+
+
+} // end namespace echocad
+
 
 #endif // _OcctQtViewer_HeaderFile

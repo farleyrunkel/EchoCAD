@@ -22,6 +22,7 @@
 #include <BRepPrimAPI_MakeWedge.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <TopoDS.hxx>
+#include <TPrsStd_AISPresentation.hxx>
 
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
@@ -33,6 +34,8 @@
 #include "IJupyterWidget.h"
 
 namespace py = pybind11;
+
+using namespace echocad;
 
 MainWindow::MainWindow(QWidget *theParent)
     : QMainWindow(theParent),
@@ -47,7 +50,7 @@ MainWindow::MainWindow(QWidget *theParent)
     setupMenuBar(new QMenuBar);
 
     setupPythonEditor(new QWidget);
-    setupOcctViewer(new IOcctWidget);
+    setupOcctViewer(new ModelController);
 
     setGPTProcessor(new GptProcessor);
     setPythonInterpreter(new PythonInterpreter);
@@ -194,7 +197,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
 }
 
 
-void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
+void MainWindow::setupOcctViewer(ModelController* theViewer)
 {
     mSplitter->addWidget(theViewer);
 
@@ -405,21 +408,21 @@ void MainWindow::setupOcctViewer(IOcctWidget* theViewer)
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
 				{
-                    // get selected box
-					auto box = mViewer->Context()->SelectedInteractive();
-                   					if (box.IsNull())
-					{
-                                     
-						QMessageBox::warning(this, "Warning", "Please select a shape first!");
-						return;
-					}
+                    for (mViewer->Context()->InitSelected(); mViewer->Context()->MoreSelected(); mViewer->Context()->NextSelected())
+					{     
+                        TopoDS_Shape anShape = mViewer->Context()->SelectedShape();
+                        if (anShape.IsNull())
+						{
+							QMessageBox::warning(this, "Warning", "Please select a shape first!");
+							return;
+						}
+                        gp_Trsf agp_Trsf =  gp_Trsf();
+                        agp_Trsf.SetTranslation(gp_Vec(0, 0, 100));
+                        anShape.Move(TopLoc_Location(agp_Trsf));
 
-                // extrude the box  
-     //                               auto shape = box->Shape();
-					//auto prism = BRepPrimAPI_MakePrism(box, gp_Vec(0, 0, 100)).Shape();
-					//mViewer->Context()->Display(new AIS_Shape(prism), Standard_True);
-					//// update and show
-					//mViewer->View()->Update();
+                        auto newAisShaple = new AIS_Shape(anShape);
+                        mViewer->Context()->Display(newAisShaple, Standard_True);
+					}
 					; });
         }
         {

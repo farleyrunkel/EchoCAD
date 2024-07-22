@@ -24,10 +24,13 @@
 
 #include "Scene.h"
 #include "GPTProcessor.h"
-#include "IOcctWidget.h"
+#include "ModelController.h"
 #include "ilineedit.h"
 #include "PythonInterpreter.h"
 #include "IJupyterWidget.h"
+
+namespace echocad
+{
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -38,13 +41,13 @@ public:
 
     void setPythonInterpreter(PythonInterpreter* thePython);
 
-    IOcctWidget* viewer() const { return mViewer; }
+    ModelController* viewer() const { return mViewer; }
 
 private:
 
     void setupMainUi(QSplitter* theSplitter);
     void setupPythonEditor(QWidget* theEditor);
-    void setupOcctViewer(IOcctWidget* theViewer);
+    void setupOcctViewer(ModelController* theViewer);
     void setupMenuBar(QMenuBar* theMenuBar);
 
     void setGPTProcessor(GptProcessor* theGptProcessor);
@@ -65,7 +68,7 @@ private:
     ILineEdit *mLineEdit;
     GptProcessor *mGptProcessor;
 
-    IOcctWidget* mViewer;
+    ModelController* mViewer;
     QSplitter* mSplitter;
     QTextBrowser* mTextBrowser;
 
@@ -75,5 +78,8 @@ private:
 
     PythonInterpreter* mPythonInterpreter;
 };
+
+
+} // end namespace echocad
 
 #endif // MAINWINDOW_H

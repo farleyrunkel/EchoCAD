@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     QSurfaceFormat::setDefaultFormat(glFormat);
 #endif
 
-    MainWindow* aWindow = new MainWindow;
+    echocad::MainWindow* aWindow = new echocad::MainWindow;
 
     // if not exist EchoCAD.conf, create it
     

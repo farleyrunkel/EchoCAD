@@ -3,7 +3,7 @@
 #include <pybind11/stl.h>
 
 #include <QOpenGLWidget>
-#include "IOcctWidget.h"
+#include "ModelController.h"
 #include "CadModule.h"
 #include <TopoDS_Shape.hxx>
 #include <AIS_ViewController.hxx>
@@ -25,16 +25,16 @@ PYBIND11_MODULE(echocad, m) {
         .def("create_box", &CadModule::createBox, py::arg("x"), py::arg("y"), py::arg("z"), "Create a box shape given its dimensions");
 
     // IOcctWidget binding
-    py::class_<IOcctWidget, QOpenGLWidget, AIS_ViewController>(m, "IOcctWidget")
+    py::class_<echocad::ModelController, QOpenGLWidget, AIS_ViewController>(m, "IOcctWidget")
         .def(py::init<QWidget*>(), py::arg("theParent") = nullptr)
-        .def("viewer", &IOcctWidget::Viewer)
-        .def("view", &IOcctWidget::View)
-        .def("context", &IOcctWidget::Context)
-        .def("getglinfo", &IOcctWidget::getGlInfo)
-        .def("minimumsizehint", &IOcctWidget::minimumSizeHint)
-        .def("sizehint", &IOcctWidget::sizeHint)
-        .def("onsubviewchanged", &IOcctWidget::OnSubviewChanged)
-        .def("display", &IOcctWidget::Display);
+        .def("viewer", &echocad::ModelController::Viewer)
+        .def("view", &echocad::ModelController::View)
+        .def("context", &echocad::ModelController::Context)
+        .def("getglinfo", &echocad::ModelController::getGlInfo)
+        .def("minimumsizehint", &echocad::ModelController::minimumSizeHint)
+        .def("sizehint", &echocad::ModelController::sizeHint)
+        .def("onsubviewchanged", &echocad::ModelController::OnSubviewChanged)
+        .def("display", &echocad::ModelController::Display);
 
     // bind function display using lambda and qt qapp to get main window
     m.def("display", [](const TopoDS_Shape& shape) {
@@ -43,7 +43,7 @@ PYBIND11_MODULE(echocad, m) {
         // get viewer from sys module
         auto viewer = sys.attr("viewer");
         // tarnsform viewer to IOcctWidget
-        IOcctWidget* occt = py::cast<IOcctWidget*>(viewer);
+        echocad::ModelController* occt = py::cast<echocad::ModelController*>(viewer);
         // display shape in viewer
         occt->Display(shape);
 	});

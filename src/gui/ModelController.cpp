@@ -27,11 +27,11 @@
 
 #include <AIS_Axis.hxx>
 
-#include "IOcctWidget.h"
-#include "OcctGlTools.h"
+#include "ModelController.h"
+#include "GlTools.h"
 
 
-namespace
+namespace echocad
 {
   //! Map Qt buttons bitmask to virtual keys.
   Aspect_VKeyMouse qtMouseButtons2VKeys (Qt::MouseButtons theButtons)
@@ -171,7 +171,6 @@ namespace
       default:                return Aspect_VKey_UNKNOWN;
     }
   }
-}
 
 //! OpenGL FBO subclass for wrapping FBO created by Qt using GL_RGBA8 texture format instead of GL_SRGB8_ALPHA8.
 //! This FBO is set to OpenGl_Context::SetDefaultFrameBuffer() as a final target.
@@ -209,7 +208,7 @@ public:
 // Function : OcctQtViewer
 // Purpose  :
 // ================================================================
-IOcctWidget::IOcctWidget (QWidget* theParent)
+ModelController::ModelController (QWidget* theParent)
 : QOpenGLWidget (theParent),
   myIsCoreProfile (true)
 {
@@ -339,7 +338,7 @@ IOcctWidget::IOcctWidget (QWidget* theParent)
 // Function : ~OcctQtViewer
 // Purpose  :
 // ================================================================
-IOcctWidget::~IOcctWidget()
+ModelController::~ModelController()
 {
   // hold on X11 display connection till making another connection active by glXMakeCurrent()
   // to workaround sudden crash in QOpenGLWidget destructor
@@ -361,7 +360,7 @@ IOcctWidget::~IOcctWidget()
 // Function : dumpGlInfo
 // Purpose  :
 // ================================================================
-void IOcctWidget::dumpGlInfo (bool theIsBasic, bool theToPrint)
+void ModelController::dumpGlInfo (bool theIsBasic, bool theToPrint)
 {
   TColStd_IndexedDataMapOfStringString aGlCapsDict;
   myView->DiagnosticInformation (aGlCapsDict, theIsBasic ? Graphic3d_DiagnosticInfo_Basic : Graphic3d_DiagnosticInfo_Complete);
@@ -389,7 +388,7 @@ void IOcctWidget::dumpGlInfo (bool theIsBasic, bool theToPrint)
 // Function : initializeGL
 // Purpose  :
 // ================================================================
-void IOcctWidget::initializeGL()
+void ModelController::initializeGL()
 {
   const QRect aRect = rect();
   const Graphic3d_Vec2i aViewSize (aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
@@ -435,7 +434,7 @@ void IOcctWidget::initializeGL()
 // Function : closeEvent
 // Purpose  :
 // ================================================================
-void IOcctWidget::closeEvent (QCloseEvent* theEvent)
+void ModelController::closeEvent (QCloseEvent* theEvent)
 {
   theEvent->accept();
 }
@@ -444,7 +443,7 @@ void IOcctWidget::closeEvent (QCloseEvent* theEvent)
 // Function : keyPressEvent
 // Purpose  :
 // ================================================================
-void IOcctWidget::keyPressEvent (QKeyEvent* theEvent)
+void ModelController::keyPressEvent (QKeyEvent* theEvent)
 {
   Aspect_VKey aKey = qtKey2VKey (theEvent->key());
   switch (aKey)
@@ -468,7 +467,7 @@ void IOcctWidget::keyPressEvent (QKeyEvent* theEvent)
 // Function : mousePressEvent
 // Purpose  :
 // ================================================================
-void IOcctWidget::mousePressEvent (QMouseEvent* theEvent)
+void ModelController::mousePressEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mousePressEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -487,7 +486,7 @@ void IOcctWidget::mousePressEvent (QMouseEvent* theEvent)
 // Function : mouseReleaseEvent
 // Purpose  :
 // ================================================================
-void IOcctWidget::mouseReleaseEvent (QMouseEvent* theEvent)
+void ModelController::mouseReleaseEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseReleaseEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -506,7 +505,7 @@ void IOcctWidget::mouseReleaseEvent (QMouseEvent* theEvent)
 // Function : mouseMoveEvent
 // Purpose  :
 // ================================================================
-void IOcctWidget::mouseMoveEvent (QMouseEvent* theEvent)
+void ModelController::mouseMoveEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseMoveEvent (theEvent);
   const Graphic3d_Vec2i aNewPos (theEvent->pos().x(), theEvent->pos().y());
@@ -525,7 +524,7 @@ void IOcctWidget::mouseMoveEvent (QMouseEvent* theEvent)
 // function : wheelEvent
 // purpose  :
 // ==============================================================================
-void IOcctWidget::wheelEvent (QWheelEvent* theEvent)
+void ModelController::wheelEvent (QWheelEvent* theEvent)
 {
   QOpenGLWidget::wheelEvent (theEvent);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -561,7 +560,7 @@ void IOcctWidget::wheelEvent (QWheelEvent* theEvent)
 // function : updateView
 // purpose  :
 // =======================================================================
-void IOcctWidget::updateView()
+void ModelController::updateView()
 {
   update();
   //if (window() != NULL) { window()->update(); }
@@ -571,7 +570,7 @@ void IOcctWidget::updateView()
 // Function : paintGL
 // Purpose  :
 // ================================================================
-void IOcctWidget::paintGL()
+void ModelController::paintGL()
 {
   if (myView->Window().IsNull())
   {
@@ -582,7 +581,7 @@ void IOcctWidget::paintGL()
   // get context from this (composer) view rather than from arbitrary one
   //Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast (myContext->CurrentViewer()->Driver());
   //Handle(OpenGl_Context) aGlCtx = aDriver->GetSharedContext();
-  Handle(OpenGl_Context) aGlCtx = OcctGlTools::GetGlContext (myView);
+  Handle(OpenGl_Context) aGlCtx = echocad::GlTools::GetGlContext (myView);
   Handle(OpenGl_FrameBuffer) aDefaultFbo = aGlCtx->DefaultFrameBuffer();
   if (aDefaultFbo.IsNull())
   {
@@ -629,7 +628,7 @@ void IOcctWidget::paintGL()
 // Function : handleViewRedraw
 // Purpose  :
 // ================================================================
-void IOcctWidget::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
+void ModelController::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
                                      const Handle(V3d_View)& theView)
 {
   AIS_ViewController::handleViewRedraw (theCtx, theView);
@@ -644,9 +643,12 @@ void IOcctWidget::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx
 // Function : OnSubviewChanged
 // Purpose  :
 // ================================================================
-void IOcctWidget::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
+void ModelController::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
                                      const Handle(V3d_View)&,
                                      const Handle(V3d_View)& theNewView)
 {
   myFocusView = theNewView;
 }
+
+
+} // end namespace echocad 
