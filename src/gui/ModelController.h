@@ -12,15 +12,22 @@
 #include <TopoDS_Shape.hxx>
 #include <AIS_Shape.hxx>
 
+#include "ViewCube.h"
+#include "Manipulator.h"
+
 class AIS_ViewCube;
 
 namespace echocad {
 
-//! OCCT 3D View.
 class ModelController : public QOpenGLWidget, public AIS_ViewController
 {
   Q_OBJECT
 public:
+    enum EditMode {
+        Select = 0,
+        Move,
+        Rotate,
+};
 
   //! Main constructor.
   ModelController (QWidget* theParent = nullptr);
@@ -47,6 +54,18 @@ public:
 
   //! Default widget size.
   virtual QSize sizeHint()        const override { return QSize(720, 480); }
+
+  void setEditMode(EditMode theMode) { myCurrentMode = theMode; }
+
+  void showManipulator() { 
+
+      if (myCurrentMode == Select) {
+          auto aManip = new Manipulator();
+
+          myContext->Display(aManip, true);
+      }
+
+}
 
 public:
 
@@ -89,12 +108,14 @@ private:
   Handle(V3d_Viewer)             myViewer;
   Handle(V3d_View)               myView;
   Handle(AIS_InteractiveContext) myContext;
-  Handle(AIS_ViewCube)           myViewCube;
+  Handle(ViewCube)               myViewCube;
 
   Handle(V3d_View)               myFocusView;
 
   QString myGlInfo;
   bool myIsCoreProfile;
+  
+  EditMode myCurrentMode;
 };
 
 

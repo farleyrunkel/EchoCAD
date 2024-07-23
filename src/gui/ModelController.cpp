@@ -29,7 +29,7 @@
 
 #include "ModelController.h"
 #include "GlTools.h"
-
+#include "ViewCube.h"
 
 namespace echocad
 {
@@ -204,13 +204,10 @@ public:
   }
 };
 
-// ================================================================
-// Function : OcctQtViewer
-// Purpose  :
-// ================================================================
 ModelController::ModelController (QWidget* theParent)
-: QOpenGLWidget (theParent),
-  myIsCoreProfile (true)
+    : QOpenGLWidget (theParent),
+    myIsCoreProfile (true),
+    myCurrentMode (EditMode::Select)
 {
   Handle(Aspect_DisplayConnection) aDisp = new Aspect_DisplayConnection();
   Handle(OpenGl_GraphicDriver) aDriver = new OpenGl_GraphicDriver (aDisp, false);
@@ -246,35 +243,15 @@ ModelController::ModelController (QWidget* theParent)
   aSettings->SetFaceBoundaryAspect (new Prs3d_LineAspect (Quantity_NOC_BLACK, Aspect_TOL_SOLID, 1.0));
   myContext->SetHighlightStyle(aSettings);
 
-  {
-      // Create Z-axis with direction (0, 0, 1)
-      gp_Ax1 zAxis(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1));
-      Handle(AIS_Axis) aisZAxis = new AIS_Axis(zAxis);
-
-      // Set the color to red
-      Handle(Prs3d_LineAspect) aspect = aisZAxis->Attributes()->LineAspect();
-      aspect->SetColor(Quantity_NOC_RED);
-      aisZAxis->Attributes()->SetLineAspect(aspect);
-
-      // Display the Z-axis
-      myContext->Display(aisZAxis, Standard_True);
-  }
-
-  myViewCube = new AIS_ViewCube();    
+  myViewCube = new ViewCube();
   myViewCube->SetViewAnimation (myViewAnimation);
-  myViewCube->SetFixedAnimationLoop (false);
-  myViewCube->SetAutoStartAnimation (true);
-  // set offset for the cube at topright corner
 
-  Handle(Graphic3d_TransformPers) aTrsfPers = new Graphic3d_TransformPers(
-  Graphic3d_TMF_TriedronPers,
-  Aspect_TOTP_RIGHT_UPPER,
-  Graphic3d_Vec2i(70, 110) 
-  );
-  myViewCube->SetTransformPersistence(aTrsfPers);
+  {
+      Handle(ViewSphere) aViewSphere = new echocad::ViewSphere();
+      myContext->Display(aViewSphere, 0, 0, false);
 
-  // set view cube size smaller
-  myViewCube->SetSize(40);
+  
+  }
 
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();
@@ -516,6 +493,21 @@ void ModelController::mouseMoveEvent (QMouseEvent* theEvent)
                             qtMouseModifiers2VKeys (theEvent->modifiers()),
                             false))
   {
+      switch (myCurrentMode)
+      {
+          case EditMode::Select:
+		  {
+			  // do dnothing
+			  break;
+		  }
+          case EditMode::Move:
+          {
+              			  // do move
+			  break;
+          }
+      default:
+          break;
+      }
     updateView();
   }
 }

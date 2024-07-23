@@ -408,22 +408,26 @@ void MainWindow::setupOcctViewer(ModelController* theViewer)
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
 				{
-                    for (mViewer->Context()->InitSelected(); mViewer->Context()->MoreSelected(); mViewer->Context()->NextSelected())
-					{     
-                        TopoDS_Shape anShape = mViewer->Context()->SelectedShape();
-                        if (anShape.IsNull())
-						{
-							QMessageBox::warning(this, "Warning", "Please select a shape first!");
-							return;
-						}
-                        gp_Trsf agp_Trsf =  gp_Trsf();
-                        agp_Trsf.SetTranslation(gp_Vec(0, 0, 100));
-                        anShape.Move(TopLoc_Location(agp_Trsf));
+     //               for (mViewer->Context()->InitSelected(); mViewer->Context()->MoreSelected(); mViewer->Context()->NextSelected())
+					//{     
+     //                   TopoDS_Shape anShape = mViewer->Context()->SelectedShape();
+     //                   if (anShape.IsNull())
+					//	{
+					//		QMessageBox::warning(this, "Warning", "Please select a shape first!");
+					//		return;
+					//	}
+     //                   gp_Trsf agp_Trsf =  gp_Trsf();
+     //                   agp_Trsf.SetTranslation(gp_Vec(0, 0, 100));
+     //                   anShape.Move(TopLoc_Location(agp_Trsf));
 
-                        auto newAisShaple = new AIS_Shape(anShape);
-                        mViewer->Context()->Display(newAisShaple, Standard_True);
-					}
-					; });
+     //                   auto newAisShaple = new AIS_Shape(anShape);
+     //                   mViewer->Context()->Display(newAisShaple, Standard_True);
+					//};
+                    
+                    mViewer->setEditMode(ModelController::EditMode::Select);
+
+                    mViewer->showManipulator();
+                });
         }
         {
             // add spacer

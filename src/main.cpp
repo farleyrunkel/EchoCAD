@@ -5,13 +5,13 @@
 #include <QSettings>
 
 #include "MainWindow.h"
-#include "config.h"
+
 
 int main(int argc, char** argv) {
 
     QApplication aQApp(argc, argv);
-    QApplication::setApplicationName("EchoCAD");
-    QApplication::setOrganizationName("EchoCAD");
+    QApplication::setApplicationName("ClaireCAD");
+    QApplication::setOrganizationName("ClaireCAD");
 
 #ifdef __APPLE__
     // Suppress Qt warning "QCocoaGLContext: Falling back to unshared context"
@@ -28,8 +28,6 @@ int main(int argc, char** argv) {
 
     echocad::MainWindow* aWindow = new echocad::MainWindow;
 
-    // if not exist EchoCAD.conf, create it
-    
     QSettings settings("EchoCAD.conf", QSettings::IniFormat);
 
     settings.beginGroup("WindowPosition");

@@ -1,6 +1,6 @@
 
-#ifndef GlTools_HeaderFile
-#define GlTools_HeaderFile
+#ifndef GLTOOL_H
+#define GLTOOL_H
 
 #include <V3d_View.hxx>
 #include <OpenGl_Context.hxx>
@@ -18,4 +18,4 @@ public:
 
 } // namespace echocad
 
-#endif // GlTools_HeaderFile
+#endif // GLTOOL_H
