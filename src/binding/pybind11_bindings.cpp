@@ -3,7 +3,7 @@
 #include <pybind11/stl.h>
 
 #include <QOpenGLWidget>
-#include "ModelController.h"
+#include "ModelEditor.h"
 #include "CadModule.h"
 #include <TopoDS_Shape.hxx>
 #include <AIS_ViewController.hxx>
@@ -25,16 +25,16 @@ PYBIND11_MODULE(echocad, m) {
         .def("create_box", &CadModule::createBox, py::arg("x"), py::arg("y"), py::arg("z"), "Create a box shape given its dimensions");
 
     // IOcctWidget binding
-    py::class_<echocad::ModelController, QOpenGLWidget, AIS_ViewController>(m, "IOcctWidget")
+    py::class_<echocad::ModelEditor, QOpenGLWidget, AIS_ViewController>(m, "IOcctWidget")
         .def(py::init<QWidget*>(), py::arg("theParent") = nullptr)
-        .def("viewer", &echocad::ModelController::Viewer)
-        .def("view", &echocad::ModelController::View)
-        .def("context", &echocad::ModelController::Context)
-        .def("getglinfo", &echocad::ModelController::getGlInfo)
-        .def("minimumsizehint", &echocad::ModelController::minimumSizeHint)
-        .def("sizehint", &echocad::ModelController::sizeHint)
-        .def("onsubviewchanged", &echocad::ModelController::OnSubviewChanged)
-        .def("display", &echocad::ModelController::Display);
+        .def("viewer", &echocad::ModelEditor::Viewer)
+        .def("view", &echocad::ModelEditor::View)
+        .def("context", &echocad::ModelEditor::Context)
+        .def("getglinfo", &echocad::ModelEditor::getGlInfo)
+        .def("minimumsizehint", &echocad::ModelEditor::minimumSizeHint)
+        .def("sizehint", &echocad::ModelEditor::sizeHint)
+        .def("onsubviewchanged", &echocad::ModelEditor::OnSubviewChanged)
+        .def("display", &echocad::ModelEditor::Display);
 
     // bind function display using lambda and qt qapp to get main window
     m.def("display", [](const TopoDS_Shape& shape) {
@@ -43,7 +43,7 @@ PYBIND11_MODULE(echocad, m) {
         // get viewer from sys module
         auto viewer = sys.attr("viewer");
         // tarnsform viewer to IOcctWidget
-        echocad::ModelController* occt = py::cast<echocad::ModelController*>(viewer);
+        echocad::ModelEditor* occt = py::cast<echocad::ModelEditor*>(viewer);
         // display shape in viewer
         occt->Display(shape);
 	});

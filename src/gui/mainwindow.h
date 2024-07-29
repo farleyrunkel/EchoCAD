@@ -24,7 +24,7 @@
 
 #include "Scene.h"
 #include "GPTProcessor.h"
-#include "ModelController.h"
+#include "ModelEditor.h"
 #include "ilineedit.h"
 #include "PythonInterpreter.h"
 #include "IJupyterWidget.h"
@@ -41,13 +41,13 @@ public:
 
     void setPythonInterpreter(PythonInterpreter* thePython);
 
-    ModelController* viewer() const { return mViewer; }
+    ModelEditor* viewer() const { return mViewer; }
 
 private:
 
     void setupMainUi(QSplitter* theSplitter);
     void setupPythonEditor(QWidget* theEditor);
-    void setupOcctViewer(ModelController* theViewer);
+    void setupOcctViewer(ModelEditor* theViewer);
     void setupMenuBar(QMenuBar* theMenuBar);
 
     void setGPTProcessor(GptProcessor* theGptProcessor);
@@ -68,7 +68,7 @@ private:
     ILineEdit *mLineEdit;
     GptProcessor *mGptProcessor;
 
-    ModelController* mViewer;
+    ModelEditor* mViewer;
     QSplitter* mSplitter;
     QTextBrowser* mTextBrowser;
 

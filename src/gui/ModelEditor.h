@@ -19,7 +19,7 @@ class AIS_ViewCube;
 
 namespace echocad {
 
-class ModelController : public QOpenGLWidget, public AIS_ViewController
+class ModelEditor : public QOpenGLWidget, public AIS_ViewController
 {
   Q_OBJECT
 public:
@@ -30,10 +30,10 @@ public:
 };
 
   //! Main constructor.
-  ModelController (QWidget* theParent = nullptr);
+  ModelEditor (QWidget* theParent = nullptr);
 
   //! Destructor.
-  virtual ~ModelController();
+  virtual ~ModelEditor();
 
   //! Return Viewer.
   const Handle(V3d_Viewer)& Viewer() const { return myViewer; }

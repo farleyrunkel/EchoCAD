@@ -27,7 +27,7 @@
 
 #include <AIS_Axis.hxx>
 
-#include "ModelController.h"
+#include "ModelEditor.h"
 #include "GlTools.h"
 #include "ViewCube.h"
 
@@ -204,7 +204,7 @@ public:
   }
 };
 
-ModelController::ModelController (QWidget* theParent)
+ModelEditor::ModelEditor (QWidget* theParent)
     : QOpenGLWidget (theParent),
     myIsCoreProfile (true),
     myCurrentMode (EditMode::Select)
@@ -315,7 +315,7 @@ ModelController::ModelController (QWidget* theParent)
 // Function : ~OcctQtViewer
 // Purpose  :
 // ================================================================
-ModelController::~ModelController()
+ModelEditor::~ModelEditor()
 {
   // hold on X11 display connection till making another connection active by glXMakeCurrent()
   // to workaround sudden crash in QOpenGLWidget destructor
@@ -337,7 +337,7 @@ ModelController::~ModelController()
 // Function : dumpGlInfo
 // Purpose  :
 // ================================================================
-void ModelController::dumpGlInfo (bool theIsBasic, bool theToPrint)
+void ModelEditor::dumpGlInfo (bool theIsBasic, bool theToPrint)
 {
   TColStd_IndexedDataMapOfStringString aGlCapsDict;
   myView->DiagnosticInformation (aGlCapsDict, theIsBasic ? Graphic3d_DiagnosticInfo_Basic : Graphic3d_DiagnosticInfo_Complete);
@@ -365,7 +365,7 @@ void ModelController::dumpGlInfo (bool theIsBasic, bool theToPrint)
 // Function : initializeGL
 // Purpose  :
 // ================================================================
-void ModelController::initializeGL()
+void ModelEditor::initializeGL()
 {
   const QRect aRect = rect();
   const Graphic3d_Vec2i aViewSize (aRect.right() - aRect.left(), aRect.bottom() - aRect.top());
@@ -411,7 +411,7 @@ void ModelController::initializeGL()
 // Function : closeEvent
 // Purpose  :
 // ================================================================
-void ModelController::closeEvent (QCloseEvent* theEvent)
+void ModelEditor::closeEvent (QCloseEvent* theEvent)
 {
   theEvent->accept();
 }
@@ -420,7 +420,7 @@ void ModelController::closeEvent (QCloseEvent* theEvent)
 // Function : keyPressEvent
 // Purpose  :
 // ================================================================
-void ModelController::keyPressEvent (QKeyEvent* theEvent)
+void ModelEditor::keyPressEvent (QKeyEvent* theEvent)
 {
   Aspect_VKey aKey = qtKey2VKey (theEvent->key());
   switch (aKey)
@@ -444,7 +444,7 @@ void ModelController::keyPressEvent (QKeyEvent* theEvent)
 // Function : mousePressEvent
 // Purpose  :
 // ================================================================
-void ModelController::mousePressEvent (QMouseEvent* theEvent)
+void ModelEditor::mousePressEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mousePressEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -463,7 +463,7 @@ void ModelController::mousePressEvent (QMouseEvent* theEvent)
 // Function : mouseReleaseEvent
 // Purpose  :
 // ================================================================
-void ModelController::mouseReleaseEvent (QMouseEvent* theEvent)
+void ModelEditor::mouseReleaseEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseReleaseEvent (theEvent);
   const Graphic3d_Vec2i aPnt (theEvent->pos().x(), theEvent->pos().y());
@@ -482,7 +482,7 @@ void ModelController::mouseReleaseEvent (QMouseEvent* theEvent)
 // Function : mouseMoveEvent
 // Purpose  :
 // ================================================================
-void ModelController::mouseMoveEvent (QMouseEvent* theEvent)
+void ModelEditor::mouseMoveEvent (QMouseEvent* theEvent)
 {
   QOpenGLWidget::mouseMoveEvent (theEvent);
   const Graphic3d_Vec2i aNewPos (theEvent->pos().x(), theEvent->pos().y());
@@ -516,7 +516,7 @@ void ModelController::mouseMoveEvent (QMouseEvent* theEvent)
 // function : wheelEvent
 // purpose  :
 // ==============================================================================
-void ModelController::wheelEvent (QWheelEvent* theEvent)
+void ModelEditor::wheelEvent (QWheelEvent* theEvent)
 {
   QOpenGLWidget::wheelEvent (theEvent);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -552,7 +552,7 @@ void ModelController::wheelEvent (QWheelEvent* theEvent)
 // function : updateView
 // purpose  :
 // =======================================================================
-void ModelController::updateView()
+void ModelEditor::updateView()
 {
   update();
   //if (window() != NULL) { window()->update(); }
@@ -562,7 +562,7 @@ void ModelController::updateView()
 // Function : paintGL
 // Purpose  :
 // ================================================================
-void ModelController::paintGL()
+void ModelEditor::paintGL()
 {
   if (myView->Window().IsNull())
   {
@@ -620,7 +620,7 @@ void ModelController::paintGL()
 // Function : handleViewRedraw
 // Purpose  :
 // ================================================================
-void ModelController::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
+void ModelEditor::handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
                                      const Handle(V3d_View)& theView)
 {
   AIS_ViewController::handleViewRedraw (theCtx, theView);
@@ -635,7 +635,7 @@ void ModelController::handleViewRedraw (const Handle(AIS_InteractiveContext)& th
 // Function : OnSubviewChanged
 // Purpose  :
 // ================================================================
-void ModelController::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
+void ModelEditor::OnSubviewChanged (const Handle(AIS_InteractiveContext)&,
                                      const Handle(V3d_View)&,
                                      const Handle(V3d_View)& theNewView)
 {

@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *theParent)
     setupMenuBar(new QMenuBar);
 
     setupPythonEditor(new QWidget);
-    setupOcctViewer(new ModelController);
+    setupOcctViewer(new ModelEditor);
 
     setGPTProcessor(new GptProcessor);
     setPythonInterpreter(new PythonInterpreter);
@@ -197,7 +197,7 @@ void MainWindow::setupPythonEditor(QWidget* theEditor)
 }
 
 
-void MainWindow::setupOcctViewer(ModelController* theViewer)
+void MainWindow::setupOcctViewer(ModelEditor* theViewer)
 {
     mSplitter->addWidget(theViewer);
 
@@ -424,7 +424,7 @@ void MainWindow::setupOcctViewer(ModelController* theViewer)
      //                   mViewer->Context()->Display(newAisShaple, Standard_True);
 					//};
                     
-                    mViewer->setEditMode(ModelController::EditMode::Select);
+                    mViewer->setEditMode(ModelEditor::EditMode::Select);
 
                     mViewer->showManipulator();
                 });
