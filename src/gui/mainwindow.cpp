@@ -454,8 +454,11 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
         }
         {
             QSlider* aSlider = new QSlider(Qt::Horizontal);
+            aSlider->setObjectName("backgroundSlider");
+
             aSlider->setValue(0);
             aSlider->setRange(0, 255);
+
             aSlider->setSingleStep(1);
             aSlider->setPageStep(15);
             aSlider->setTickInterval(15);

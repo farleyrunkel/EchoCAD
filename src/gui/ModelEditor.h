@@ -108,7 +108,7 @@ private:
   Handle(V3d_Viewer)             myViewer;
   Handle(V3d_View)               myView;
   Handle(AIS_InteractiveContext) myContext;
-  Handle(ViewCube)               myViewCube;
+  Handle(AIS_InteractiveObject) myViewSphere;
 
   Handle(V3d_View)               myFocusView;
 

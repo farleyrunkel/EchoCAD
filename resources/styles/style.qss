@@ -37,73 +37,108 @@
 */
 
 Example#Usage {
-   background-color: transparent; /*@LightBackground*/
-   border: 1px solid transparent; /*@LightBorder*/
-}
-
-IOcctWidget,
-QWidget#EditorWidget{
-   background-color: transparent; /*@DarkBackground*/
-}
-
-ILineEdit {
-    Background-color: transparent;
-    border-style: hidden;
-    border-radius: 20px;
-    color: white;
-}
-QPushButton#circleButton{
-    border-style: hidden;
-    border-radius: 15px;
-}
-QPushButton#circleButton:hover {
-    background-color: #ececec; /*@NeutralBackground*/
-}
-QPushButton#circleButton:menu-indicator {
-    width: 0px;
-    image: none;
-}
-
-QPushButton#RoundedButton{
-    background-color: #282828;
-    border-style: solid;
-    border-radius: 5px;
-    width: 30px;
-    height: 30px;
-}
-QPushButton#RoundedButton:hover {
-    background-color: #303030;
-}
-QToolButton#RoundedButton{
-    background-color: #282828;
-    border-style: solid;
-    border-radius: 5px;
-    width: 30px;
+  background-color: transparent; /*@LightBackground*/
+  border: 1px
+  solid transparent; /*@LightBorder*/
+} IOcctWidget, QWidget#EditorWidget {
+  background-color: transparent; /*@DarkBackground*/
+} ILineEdit {
+  Background-color: transparent;
+  border-style: hidden;
+  border-radius: 20px;
+  color: white;
+} QPushButton#circleButton {
+  border-style: hidden;
+  border-radius: 15px;
+} QPushButton#circleButton:hover {
+  background-color: #ececec; /*@NeutralBackground*/
+} QPushButton#circleButton:menu-indicator {
+  width: 0px;
+  image: none;
+} QPushButton#RoundedButton {
+  background-color: #282828;
+  border-style: solid;
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+} QPushButton#RoundedButton:hover {
+  background-color: #303030;
+} QToolButton#RoundedButton {
+  background-color: #282828;
+  border-style: solid;
+  border-radius: 5px;
+  width: 30px;
   height: 30px;
   padding-left: 0px;
+} QToolButton#RoundedButton:checked {
+  background-color: #4772b3;
+} QToolButton#RoundedButton:hover:!checked {
+  background-color: #303030;
+} QScrollBar:vertical, QScrollBar:horizontal {
+  height: 8px;
+  background-color: #f7f7f5; /*@DarkBackground*/
+} QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+  background-color: #f7f7f5; /*@LightBackground*/
+  border-radius: 4px;
+} QScrollBar::handle:vertical:hover, QScrollBar::handle:horizontal:hover {
+  background-color: #f7f7f5; /*@NeutralBackground*/
+} QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical, QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {
+  width: 0;
+  height: 0;
+} 
+QSlider::groove:horizontal {
+border: 1px solid #bbb;
+background: white;
+height: 24px;
+border-radius: 8px;
 }
-QToolButton#RoundedButton:checked  {
-    background-color: #4772b3;
+
+QSlider::sub-page:horizontal {
+background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1,
+    stop: 0 #66e, stop: 1 #bbf);
+background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,
+    stop: 0 #bbf, stop: 1 #55f);
+border: 1px solid #777;
+height: 10px;
+border-radius: 8x;
 }
-QToolButton#RoundedButton:hover:!checked {
-    background-color: #303030;
+
+QSlider::add-page:horizontal {
+background: #fff;
+border: 1px solid #777;
+height: 10px;
+border-radius: 8px;
 }
-QScrollBar:vertical,
-QScrollBar:horizontal {
-    height: 8px;
- background-color: #f7f7f5;  /*@DarkBackground*/
+
+QSlider::handle:horizontal {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+    stop:0 #eee, stop:1 #ccc);
+border: 0px solid #777;
+width: 20px;
+margin-top: -2px;
+margin-bottom: -2px;
+border-radius: 8px;
 }
-QScrollBar::handle:vertical,
-QScrollBar::handle:horizontal {
-    background-color: #f7f7f5;  /*@LightBackground*/
-    border-radius:4px;
+
+QSlider::handle:horizontal:hover {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+    stop:0 #fff, stop:1 #ddd);
+border: 1px solid #444;
+border-radius: 8px;
 }
-QScrollBar::handle:vertical:hover,
-QScrollBar::handle:horizontal:hover {
-    background-color: #f7f7f5;  /*@NeutralBackground*/
+
+QSlider::sub-page:horizontal:disabled {
+background: #bbb;
+border-color: #999;
 }
-QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical,
-QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {
-    width: 0;
-    height: 0;
+
+QSlider::add-page:horizontal:disabled {
+background: #eee;
+border-color: #999;
+}
+
+QSlider::handle:horizontal:disabled {
+background: #eee;
+border: 1px solid #aaa;
+border-radius: 8px;
 }

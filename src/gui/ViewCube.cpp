@@ -17,7 +17,7 @@ ViewCube::ViewCube() : AIS_ViewCube()
 	Handle(Graphic3d_TransformPers) aTrsfPers = new Graphic3d_TransformPers(
 		Graphic3d_TMF_TriedronPers,
 		Aspect_TOTP_RIGHT_UPPER,
-		Graphic3d_Vec2i(70, 110)
+		Graphic3d_Vec2i(0, 0)
 	);
 	SetTransformPersistence(aTrsfPers);
 
@@ -51,7 +51,7 @@ ViewSphere::ViewSphere()
 	myTransformPersistence = new Graphic3d_TransformPers(
 		Graphic3d_TMF_TriedronPers,
 		Aspect_TOTP_RIGHT_UPPER,
-		Graphic3d_Vec2i(370, 310)
+		Graphic3d_Vec2i(80, 110)
 	);
 
 	myAxesLabels.Bind(Prs3d_DatumParts_XAxis, "X");

@@ -243,15 +243,8 @@ ModelEditor::ModelEditor (QWidget* theParent)
   aSettings->SetFaceBoundaryAspect (new Prs3d_LineAspect (Quantity_NOC_BLACK, Aspect_TOL_SOLID, 1.0));
   myContext->SetHighlightStyle(aSettings);
 
-  myViewCube = new ViewCube();
-  myViewCube->SetViewAnimation (myViewAnimation);
-
-  {
-      Handle(ViewSphere) aViewSphere = new echocad::ViewSphere();
-      myContext->Display(aViewSphere, 0, 0, false);
-
-  
-  }
+myViewSphere = new echocad::ViewSphere();
+myContext->Display(myViewSphere, 0, 0, false);
 
   // note - window will be created later within initializeGL() callback!
   myView = myViewer->CreateView();
@@ -403,7 +396,6 @@ void ModelEditor::initializeGL()
     myView->SetWindow (aWindow, aGlCtx->RenderingContext());
     dumpGlInfo (true, true);
 
-    myContext->Display (myViewCube, 0, 0, false);
   }
 }
 
