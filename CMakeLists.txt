@@ -16,6 +16,10 @@ set(PYTHONOCC_INSTALL_DIRECTORY ${CMAKE_BINARY_DIR}/python/Lib/site-packages)
 # append the cmake directory to the CMAKE_MODULE_PATH
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+####################
+# Python3
+####################
+
 # Find Python3 package
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 if(Python3_FOUND)
@@ -35,10 +39,17 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
 
 message(STATUS "pybind11_INCLUDE_DIR: ${CMAKE_SOURCE_DIR}/src/3rdparty/pybind11/include")
 
-# Find Qt and OpenGL packages
+####################
+# Qt
+####################
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Test OpenGLWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core5Compat Test OpenGLWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS 3DCore 3DExtras 3DInput 3DRender)
+
+####################
+# OpenGL
+####################
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
@@ -49,6 +60,10 @@ if(OpenGL_FOUND)
 else()
 	message(FATAL_ERROR "OpenGL not found")
 endif()
+
+####################
+# OpenCASCADE
+####################
 
 # Find OpenCASCADE package
 find_package(OpenCASCADE REQUIRED)
@@ -61,9 +76,19 @@ else()
 	message(FATAL_ERROR "OpenCASCADE not found")
 endif()
 
+####################
+# KDbindings
+####################
+include_directories(${CMAKE_SOURCE_DIR}/external/kdbindings/src)
+
+
+####################
+# QScintilla
+####################
+
+message(STATUS "QScintilla include directory: " ${QScintilla_INCLUDE_DIR})
 # Find QScintilla package
 # find_package(QScintilla REQUIRED)
-message(STATUS "QScintilla include directory: " ${QScintilla_INCLUDE_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(QSCINTILLA_LIB qscintilla2_qt${QT_VERSION_MAJOR}d)
 else()
