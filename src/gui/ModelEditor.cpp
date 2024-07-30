@@ -333,7 +333,7 @@ ModelEditor::~ModelEditor()
 
 void ModelEditor::open(const TCollection_ExtendedString& path) {
     auto anOcaf_Application = myApp;
-    // load persistence
+    // load persistence 
     BinDrivers::DefineFormat(anOcaf_Application);
     XmlDrivers::DefineFormat(anOcaf_Application);
     // Look for already opened
@@ -365,8 +365,9 @@ void ModelEditor::open(const TCollection_ExtendedString& path) {
     }
 
     update();
-}
 
+    emit documentOpened(myOcafDoc);
+}
 
 // ================================================================
 // Function : dumpGlInfo

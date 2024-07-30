@@ -89,74 +89,6 @@ public:
 
   void open(const TCollection_ExtendedString& path);
 
-  void test() {
-
-      // Open a new command (for undo)
-      myOcafDoc->NewCommand();
-
-      // A data structure for our box:
-      // the box itself is attached to the BoxLabel label (as his name and his function attribute)
-      // its arguments (dimensions: width, length and height; and position: x, y, z)
-      // are attached to the child labels of the box:
-      // 0:1 Box Label ---> Name --->  Named shape ---> Function
-      //     0:1:1 -- Width Label
-      //     0:1:2 -- Length Label
-      //     0:1:3 -- Height Label
-      //     0:1:4 -- X Label
-      //     0:1:5 -- Y Label
-      //     0:1:6 -- Z Label
-
-      // Create a new label in the data structure for the box
-      TDF_Label aLabel = TDF_TagSource::NewChild(myOcafDoc->Main());
-
-      Standard_Real aBoxWidth(30.0), aBoxLength(20.0), aBoxHeight(10.0);
-      Standard_Real aBoxX(0.0), aBoxY(0.0), aBoxZ(0.0);
-      Standard_CString aBoxName("OcafBox");
-      // Create the data structure : Set the dimensions, position and name attributes
-      TDataStd_Real::Set(aLabel.FindChild(1), aBoxWidth);
-      TDataStd_Real::Set(aLabel.FindChild(2), aBoxLength);
-      TDataStd_Real::Set(aLabel.FindChild(3), aBoxHeight);
-      TDataStd_Real::Set(aLabel.FindChild(4), aBoxX);
-      TDataStd_Real::Set(aLabel.FindChild(5), aBoxY);
-      TDataStd_Real::Set(aLabel.FindChild(6), aBoxZ);
-      TDataStd_Name::Set(aLabel, aBoxName); // Name
-
-      // Instantiate a TFunction_Function attribute connected to the current box driver
-      // and attach it to the data structure as an attribute of the Box Label
-      Handle(TFunction_Function) myFunction = TFunction_Function::Set(aLabel, BOX_GUID);
-
-      // Initialize and execute the box driver (look at the "Execute()" code)
-      Handle(TFunction_Logbook) aLogBook = TFunction_Logbook::Set(aLabel);
-
-      Handle(TFunction_Driver) myBoxDriver;
-      // Find the TOcafFunction_BoxDriver in the TFunction_DriverTable using its GUID
-      if (!TFunction_DriverTable::Get()->FindDriver(BOX_GUID, myBoxDriver))
-      {
-          std::cout << "Ocaf Box driver not found" << std::endl;
-      }
-
-      myBoxDriver->Init(aLabel);
-      if (myBoxDriver->Execute(aLogBook))
-      {
-          std::cout << "Create Box function execute failed" << std::endl;
-      }
-
-      // Get the TPrsStd_AISPresentation of the new box TNaming_NamedShape
-      Handle(TPrsStd_AISPresentation) anAisPresentation = TPrsStd_AISPresentation::Set(aLabel, TNaming_NamedShape::GetID());
-      // Display it
-      anAisPresentation->Display(true);
-      // Attach an integer attribute to aLabel to memorize it's displayed
-      TDataStd_Integer::Set(aLabel, 1);
-      myContext->UpdateCurrentViewer();
-
-      // Close the command (for undo)
-      myOcafDoc->CommitCommand();
-
-      std::cout << "Created a box with name: " << aBoxName << std::endl;
-      std::cout << "base coord X: " << aBoxX << " Y: " << aBoxY << " Z: " << aBoxZ << std::endl;
-      std::cout << "width: " << aBoxWidth << " length: " << aBoxLength << " height: " << aBoxHeight << std::endl;
-  }
-
   void closeAllDocument() {     
       // Close all documents
       for (auto a = 0; a < myApp->NbDocuments(); a++) {
@@ -165,6 +97,9 @@ public:
 		  myApp->Close(aDoc);
 	  }
   }
+
+signals:
+    void documentOpened(const Handle(TDocStd_Document)& theDoc);
 
 public:
 

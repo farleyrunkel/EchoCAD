@@ -10,11 +10,14 @@
 #include <TDF_ChildIterator.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <stack>
+#include <TDocStd_SequenceOfDocument.hxx>
+#include <TDF_AttributeIterator.hxx>
+
 
 class TreeWidget : public QTreeWidget
 {
     Q_OBJECT
-
+public:
     using QTreeWidget::QTreeWidget;
 
     void setApp(TOcaf_Application* app)
@@ -44,14 +47,13 @@ class TreeWidget : public QTreeWidget
 		}
 	}
 
-	void updateTree() {
+	void updateTree(const Handle(TDocStd_Document)& theDoc) {
 		clear();
-		if (myApp.IsNull())
-			return;
 
-		TDF_Label rootLabel = myDoc->Main();
+		TDF_Label rootLabel = theDoc->Main();
 		TCollection_AsciiString es;
 		TDF_Tool::Entry(rootLabel, es);
+	
 		QTreeWidgetItem* rootItem = new QTreeWidgetItem(this);
 		rootItem->setText(0, es.ToCString());
 
@@ -61,6 +63,9 @@ class TreeWidget : public QTreeWidget
 		while (!stack.empty()) {
 			auto [label, item] = stack.top();
 			stack.pop();
+
+			loadLabelAttributes(label, item);
+
 			TDF_ChildIterator it;
 			for (it.Initialize(label, Standard_True); it.More(); it.Next()) {
 				TDF_Label childLabel = it.Value();
@@ -73,16 +78,61 @@ class TreeWidget : public QTreeWidget
 		}
 	}
 
-	void setDoc(Handle(TDocStd_Document) doc)
-	{
-		myDoc = doc;
-		updateTree();
+	void loadLabelAttributes(const TDF_Label& label, QTreeWidgetItem* treeItem)
+{
+		for (TDF_AttributeIterator it(label); it.More(); it.Next()) {
+			const Handle_TDF_Attribute ptrAttr = it.Value();
+			const Standard_GUID& attrId = ptrAttr->ID();
+			QString text;
+			QString value;
+			if (attrId == TDataStd_Name::GetID()) {
+				const auto& name = static_cast<const TDataStd_Name&>(*ptrAttr);
+				text = "TDataStd_Name";
+				value = QString::fromUtf16(name.Get().ToExtString(), name.Get().Length());;
+			}
+			else {
+				std::stringstream sstream;
+				ptrAttr->Dump(sstream);
+				QString strDump = QString::fromStdString(sstream.str());
+
+				int i = 0;
+				while (i < strDump.size() && strDump.at(i).isSpace()) ++i;
+
+				const int wordStart = i;
+				while (i < strDump.size() && !strDump.at(i).isSpace()) ++i;
+
+				const int wordEnd = i;
+				while (i < strDump.size() && strDump.at(i).isSpace()) ++i;
+
+				const int dataStart = i;
+				text = wordStart < strDump.size() ? strDump.mid(wordStart, wordEnd - wordStart) : QStringLiteral("??");
+				strDump = strDump.right(strDump.size() - dataStart);
+				value = strDump.replace(QChar('\n'), QString("  "));
+			}
+
+			auto attrTreeItem = new QTreeWidgetItem;
+			attrTreeItem->setText(0, text + ": " + value);
+			attrTreeItem->setToolTip(0, text + ": " + value);
+
+			treeItem->addChild(attrTreeItem);
+		}
 	}
 
+	void addDocument(const Handle(TDocStd_Document)& theDoc)
+	{
+		myDoc = theDoc;
+		updateTree(theDoc);
+	}
+
+	void setDoc(const Handle(TDocStd_Document)& doc)
+	{
+		myDoc = doc;
+	}
 
 private:
 	Handle(TOcaf_Application) myApp;
 	Handle(TDocStd_Document) myDoc;
+	TDocStd_SequenceOfDocument myDocs;
 };
 
 #endif // !ECHOCAD_TREE_H

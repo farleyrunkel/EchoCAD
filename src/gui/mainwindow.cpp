@@ -520,6 +520,11 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
             myTreeWidget->setObjectName("TreeWidget");
             myTreeWidget->setHeaderHidden(true);
             aSplitter->addWidget(myTreeWidget);
+
+            connect(mViewer, &ModelEditor::documentOpened, [this](const Handle(TDocStd_Document)& theDoc)
+				{
+					myTreeWidget->addDocument(theDoc);
+				});
         }
         {
             auto aWidget = new QWidget(aFrame);

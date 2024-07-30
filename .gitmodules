@@ -7,3 +7,6 @@
 [submodule "src/3rdparty/QScintilla"]
 	path = src/3rdparty/QScintilla
 	url = git@github.com:farleyrunkel/QScintilla.git
+[submodule "external/kdbindings"]
+	path = external/kdbindings
+	url = git@github.com:KDAB/KDBindings.git
