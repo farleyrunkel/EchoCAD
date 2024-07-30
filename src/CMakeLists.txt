@@ -4,6 +4,7 @@
 file(GLOB PROJECT_SUBSOURCES
     "${CMAKE_SOURCE_DIR}/src/*/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/*/*.h"
+     CACHE INTERNAL "List of source files for the project"
 )
 
 # Define project source files
@@ -13,3 +14,4 @@ set(PROJECT_SOURCES
     CACHE INTERNAL "List of source files for the project"
 )
 
+ 

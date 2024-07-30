@@ -17,6 +17,8 @@
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <StdSelect_BRepSelectionTool.hxx>
 #include <TopoDS.hxx>
+#include <XmlDrivers.hxx>
+#include <BinDrivers.hxx>
 
 #include <Message.hxx>
 #include <OpenGl_GraphicDriver.hxx>
@@ -206,9 +208,12 @@ public:
 
 ModelEditor::ModelEditor (QWidget* theParent)
     : QOpenGLWidget (theParent),
+    myApp(new TOcaf_Application()),
     myIsCoreProfile (true),
     myCurrentMode (EditMode::Select)
 {
+    myApp->NewDocument("NewDocumentFormat", myOcafDoc);
+
   Handle(Aspect_DisplayConnection) aDisp = new Aspect_DisplayConnection();
   Handle(OpenGl_GraphicDriver) aDriver = new OpenGl_GraphicDriver (aDisp, false);
   // lets QOpenGLWidget to manage buffer swap
@@ -325,6 +330,43 @@ ModelEditor::~ModelEditor()
   makeCurrent();
   aDisp.Nullify();
 }
+
+void ModelEditor::open(const TCollection_ExtendedString& path) {
+    auto anOcaf_Application = myApp;
+    // load persistence
+    BinDrivers::DefineFormat(anOcaf_Application);
+    XmlDrivers::DefineFormat(anOcaf_Application);
+    // Look for already opened
+    if (anOcaf_Application->IsInSession(path))
+    {
+        std::cout << "Document: " << path << " is already in session" << std::endl;
+        return;
+    }
+    // Open the document in the current application
+    PCDM_ReaderStatus aReaderStatus = anOcaf_Application->Open(path, myOcafDoc);
+    if (aReaderStatus == PCDM_RS_OK)
+    {
+        // Connect the document CAF (myDoc) with the AISContext (myAISContext)
+        TPrsStd_AISViewer::New(myOcafDoc->Main(), myViewer);
+        myOcafDoc->SetUndoLimit(10);
+
+        myContext->RemoveAll(Standard_False);
+        Handle(AIS_InteractiveContext) aContext;
+        TPrsStd_AISViewer::Find(myOcafDoc->Main(), aContext);
+        aContext->SetDisplayMode(AIS_Shaded, Standard_True);
+        myContext = aContext;
+
+        // Display the presentations (which was not stored in the document)
+        std::cout << "Open a document" << std::endl;
+    }
+    else
+    {
+        std::cout << "Error! The file wasn't opened. PCDM_ReaderStatus: " << aReaderStatus << std::endl;
+    }
+
+    update();
+}
+
 
 // ================================================================
 // Function : dumpGlInfo

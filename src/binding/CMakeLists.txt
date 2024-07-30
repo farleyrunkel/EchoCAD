@@ -2,12 +2,6 @@
 # Specify the list of source files for creating the Python binding module
 message(STATUS "Creating Python binding module using pybind11")
 
-# Find all source and header files in all subdirectories under the src directory
-file(GLOB PROJECT_SUBSOURCES
-    "${CMAKE_SOURCE_DIR}/src/*/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/*/*.h"
-)
-
 pybind11_add_module(echocad MODULE
 
     ${PROJECT_SUBSOURCES}

@@ -151,5 +151,21 @@ Example#Usage {
   border: 1px
   solid #aaa;
   border-radius: 8px;
-}
-
+} QTreeView {
+  background-color: transparent;
+} QTreeView::item {
+  background-color: transparent;
+  color: white;
+  border: 0px;
+  padding: 5px;
+} QTreeView::item:selected {
+  background-color: #2d2d2d;
+  color: white;
+  border: 0px;
+  padding: 5px;
+} QTreeView::item:hover {
+  background-color: #2d2d2d;
+  color: white;
+  border: 0px;
+  padding: 5px;
+} 

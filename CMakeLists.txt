@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON) 
 
 set(OpenCASCADE_DIR "E:/Projects/Project-EchoCAD/OCCT-7_8_1-install/cmake")
 set(PYTHONOCC_INSTALL_DIRECTORY ${CMAKE_BINARY_DIR}/python/Lib/site-packages)
@@ -26,9 +26,9 @@ if(Python3_FOUND)
     
     # Include the file to setup Python
     include(setupPython)
-else()
+else()  
 	message(FATAL_ERROR "Python3 not found")
-endif()
+endif()   
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/3rdparty)
@@ -68,7 +68,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(QSCINTILLA_LIB qscintilla2_qt${QT_VERSION_MAJOR}d)
 else()
     set(QSCINTILLA_LIB qscintilla2_qt${QT_VERSION_MAJOR})
-endif()
+endif() 
 
 # Define project resources
 set(PROJECT_RESOURCES ${CMAKE_SOURCE_DIR}/resources/resources.qrc) 

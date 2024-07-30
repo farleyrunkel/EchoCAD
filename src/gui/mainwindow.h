@@ -28,6 +28,8 @@
 #include "ilineedit.h"
 #include "PythonInterpreter.h"
 #include "IJupyterWidget.h"
+#include "tree.h"
+
 
 namespace echocad
 {
@@ -65,6 +67,9 @@ private slots:
     void executePythonCode(const QString& theCode);
 
 private:
+
+    TreeWidget* myTreeWidget;
+
     ILineEdit *mLineEdit;
     GptProcessor *mGptProcessor;
 

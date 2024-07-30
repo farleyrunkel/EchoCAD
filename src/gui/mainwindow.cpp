@@ -10,6 +10,7 @@
 #include <QTextBrowser>
 #include <QGraphicsDropShadowEffect>
 #include <QToolButton>
+#include <QFileDialog>
 
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <AIS_Shape.hxx>
@@ -44,7 +45,8 @@ MainWindow::MainWindow(QWidget *theParent)
     mSplitter(nullptr),
     mLineEdit(nullptr),
     mEditor(nullptr),
-    mPythonInterpreter(nullptr)
+    mPythonInterpreter(nullptr),
+    myTreeWidget(nullptr)
 {
     setupMainUi(new QSplitter);
     setupMenuBar(new QMenuBar);
@@ -407,23 +409,23 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
             aButton->setObjectName("RoundedButton");
             aButtonsLayout->addWidget(aButton);
             connect(aButton, &QPushButton::clicked, [this]()
-				{
-     //               for (mViewer->Context()->InitSelected(); mViewer->Context()->MoreSelected(); mViewer->Context()->NextSelected())
-					//{     
-     //                   TopoDS_Shape anShape = mViewer->Context()->SelectedShape();
-     //                   if (anShape.IsNull())
-					//	{
-					//		QMessageBox::warning(this, "Warning", "Please select a shape first!");
-					//		return;
-					//	}
-     //                   gp_Trsf agp_Trsf =  gp_Trsf();
-     //                   agp_Trsf.SetTranslation(gp_Vec(0, 0, 100));
-     //                   anShape.Move(TopLoc_Location(agp_Trsf));
+                {
+                    //               for (mViewer->Context()->InitSelected(); mViewer->Context()->MoreSelected(); mViewer->Context()->NextSelected())
+                                   //{     
+                    //                   TopoDS_Shape anShape = mViewer->Context()->SelectedShape();
+                    //                   if (anShape.IsNull())
+                                   //	{
+                                   //		QMessageBox::warning(this, "Warning", "Please select a shape first!");
+                                   //		return;
+                                   //	}
+                    //                   gp_Trsf agp_Trsf =  gp_Trsf();
+                    //                   agp_Trsf.SetTranslation(gp_Vec(0, 0, 100));
+                    //                   anShape.Move(TopLoc_Location(agp_Trsf));
 
-     //                   auto newAisShaple = new AIS_Shape(anShape);
-     //                   mViewer->Context()->Display(newAisShaple, Standard_True);
-					//};
-                    
+                    //                   auto newAisShaple = new AIS_Shape(anShape);
+                    //                   mViewer->Context()->Display(newAisShaple, Standard_True);
+                                   //};
+
                     mViewer->setEditMode(ModelEditor::EditMode::Select);
 
                     mViewer->showManipulator();
@@ -451,6 +453,10 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
                         mViewer->View()->Redraw();
                     }
                 });
+        }
+        {
+
+
         }
         {
             QSlider* aSlider = new QSlider(Qt::Horizontal);
@@ -491,35 +497,50 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
             aSlider->setValue(aColor1.Red() * aSlider->maximum());
         }
     }
+
     {
         // Set up the bottom area of the chats page
         QFrame* aFrame = new QFrame;
 		aLayout->addWidget(aFrame);
         aFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         aFrame->setFixedWidth(240);
-        aFrame->setStyleSheet("border: none; border-radius: 10px; background-color: rgba(40, 40, 40, 0.5);");
+        aFrame->setStyleSheet("border: 1px; border-radius: 10px; background-color: rgba(40, 40, 40, 0.5);");
 
         auto aFrameLayout = new QVBoxLayout(aFrame);
         aFrameLayout->setContentsMargins(0, 0, 0, 0);
         aFrameLayout->setSpacing(0);
+
+        auto aSplitter = new QSplitter(aFrame);
+        aFrameLayout->addWidget(aSplitter);
+        aSplitter->setOrientation(Qt::Vertical);
+        aSplitter->setContentsMargins(0, 0, 0, 0);
+        aSplitter->setChildrenCollapsible(false);
         {
-            // Add a text browser
-            mTextBrowser = new QTextBrowser(aFrame);
-            mTextBrowser->setObjectName("TextBrowser");
-            mTextBrowser->setOpenExternalLinks(true);
-            mTextBrowser->setOpenLinks(true);
-            mTextBrowser->setFrameShape(QFrame::NoFrame);
-            mTextBrowser->setStyleSheet("background-color: transparent;");
-            aFrameLayout->addWidget(mTextBrowser);
+            myTreeWidget = new TreeWidget(aFrame);
+            myTreeWidget->setObjectName("TreeWidget");
+            myTreeWidget->setHeaderHidden(true);
+            aSplitter->addWidget(myTreeWidget);
         }
         {
+            auto aWidget = new QWidget(aFrame);
+            auto aLayout = new QVBoxLayout(aWidget);
+            aSplitter->addWidget(aWidget);
+
+            aLayout->setContentsMargins(0, 0, 0, 0);
+            // Add a text browser
+            mTextBrowser = new QTextBrowser(aWidget);
+            mTextBrowser->setObjectName("TextBrowser");
+            mTextBrowser->setFrameShape(QFrame::NoFrame);
+            mTextBrowser->setStyleSheet("background-color: transparent;");
+            aLayout->addWidget(mTextBrowser);
+
             // Set up the bottom area of the chats page
             mLineEdit = new ILineEdit(this);
             mLineEdit->setPlaceholderText("Describe what you want to create ...");
             mLineEdit->setFixedHeight(40);
             mLineEdit->rightButton()->setIcon(QIcon("://icons/send.svg"));
 
-            aFrameLayout->addWidget(mLineEdit);
+            aLayout->addWidget(mLineEdit);
         	connect(mLineEdit->rightButton(), &QPushButton::clicked, mLineEdit, &ILineEdit::returnPressed);
             connect(mLineEdit, &ILineEdit::returnPressed, this, &MainWindow::onExecuteButtonClicked);
         }
@@ -580,6 +601,30 @@ void MainWindow::setupMenuBar(QMenuBar* theMenuBar)
                 close();
             });
     } 
+    {
+        QAction* anActionOpen = new QAction(aMenuFile);
+        anActionOpen->setText("Open");
+        aMenuFile->addAction(anActionOpen);
+        connect(anActionOpen, &QAction::triggered, [this]()
+            {
+                QString aFileName = QFileDialog::getOpenFileName(this, "Open File", QString(), "All Files (*.*)");
+                if (!aFileName.isEmpty())
+                {
+                    mViewer->open(aFileName.toStdWString().c_str());
+                }
+            });
+    }
+    {
+        QAction* anActionClose = new QAction(aMenuFile);
+        anActionClose->setText("Close");
+        aMenuFile->addAction(anActionClose);
+        connect(anActionClose, &QAction::triggered, [this]()
+            {
+                mViewer->closeAllDocument();
+                mViewer->View()->Update();
+            });
+    }
+
     QMenu* aMenuAbout = aMenuBar->addMenu("About");
     {  
         {

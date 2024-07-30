@@ -6,6 +6,7 @@
 
 #include <Prs3d_ToolDisk.hxx>
 #include <Graphic3d_Text.hxx>
+#include <Graphic3d_ArrayOfPoints.hxx>
 
 namespace echocad{
 
