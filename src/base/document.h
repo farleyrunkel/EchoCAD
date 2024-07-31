@@ -7,17 +7,18 @@
 #include <string>
 #include <string_view>
 
-namespace echocad {
+namespace App {
 
 // Provides a data container, composed of labels and attributes
 // It extends TDocStd_Document to provide an actualized model tree of its contents
 // Entities are actually "root" data items
 class Document : public TDocStd_Document {
+
 public:
 
 };
 
-} // namespace echocad
+} // namespace App
 
 
 #endif // !ECHOCAD_DOCUMENT_H

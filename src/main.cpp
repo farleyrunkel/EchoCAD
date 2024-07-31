@@ -3,15 +3,44 @@
 #include <QSurfaceFormat>
 #include <QDebug>
 #include <QSettings>
+#include <QTranslator>
 
 #include "MainWindow.h"
+#include "AppModule.h"
+#include "GuiApplication.h"
+#include "GuiDocument.h"
 
+using namespace echocad;
+
+static int initGui(GuiApplication* guiApp)
+{
+
+    return 1;
+}
+// Initializes and runs Mayo application
+static int runApp(QCoreApplication* qtApp)
+{
+
+    // Initialize AppModule
+    auto appModule = AppModule::instance();
+    //appModule->settings()->setStorage(std::make_unique<QSettingsStorage>());
+    //appModule->setRecentFileThumbnailRecorder(&createGuiDocumentThumbnail);
+
+    auto app = appModule->application();
+
+    // Initialize Gui application
+
+    auto guiApp = new GuiApplication(app);
+    initGui(guiApp);
+
+    return qtApp->exec();
+}
 
 int main(int argc, char** argv) {
 
     QApplication aQApp(argc, argv);
-    QApplication::setApplicationName("ClaireCAD");
-    QApplication::setOrganizationName("ClaireCAD");
+    QApplication::setApplicationName("EchoCAD");
+    QApplication::setOrganizationName("EchoCAD");
 
 #ifdef __APPLE__
     // Suppress Qt warning "QCocoaGLContext: Falling back to unshared context"
@@ -24,7 +53,7 @@ int main(int argc, char** argv) {
     }
     glFormat.setProfile(isCoreProfile ? QSurfaceFormat::CoreProfile : QSurfaceFormat::CompatibilityProfile);
     QSurfaceFormat::setDefaultFormat(glFormat);
-#endif
+#endif 
 
     echocad::MainWindow* aWindow = new echocad::MainWindow;
 
@@ -44,7 +73,7 @@ int main(int argc, char** argv) {
 
     aWindow->show();
 
-    int aResult = aQApp.exec();
+    int aResult = runApp(&aQApp);
 
     settings.beginGroup("WindowPosition");
         settings.setValue("x", aWindow->x());

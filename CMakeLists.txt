@@ -118,7 +118,7 @@ else()
         add_executable(EchoCAD
             ${PROJECT_SOURCES}
         )
-    endif()
+    endif() 
 endif()
 
 set_target_properties(EchoCAD PROPERTIES

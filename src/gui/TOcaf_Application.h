@@ -11,7 +11,7 @@ class TOcaf_Application : public TDocStd_Application
 	DEFINE_STANDARD_RTTI_INLINE(TOcaf_Application, TDocStd_Application)
 public:
 
-	Standard_EXPORT TOcaf_Application();
+	 TOcaf_Application();
 };
 
 #endif
