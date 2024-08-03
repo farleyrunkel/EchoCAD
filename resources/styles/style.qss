@@ -69,7 +69,6 @@ Example#Usage {
   border-radius: 5px;
   width: 30px;
   height: 30px;
-  padding-left: 0px;
 } QToolButton#RoundedButton:checked {
   background-color: #4772b3;
 } QToolButton#RoundedButton:hover:!checked {

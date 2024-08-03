@@ -14,6 +14,8 @@
 #include <QSlider>
 #include <QSplitter>
 #include <QTextBrowser>
+#include <QButtonGroup>
+#include <QToolButton>
 
 #include <Standard_WarningsDisable.hxx>
 #include <Standard_WarningsRestore.hxx>
@@ -66,6 +68,11 @@ private slots:
 
     void executePythonCode(const QString& theCode);
 
+    void updateButtons() {
+        for (auto aButton : m_editButtons) {
+            aButton->setChecked(aButton == m_currentEditButton);
+        }
+    }
 private:
 
     TreeWidget* myTreeWidget;
@@ -82,6 +89,9 @@ private:
     QPushButton* mSplitterButtons[2];
 
     PythonInterpreter* mPythonInterpreter;
+
+    std::vector<QToolButton*> m_editButtons;
+    QToolButton* m_currentEditButton;
 };
 
 

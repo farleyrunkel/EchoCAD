@@ -19,6 +19,7 @@
 #include <TopoDS.hxx>
 #include <XmlDrivers.hxx>
 #include <BinDrivers.hxx>
+#include <BRepFeat.hxx>
 
 #include <Message.hxx>
 #include <OpenGl_GraphicDriver.hxx>
@@ -211,6 +212,7 @@ ModelEditor::ModelEditor (QWidget* theParent)
     myApp(new TOcaf_Application()),
     myIsCoreProfile (true),
     myCurrentMode (EditMode::Select)
+
 {
     myApp->NewDocument("NewDocumentFormat", myOcafDoc);
 
@@ -307,6 +309,9 @@ myContext->Display(myViewSphere, 0, 0, false);
   QCoreApplication::setAttribute (Qt::AA_UseDesktopOpenGL);
   //QCoreApplication::setAttribute (Qt::AA_UseOpenGLES);
 #endif
+
+  myManipulator = new Manipulator;
+  myManipulator->SetSize(100);
 }
 
 // ================================================================
@@ -438,7 +443,6 @@ void ModelEditor::initializeGL()
     aWindow->SetSize (aViewSize.x(), aViewSize.y());
     myView->SetWindow (aWindow, aGlCtx->RenderingContext());
     dumpGlInfo (true, true);
-
   }
 }
 
@@ -490,6 +494,9 @@ void ModelEditor::mousePressEvent (QMouseEvent* theEvent)
                            aFlags,
                            false))
   {
+      if (theEvent->button() == Qt::LeftButton) {
+          m_lastPos = theEvent->pos();
+      }
     updateView();
   }
 }
@@ -509,6 +516,36 @@ void ModelEditor::mouseReleaseEvent (QMouseEvent* theEvent)
                            aFlags,
                            false))
   {
+      if (m_lastPos == theEvent->pos()) {
+          myContext->SelectDetected();
+          if (myCurrentMode == EditMode::Move) {
+
+              myManipulator->EnableMode(AIS_MM_Rotation);
+              myManipulator->SetPart(1, AIS_MM_Rotation, true);
+
+              myManipulator->SetModeActivationOnDetection(true);
+              if (myContext->HasDetected() && myManipulator->IsModeActivationOnDetection()) {
+                  myManipulator->Attach(myContext->DetectedInteractive());
+
+                  auto EO = myContext->DetectedOwner();
+                  Handle(StdSelect_BRepOwner) BRO = Handle(StdSelect_BRepOwner)::DownCast(EO);
+
+                  gp_Pnt center = gp_Pnt();
+                  BRepFeat::Barycenter(BRO->Shape(), center);
+
+                  auto aPnt = center.Coord();
+                  BRO->Location().Transformation().Transforms(aPnt);
+                  myManipulator->SetPosition(gp_Ax2(aPnt, gp_Dir(0, 0, 1)));
+
+                  myContext->Display(myManipulator, true);
+                  myContext->RecomputeSelectionOnly(myContext->DetectedInteractive());
+              }
+		      else {
+                  myManipulator->Detach();
+			      myContext->Remove(myManipulator, true);
+		      }
+          }
+      }
     updateView();
   }
 }
@@ -528,21 +565,6 @@ void ModelEditor::mouseMoveEvent (QMouseEvent* theEvent)
                             qtMouseModifiers2VKeys (theEvent->modifiers()),
                             false))
   {
-      switch (myCurrentMode)
-      {
-          case EditMode::Select:
-		  {
-			  // do dnothing
-			  break;
-		  }
-          case EditMode::Move:
-          {
-              			  // do move
-			  break;
-          }
-      default:
-          break;
-      }
     updateView();
   }
 }
@@ -590,6 +612,7 @@ void ModelEditor::wheelEvent (QWheelEvent* theEvent)
 void ModelEditor::updateView()
 {
   update();
+
   //if (window() != NULL) { window()->update(); }
 }
 

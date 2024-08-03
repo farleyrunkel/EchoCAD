@@ -9,12 +9,14 @@
 #include "AppModule.h"
 #include "GuiApplication.h"
 #include "GuiDocument.h"
+#include <QVersionNumber>
 
 using namespace echocad;
 
 static int initGui(GuiApplication* guiApp)
 {
-
+    if (!guiApp)
+        return 1;
     return 1;
 }
 // Initializes and runs Mayo application

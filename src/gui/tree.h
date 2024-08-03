@@ -67,7 +67,7 @@ public:
 			loadLabelAttributes(label, item);
 
 			TDF_ChildIterator it;
-			for (it.Initialize(label, Standard_True); it.More(); it.Next()) {
+			for (it.Initialize(label); it.More(); it.Next()) {
 				TDF_Label childLabel = it.Value();
 				TCollection_AsciiString es;
 				TDF_Tool::Entry(childLabel, es);
@@ -114,7 +114,7 @@ public:
 			attrTreeItem->setText(0, text + ": " + value);
 			attrTreeItem->setToolTip(0, text + ": " + value);
 
-			treeItem->addChild(attrTreeItem);
+			treeItem->addChild(attrTreeItem);        
 		}
 	}
 

@@ -44,6 +44,7 @@ class ModelEditor : public QOpenGLWidget, public AIS_ViewController
   Q_OBJECT
 public:
     enum EditMode {
+        None = -1,
         Select = 0,
         Move,
         Rotate,
@@ -99,7 +100,7 @@ public:
   }
 
 signals:
-    void documentOpened(const Handle(TDocStd_Document)& theDoc);
+   void documentOpened(const Handle(TDocStd_Document)& theDoc);
 
 public:
 
@@ -138,6 +139,14 @@ private:
   virtual void handleViewRedraw (const Handle(AIS_InteractiveContext)& theCtx,
                                  const Handle(V3d_View)& theView) override;
 
+  void showManipulator(const gp_Ax2& thePosition) {
+	  if (myCurrentMode == Select) {
+          ;
+		  myContext->Display(myManipulator, true);
+	  }
+  }
+
+
 private:
   Handle(TOcaf_Application)         myApp;
   Handle(TDocStd_Document)      myOcafDoc;
@@ -152,6 +161,10 @@ private:
   bool myIsCoreProfile;
   
   EditMode myCurrentMode;
+
+  Handle(Manipulator) myManipulator;
+
+  QPoint m_lastPos;
 };
 
 

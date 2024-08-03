@@ -46,7 +46,8 @@ MainWindow::MainWindow(QWidget *theParent)
     mLineEdit(nullptr),
     mEditor(nullptr),
     mPythonInterpreter(nullptr),
-    myTreeWidget(nullptr)
+    myTreeWidget(nullptr),
+    m_editButtons()
 {
     setupMainUi(new QSplitter);
     setupMenuBar(new QMenuBar);
@@ -95,6 +96,7 @@ void MainWindow::setConnects() {
         mEditor->addItem(item);
         mEditor->addItem(new IJupyterItem(""));
 	});
+
 }
 
 void MainWindow::setupMainUi(QSplitter* splitter) {
@@ -109,6 +111,7 @@ void MainWindow::setupMainUi(QSplitter* splitter) {
     // StyleManager::instance().enableBorders(true);
     StyleManager::instance().applyStyleSheet(this);
     StyleManager::instance().applyPalette(this);
+
 }
 void MainWindow::setupPythonEditor(QWidget* theEditor)
 {
@@ -213,8 +216,6 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
     aLayout->setAlignment(Qt::AlignTop);
     {
         QWidget* aButtonsBox = new QWidget();
-
-
         QHBoxLayout* aButtonsLayout = new QHBoxLayout(aButtonsBox);
         aButtonsLayout->setAlignment(Qt::AlignLeft);
         {
@@ -242,7 +243,7 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            aSpacer->setFixedWidth(10);
+            aSpacer->setFixedWidth(5);
             aButtonsLayout->addWidget(aSpacer);
         }
         {
@@ -303,10 +304,29 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
                 ;});
 		}
         {
+            // add selete mode face
+            QToolButton* aButton = new QToolButton(aButtonsBox);
+            aButton->setIcon(QIcon("://icons/select_body.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButton->setToolTip("Select Mode: Body");
+            aButton->setAutoRaise(true);
+            aButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            aButton->setCheckable(true);
+            aButtonsLayout->addWidget(aButton);
+            connect(aButton, &QToolButton::clicked, this, [this, aButton]() {
+                if (aButton->isChecked()) {
+                    mViewer->Context()->Activate(AIS_Shape::SelectionMode(TopAbs_SOLID));
+                }
+                else {
+                    mViewer->Context()->Deactivate(AIS_Shape::SelectionMode(TopAbs_SOLID));
+                }
+                ; });
+        }
+        {
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            aSpacer->setFixedWidth(10);
+            aSpacer->setFixedWidth(5);
             aButtonsLayout->addWidget(aSpacer);
         }
         {
@@ -399,36 +419,56 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
             // add spacer
             QWidget* aSpacer = new QWidget();
             aSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            aSpacer->setFixedWidth(10);
+            aSpacer->setFixedWidth(5);
             aButtonsLayout->addWidget(aSpacer);
         }
         {
+            // move button
+            QToolButton* aButton = new QToolButton(aButtonsBox);
+            aButton->setIcon(QIcon("://icons/move.svg"));
+            aButton->setObjectName("RoundedButton");
+            aButton->setAutoRaise(true);
+            aButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            aButton->setCheckable(true);
+            aButtonsLayout->addWidget(aButton);
+            m_editButtons.push_back(aButton);
+
+            connect(aButton, &QToolButton::clicked, [this, aButton]() {
+                if (aButton->isChecked()) {
+                    mViewer->setEditMode(ModelEditor::EditMode::Move);
+                    m_currentEditButton = aButton;
+				}
+				else {
+					mViewer->setEditMode(ModelEditor::EditMode::None);
+                    m_currentEditButton = nullptr;
+                };
+
+                updateButtons();
+            });
+        }
+        {
             // extrude button
-            QPushButton* aButton = new QPushButton("", aButtonsBox);
+            QToolButton* aButton = new QToolButton(aButtonsBox);
             aButton->setIcon(QIcon("://icons/extrude.svg"));
             aButton->setObjectName("RoundedButton");
+            aButton->setAutoRaise(true);
+            aButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+            aButton->setCheckable(true);
             aButtonsLayout->addWidget(aButton);
-            connect(aButton, &QPushButton::clicked, [this]()
-                {
-                    //               for (mViewer->Context()->InitSelected(); mViewer->Context()->MoreSelected(); mViewer->Context()->NextSelected())
-                                   //{     
-                    //                   TopoDS_Shape anShape = mViewer->Context()->SelectedShape();
-                    //                   if (anShape.IsNull())
-                                   //	{
-                                   //		QMessageBox::warning(this, "Warning", "Please select a shape first!");
-                                   //		return;
-                                   //	}
-                    //                   gp_Trsf agp_Trsf =  gp_Trsf();
-                    //                   agp_Trsf.SetTranslation(gp_Vec(0, 0, 100));
-                    //                   anShape.Move(TopLoc_Location(agp_Trsf));
 
-                    //                   auto newAisShaple = new AIS_Shape(anShape);
-                    //                   mViewer->Context()->Display(newAisShaple, Standard_True);
-                                   //};
+            m_editButtons.push_back(aButton);
 
-                    mViewer->setEditMode(ModelEditor::EditMode::Select);
+            connect(aButton, &QPushButton::clicked, [this, aButton]() {
+                if (aButton->isChecked()) {
+                    mViewer->setEditMode(ModelEditor::EditMode::Rotate);
+                    m_currentEditButton = aButton;
+                }
+                else {
+                    mViewer->setEditMode(ModelEditor::EditMode::None);
+                    m_currentEditButton = nullptr;
+                };
 
-                    mViewer->showManipulator();
+                updateButtons();
                 });
         }
         {
@@ -453,10 +493,6 @@ void MainWindow::setupOcctViewer(ModelEditor* theViewer)
                         mViewer->View()->Redraw();
                     }
                 });
-        }
-        {
-
-
         }
         {
             QSlider* aSlider = new QSlider(Qt::Horizontal);
